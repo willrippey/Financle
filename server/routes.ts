@@ -40,7 +40,7 @@ export async function registerRoutes(
 
   app.get(api.games.daily.path, async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
-    const userId = (req.user as any).id;
+    const userId = (req.user as any).claims.sub;
     const today = new Date().toISOString().split('T')[0];
     
     let game = await storage.getDailyGame(userId, today);
@@ -55,7 +55,7 @@ export async function registerRoutes(
 
   app.post(api.games.create.path, async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
-    const userId = (req.user as any).id;
+    const userId = (req.user as any).claims.sub;
     const { type } = req.body;
     
     if (type === 'daily') {
@@ -71,7 +71,7 @@ export async function registerRoutes(
   app.get(api.games.get.path, async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
     const game = await storage.getGame(Number(req.params.id));
-    if (!game || game.userId !== (req.user as any).id) return res.sendStatus(404);
+    if (!game || game.userId !== (req.user as any).claims.sub) return res.sendStatus(404);
     
     const response = await buildGameState(game);
     res.json(response);
@@ -81,7 +81,7 @@ export async function registerRoutes(
     if (!req.isAuthenticated()) return res.sendStatus(401);
     const { companySymbol } = req.body;
     const gameId = Number(req.params.id);
-    const userId = (req.user as any).id;
+    const userId = (req.user as any).claims.sub;
     
     let game = await storage.getGame(gameId);
     if (!game || game.userId !== userId) return res.sendStatus(404);
