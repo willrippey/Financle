@@ -52,15 +52,29 @@ export function GameOverModal({ open, game, onPlayAgain, isDaily }: GameOverModa
             <p className="text-sm font-mono text-foreground/80 mt-1">{target.symbol}</p>
           </div>
           
-          <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/5">
+          <div className="grid grid-cols-2 gap-3 pt-4 border-t border-white/5">
              <div className="text-center">
-               <span className="text-xs text-muted-foreground block mb-1">Sector</span>
+               <span className="text-xs text-muted-foreground block mb-1">Category</span>
                <span className="text-sm font-medium">{target.sector}</span>
+               <span className="text-xs text-muted-foreground">{target.subIndustry}</span>
+             </div>
+             <div className="text-center">
+               <span className="text-xs text-muted-foreground block mb-1">Market Cap</span>
+               <span className="text-sm font-medium">{target.marketCap}</span>
              </div>
              <div className="text-center">
                <span className="text-xs text-muted-foreground block mb-1">Headquarters</span>
                <span className="text-sm font-medium">{target.headquarters}</span>
              </div>
+             <div className="text-center">
+               <span className="text-xs text-muted-foreground block mb-1">Founded</span>
+               <span className="text-sm font-medium">{target.founded}</span>
+             </div>
+          </div>
+          
+          <div className="pt-4 border-t border-white/5">
+            <span className="text-xs text-muted-foreground block mb-2">About</span>
+            <p className="text-sm font-medium leading-relaxed">{target.description}</p>
           </div>
         </div>
 

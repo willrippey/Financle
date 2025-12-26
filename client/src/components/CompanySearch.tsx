@@ -10,13 +10,16 @@ import { useDebounce } from "@/hooks/use-debounce";
 interface CompanySearchProps {
   onSelect: (symbol: string) => void;
   disabled?: boolean;
+  inputRef?: React.RefObject<HTMLInputElement>;
 }
 
-export function CompanySearch({ onSelect, disabled }: CompanySearchProps) {
+export function CompanySearch({ onSelect, disabled, inputRef }: CompanySearchProps) {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
   const [searchQuery, setSearchQuery] = React.useState("");
   const debouncedQuery = useDebounce(searchQuery, 300);
+  const internalRef = React.useRef<HTMLInputElement>(null);
+  const ref = inputRef || internalRef;
   
   const { data: companies, isLoading } = useCompanySearch(debouncedQuery);
 
@@ -39,6 +42,7 @@ export function CompanySearch({ onSelect, disabled }: CompanySearchProps) {
       <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0 bg-card border-white/10 shadow-2xl" align="start">
         <Command shouldFilter={false} className="bg-transparent">
           <CommandInput 
+            ref={ref}
             placeholder="Type company name..." 
             value={searchQuery}
             onValueChange={setSearchQuery}
