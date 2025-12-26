@@ -70,11 +70,14 @@ export function GameOverModal({ open, game, onPlayAgain, isDaily }: GameOverModa
                <span className="text-xs text-muted-foreground block mb-1">Founded</span>
                <span className="text-sm font-medium">{target.founded}</span>
              </div>
-          </div>
-          
-          <div className="pt-4 border-t border-white/5">
-            <span className="text-xs text-muted-foreground block mb-2">About</span>
-            <p className="text-sm font-medium leading-relaxed">{target.description}</p>
+             <div className="text-center">
+               <span className="text-xs text-muted-foreground block mb-1">First Letter</span>
+               <span className="text-sm font-medium">{target.symbol.charAt(0)}</span>
+             </div>
+             <div className="text-center">
+               <span className="text-xs text-muted-foreground block mb-1">Description</span>
+               <p className="text-xs font-medium line-clamp-2">{target.description}</p>
+             </div>
           </div>
         </div>
 

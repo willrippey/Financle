@@ -71,7 +71,7 @@ export function CompanySearch({ onSelect, disabled, inputRef }: CompanySearchPro
                   key={company.symbol}
                   value={company.symbol}
                   onSelect={(currentValue) => {
-                    setValue(currentValue);
+                    setValue("");
                     onSelect(currentValue);
                     setOpen(false);
                     setSearchQuery(""); // Reset search after selection

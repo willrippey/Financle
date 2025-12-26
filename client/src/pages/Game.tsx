@@ -85,32 +85,32 @@ export default function Game() {
     { title: "Headquarters", value: game.clues.headquarters, revealed: !!game.clues.headquarters },
     { title: "Founded", value: game.clues.founded, revealed: !!game.clues.founded },
     { title: "First Letter", value: game.clues.firstLetter, revealed: !!game.clues.firstLetter },
-    { title: "Description", value: game.clues.description, revealed: !!game.clues.description, fullWidth: true },
+    { title: "Description", value: game.clues.description, revealed: !!game.clues.description },
   ];
 
   return (
     <div className="min-h-screen bg-background flex flex-col pb-12">
       <Navbar />
       
-      <main className="flex-1 container mx-auto px-4 py-6 max-w-4xl">
+      <main className="flex-1 container mx-auto px-4 py-4 max-w-4xl">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <Button variant="ghost" onClick={() => setLocation("/")} className="text-muted-foreground hover:text-foreground pl-0">
+        <div className="flex items-center justify-between mb-4">
+          <Button variant="ghost" onClick={() => setLocation("/")} className="text-muted-foreground hover:text-foreground pl-0 h-8">
             <ArrowLeft className="mr-2 h-4 w-4" /> Back
           </Button>
           <div className="text-right">
-            <span className="text-sm font-medium text-muted-foreground uppercase tracking-widest block mb-1">
+            <span className="text-xs font-medium text-muted-foreground uppercase tracking-widest block mb-0">
               {game.type === 'daily' ? 'Daily Challenge' : 'Endless Mode'}
             </span>
             <div className="flex items-center gap-2">
-              <span className="text-2xl font-mono font-bold">{game.round}/6</span>
-              <span className="text-sm text-muted-foreground">Rounds</span>
+              <span className="text-xl font-mono font-bold">{game.round}/6</span>
+              <span className="text-xs text-muted-foreground">Rounds</span>
             </div>
           </div>
         </div>
 
         {/* Progress Bar */}
-        <div className="mb-8 relative h-2 bg-secondary rounded-full overflow-hidden">
+        <div className="mb-4 relative h-2 bg-secondary rounded-full overflow-hidden">
           <motion.div 
             className="absolute top-0 left-0 h-full bg-primary"
             initial={{ width: 0 }}
@@ -120,7 +120,7 @@ export default function Game() {
         </div>
 
         {/* Game Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
           {clues.map((clue, idx) => (
             <div key={clue.title} className={clue.fullWidth ? "col-span-2 md:col-span-3" : "col-span-1"}>
               <GameCard 
@@ -135,16 +135,16 @@ export default function Game() {
         </div>
 
         {/* Input Area */}
-        <div className="max-w-xl mx-auto space-y-4 mb-12">
+        <div className="max-w-xl mx-auto space-y-3 mb-8">
           {!isGameOver ? (
             <motion.div 
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              className="space-y-4"
+              className="space-y-2"
             >
-              <div className="text-center mb-4">
-                <h3 className="text-lg font-medium text-foreground mb-1">Make your guess</h3>
-                <p className="text-sm text-muted-foreground">{attemptsLeft} attempts remaining</p>
+              <div className="text-center mb-2">
+                <h3 className="text-base font-medium text-foreground mb-0">Make your guess</h3>
+                <p className="text-xs text-muted-foreground">{attemptsLeft} attempts remaining</p>
               </div>
               
               <div className="flex gap-2">
