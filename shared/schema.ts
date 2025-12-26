@@ -25,6 +25,7 @@ export const companies = pgTable("companies", {
   headquarters: text("headquarters").notNull(),
   founded: text("founded").notNull(),
   description: text("description").notNull(),
+  marketCap: text("market_cap").notNull(), // e.g., "$3.2T", "$542B"
 });
 
 export const games = pgTable("games", {

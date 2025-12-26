@@ -6,16 +6,16 @@ import { api } from "@shared/routes";
 import { z } from "zod";
 
 const COMPANIES_SEED = [
-  { symbol: "AAPL", name: "Apple Inc.", sector: "Information Technology", subIndustry: "Technology Hardware, Storage & Peripherals", headquarters: "Cupertino, California", founded: "1976", description: "Designs, manufactures, and markets smartphones, personal computers, tablets, wearables, and accessories." },
-  { symbol: "MSFT", name: "Microsoft Corporation", sector: "Information Technology", subIndustry: "Systems Software", headquarters: "Redmond, Washington", founded: "1975", description: "Develops, licenses, and supports software, services, devices, and solutions." },
-  { symbol: "GOOGL", name: "Alphabet Inc.", sector: "Communication Services", subIndustry: "Interactive Media & Services", headquarters: "Mountain View, California", founded: "1998", description: "A multinational technology company specializing in Internet-related services and products." },
-  { symbol: "AMZN", name: "Amazon.com Inc.", sector: "Consumer Discretionary", subIndustry: "Broadline Retail", headquarters: "Seattle, Washington", founded: "1994", description: "E-commerce, cloud computing, digital streaming, and artificial intelligence." },
-  { symbol: "NVDA", name: "NVIDIA Corporation", sector: "Information Technology", subIndustry: "Semiconductors", headquarters: "Santa Clara, California", founded: "1993", description: "Designs graphics processing units for gaming and professional markets, as well as system on chip units." },
-  { symbol: "META", name: "Meta Platforms, Inc.", sector: "Communication Services", subIndustry: "Interactive Media & Services", headquarters: "Menlo Park, California", founded: "2004", description: "Builds technologies that help people connect, find communities, and grow businesses." },
-  { symbol: "TSLA", name: "Tesla, Inc.", sector: "Consumer Discretionary", subIndustry: "Automobile Manufacturers", headquarters: "Austin, Texas", founded: "2003", description: "Designs and manufactures electric vehicles, battery energy storage from home to grid-scale, solar panels and solar roof tiles." },
-  { symbol: "BRK.B", name: "Berkshire Hathaway", sector: "Financials", subIndustry: "Multi-Sector Holdings", headquarters: "Omaha, Nebraska", founded: "1839", description: "A multinational conglomerate holding company owning a diverse range of businesses." },
-  { symbol: "V", name: "Visa Inc.", sector: "Financials", subIndustry: "Transaction & Payment Processing Services", headquarters: "San Francisco, California", founded: "1958", description: "Facilitates electronic funds transfers throughout the world." },
-  { symbol: "JPM", name: "JPMorgan Chase & Co.", sector: "Financials", subIndustry: "Diversified Banks", headquarters: "New York, New York", founded: "2000", description: "A multinational finance and insurance corporation." }
+  { symbol: "AAPL", name: "Apple Inc.", sector: "Information Technology", subIndustry: "Technology Hardware, Storage & Peripherals", headquarters: "Cupertino, California", founded: "1976", description: "Designs, manufactures, and markets smartphones, personal computers, tablets, wearables, and accessories.", marketCap: "$3.2T" },
+  { symbol: "MSFT", name: "Microsoft Corporation", sector: "Information Technology", subIndustry: "Systems Software", headquarters: "Redmond, Washington", founded: "1975", description: "Develops, licenses, and supports software, services, devices, and solutions.", marketCap: "$3.1T" },
+  { symbol: "GOOGL", name: "Alphabet Inc.", sector: "Communication Services", subIndustry: "Interactive Media & Services", headquarters: "Mountain View, California", founded: "1998", description: "A multinational technology company specializing in Internet-related services and products.", marketCap: "$2.1T" },
+  { symbol: "AMZN", name: "Amazon.com Inc.", sector: "Consumer Discretionary", subIndustry: "Broadline Retail", headquarters: "Seattle, Washington", founded: "1994", description: "E-commerce, cloud computing, digital streaming, and artificial intelligence.", marketCap: "$2.3T" },
+  { symbol: "NVDA", name: "NVIDIA Corporation", sector: "Information Technology", subIndustry: "Semiconductors", headquarters: "Santa Clara, California", founded: "1993", description: "Designs graphics processing units for gaming and professional markets, as well as system on chip units.", marketCap: "$3.5T" },
+  { symbol: "META", name: "Meta Platforms, Inc.", sector: "Communication Services", subIndustry: "Interactive Media & Services", headquarters: "Menlo Park, California", founded: "2004", description: "Builds technologies that help people connect, find communities, and grow businesses.", marketCap: "$1.6T" },
+  { symbol: "TSLA", name: "Tesla, Inc.", sector: "Consumer Discretionary", subIndustry: "Automobile Manufacturers", headquarters: "Austin, Texas", founded: "2003", description: "Designs and manufactures electric vehicles, battery energy storage from home to grid-scale, solar panels and solar roof tiles.", marketCap: "$900B" },
+  { symbol: "BRK.B", name: "Berkshire Hathaway", sector: "Financials", subIndustry: "Multi-Sector Holdings", headquarters: "Omaha, Nebraska", founded: "1839", description: "A multinational conglomerate holding company owning a diverse range of businesses.", marketCap: "$1.0T" },
+  { symbol: "V", name: "Visa Inc.", sector: "Financials", subIndustry: "Transaction & Payment Processing Services", headquarters: "San Francisco, California", founded: "1958", description: "Facilitates electronic funds transfers throughout the world.", marketCap: "$680B" },
+  { symbol: "JPM", name: "JPMorgan Chase & Co.", sector: "Financials", subIndustry: "Diversified Banks", headquarters: "New York, New York", founded: "2000", description: "A multinational finance and insurance corporation.", marketCap: "$580B" }
 ];
 
 export async function registerRoutes(
@@ -143,8 +143,8 @@ export async function registerRoutes(
     if (!target) throw new Error("Target company not found");
 
     const clues = {
-      sector: guesses.length >= 0 ? target.sector : undefined,
-      subIndustry: guesses.length >= 1 ? target.subIndustry : undefined,
+      category: guesses.length >= 0 ? `${target.sector} - ${target.subIndustry}` : undefined,
+      marketCap: guesses.length >= 1 ? target.marketCap : undefined,
       headquarters: guesses.length >= 2 ? target.headquarters : undefined,
       founded: guesses.length >= 3 ? target.founded : undefined,
       firstLetter: guesses.length >= 4 ? target.symbol[0] : undefined,
@@ -160,8 +160,8 @@ export async function registerRoutes(
       status: game.status,
       round: guesses.length + 1,
       clues: isOver ? {
-        sector: target.sector,
-        subIndustry: target.subIndustry,
+        category: `${target.sector} - ${target.subIndustry}`,
+        marketCap: target.marketCap,
         headquarters: target.headquarters,
         founded: target.founded,
         firstLetter: target.symbol[0],
