@@ -102,10 +102,10 @@ export default function Game() {
   ];
 
   return (
-    <div className="min-h-screen bg-background flex flex-col pb-12">
+    <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
       
-      <main className="flex-1 container mx-auto px-4 py-4 max-w-4xl">
+      <main className="flex-1 container mx-auto px-4 py-4 max-w-4xl overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <Button variant="ghost" onClick={() => setLocation("/")} className="text-muted-foreground hover:text-foreground pl-0 h-8">
@@ -148,7 +148,7 @@ export default function Game() {
         </div>
 
         {/* Input Area */}
-        <div className="max-w-xl mx-auto space-y-3 mb-8">
+        <div className="max-w-xl mx-auto space-y-3 mb-6">
           {!isGameOver ? (
             <motion.div 
               initial={{ y: 20, opacity: 0 }}
@@ -173,36 +173,41 @@ export default function Game() {
             </div>
           )}
         </div>
-      </main>
 
-      {/* Previous Guesses Section at Bottom */}
-      {game.guesses.length > 0 && (
-        <div className="border-t border-white/5 bg-background/50 backdrop-blur-sm sticky bottom-0 w-full">
-          <div className="container mx-auto px-4 py-6 max-w-4xl">
+        {/* Previous Guesses Section */}
+        {game.guesses.length > 0 && (
+          <div className="max-w-xl mx-auto pt-4">
             <div className="flex items-center gap-2 text-sm text-muted-foreground uppercase tracking-widest font-semibold mb-4">
               <History className="h-4 w-4" /> Previous Guesses
             </div>
-            <div className="space-y-2">
+            <div className="space-y-2 pb-6">
               <AnimatePresence>
-                {game.guesses.slice().reverse().map((guess, idx) => (
-                  <motion.div
-                    key={guess.symbol + idx}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    className="flex items-center justify-between p-3 rounded-lg bg-card border border-white/5 shadow-sm"
-                  >
-                     <div className="flex items-center gap-3">
-                        <span className="font-mono font-bold text-muted-foreground w-12">{guess.symbol}</span>
-                        <span className="font-medium">{guess.name}</span>
-                     </div>
-                     <span className="text-xs font-mono text-destructive">MISS</span>
-                  </motion.div>
-                ))}
+                {game.guesses.slice().reverse().map((guess, idx) => {
+                  const isCorrectGuess = game.status === 'won' && idx === 0;
+                  return (
+                    <motion.div
+                      key={guess.symbol + idx}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      className="flex items-center justify-between p-3 rounded-lg bg-card border border-white/5 shadow-sm"
+                    >
+                       <div className="flex items-center gap-3">
+                          <span className="font-mono font-bold text-muted-foreground w-12">{guess.symbol}</span>
+                          <span className="font-medium">{guess.name}</span>
+                       </div>
+                       {isCorrectGuess ? (
+                         <span className="text-xs font-mono text-green-500 font-semibold">HIT</span>
+                       ) : (
+                         <span className="text-xs font-mono text-destructive">MISS</span>
+                       )}
+                    </motion.div>
+                  );
+                })}
               </AnimatePresence>
             </div>
           </div>
-        </div>
-      )} 
+        )}
+      </main>
 
       <GameOverModal 
         open={showGameOverModal} 
