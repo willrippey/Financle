@@ -23,6 +23,14 @@ export default function Game() {
   const createGame = useCreateGame();
 
   const [lastGuess, setLastGuess] = useState<string | null>(null);
+  const [showGameOverModal, setShowGameOverModal] = useState(false);
+
+  // Update modal visibility when game status changes
+  useEffect(() => {
+    if (game && game.status !== 'playing') {
+      setShowGameOverModal(true);
+    }
+  }, [game?.status]);
 
   // Redirect if game not found
   useEffect(() => {
@@ -75,7 +83,8 @@ export default function Game() {
   };
 
   const handleModalClose = () => {
-    // Modal will just close when X is clicked, no navigation needed
+    // Close the modal without navigating
+    setShowGameOverModal(false);
   };
 
   const isGameOver = game.status !== 'playing';
@@ -196,7 +205,7 @@ export default function Game() {
       )} 
 
       <GameOverModal 
-        open={isGameOver} 
+        open={showGameOverModal} 
         game={game} 
         onPlayAgain={handlePlayAgain}
         isDaily={game.type === 'daily'}

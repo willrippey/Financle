@@ -26,7 +26,9 @@ export default function Home() {
   const handlePlayDaily = () => {
     // Navigate to the daily game
     if (dailyGame?.id) {
-      setLocation(`/game/${dailyGame.id}`);
+      setTimeout(() => {
+        setLocation(`/game/${dailyGame.id}`);
+      }, 0);
     }
   };
 
