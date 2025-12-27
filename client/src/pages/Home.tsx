@@ -13,7 +13,7 @@ export default function Home() {
   const createGameMutation = useCreateGame();
   
   // Prefetch daily game to check status
-  const { data: dailyGame, isLoading: isDailyLoading } = useDailyGame();
+  const { data: dailyGame, isLoading: isDailyLoading, refetch: refetchDaily } = useDailyGame();
 
   const handlePlayEndless = () => {
     createGameMutation.mutate({ type: 'endless' }, {
@@ -23,10 +23,19 @@ export default function Home() {
     });
   };
 
-  const handlePlayDaily = () => {
-    // Navigate to the daily game - the endpoint auto-creates if it doesn't exist
-    if (dailyGame) {
+  const handlePlayDaily = async () => {
+    // If we have the daily game, navigate to it
+    if (dailyGame?.id) {
       setLocation(`/game/${dailyGame.id}`);
+      return;
+    }
+    
+    // Otherwise, refetch to ensure we have it
+    if (!isDailyLoading) {
+      const result = await refetchDaily();
+      if (result.data?.id) {
+        setLocation(`/game/${result.data.id}`);
+      }
     }
   };
 

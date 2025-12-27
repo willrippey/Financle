@@ -26,7 +26,7 @@ export function GameOverModal({ open, game, onPlayAgain, isDaily }: GameOverModa
 
   return (
     <Dialog open={open}>
-      <DialogContent className="sm:max-w-md bg-card border-white/10 shadow-2xl" onPointerDownOutside={(e) => e.preventDefault()}>
+      <DialogContent className="sm:max-w-md bg-card border-white/10 shadow-2xl">
         <DialogHeader>
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-secondary/50">
             {isWin ? (
