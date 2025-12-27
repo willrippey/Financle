@@ -64,6 +64,10 @@ export default function Game() {
           description: err.message,
           variant: "destructive"
         });
+        // Auto-focus input after incorrect guess
+        setTimeout(() => {
+          searchInputRef.current?.focus();
+        }, 100);
       },
       onSuccess: () => {
         // Auto-focus input after guess
@@ -172,7 +176,12 @@ export default function Game() {
               
               <div className="flex gap-2">
                 <div className="flex-1">
-                  <CompanySearch onSelect={handleGuess} disabled={submitGuess.isPending} inputRef={searchInputRef} />
+                  <CompanySearch 
+                    onSelect={handleGuess} 
+                    disabled={submitGuess.isPending} 
+                    inputRef={searchInputRef}
+                    guessedSymbols={game.guesses.map(g => g.symbol)}
+                  />
                 </div>
               </div>
             </motion.div>

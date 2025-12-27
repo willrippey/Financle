@@ -11,9 +11,10 @@ interface CompanySearchProps {
   onSelect: (symbol: string) => void;
   disabled?: boolean;
   inputRef?: React.RefObject<HTMLInputElement>;
+  guessedSymbols?: string[];
 }
 
-export function CompanySearch({ onSelect, disabled, inputRef }: CompanySearchProps) {
+export function CompanySearch({ onSelect, disabled, inputRef, guessedSymbols = [] }: CompanySearchProps) {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
   const [searchQuery, setSearchQuery] = React.useState("");
@@ -22,6 +23,11 @@ export function CompanySearch({ onSelect, disabled, inputRef }: CompanySearchPro
   const ref = inputRef || internalRef;
   
   const { data: companies, isLoading } = useCompanySearch(debouncedQuery);
+  
+  // Filter out already guessed companies
+  const filteredCompanies = companies?.filter(
+    (company) => !guessedSymbols.includes(company.symbol)
+  ) || [];
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -66,7 +72,7 @@ export function CompanySearch({ onSelect, disabled, inputRef }: CompanySearchPro
             )}
 
             <CommandGroup>
-              {companies?.map((company) => (
+              {filteredCompanies.map((company) => (
                 <CommandItem
                   key={company.symbol}
                   value={company.symbol}
