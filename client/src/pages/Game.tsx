@@ -74,6 +74,10 @@ export default function Game() {
     });
   };
 
+  const handleModalClose = () => {
+    setLocation('/');
+  };
+
   const isGameOver = game.status !== 'playing';
   const attemptsLeft = 6 - game.round;
   const progress = (game.round / 6) * 100;
@@ -196,6 +200,7 @@ export default function Game() {
         game={game} 
         onPlayAgain={handlePlayAgain}
         isDaily={game.type === 'daily'}
+        onClose={handleModalClose}
       />
     </div>
   );

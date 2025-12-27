@@ -13,7 +13,7 @@ export default function Home() {
   const createGameMutation = useCreateGame();
   
   // Prefetch daily game to check status
-  const { data: dailyGame, isLoading: isDailyLoading, refetch: refetchDaily } = useDailyGame();
+  const { data: dailyGame, isLoading: isDailyLoading } = useDailyGame();
 
   const handlePlayEndless = () => {
     createGameMutation.mutate({ type: 'endless' }, {
@@ -23,19 +23,10 @@ export default function Home() {
     });
   };
 
-  const handlePlayDaily = async () => {
-    // If we have the daily game, navigate to it
+  const handlePlayDaily = () => {
+    // Navigate directly to daily game if loaded
     if (dailyGame?.id) {
       setLocation(`/game/${dailyGame.id}`);
-      return;
-    }
-    
-    // Otherwise, refetch to ensure we have it
-    if (!isDailyLoading) {
-      const result = await refetchDaily();
-      if (result.data?.id) {
-        setLocation(`/game/${result.data.id}`);
-      }
     }
   };
 

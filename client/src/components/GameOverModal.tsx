@@ -16,16 +16,23 @@ interface GameOverModalProps {
   game: GameStateResponse;
   onPlayAgain?: () => void;
   isDaily?: boolean;
+  onClose?: () => void;
 }
 
-export function GameOverModal({ open, game, onPlayAgain, isDaily }: GameOverModalProps) {
+export function GameOverModal({ open, game, onPlayAgain, isDaily, onClose }: GameOverModalProps) {
   const isWin = game.status === "won";
   const target = game.targetCompany;
 
   if (!target) return null;
 
+  const handleOpenChange = (newOpen: boolean) => {
+    if (!newOpen && onClose) {
+      onClose();
+    }
+  };
+
   return (
-    <Dialog open={open}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-md bg-card border-white/10 shadow-2xl">
         <DialogHeader>
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-secondary/50">
