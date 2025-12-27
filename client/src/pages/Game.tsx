@@ -75,7 +75,7 @@ export default function Game() {
   };
 
   const handleModalClose = () => {
-    setLocation('/');
+    // Modal will just close when X is clicked, no navigation needed
   };
 
   const isGameOver = game.status !== 'playing';

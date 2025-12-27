@@ -24,7 +24,7 @@ export default function Home() {
   };
 
   const handlePlayDaily = () => {
-    // Navigate directly to daily game if loaded
+    // Navigate to the daily game
     if (dailyGame?.id) {
       setLocation(`/game/${dailyGame.id}`);
     }
@@ -114,9 +114,10 @@ export default function Home() {
                     className="w-full h-12 text-base font-semibold" 
                     variant={dailyCompleted ? "secondary" : "default"}
                     onClick={handlePlayDaily}
-                    disabled={createGameMutation.isPending && createGameMutation.variables?.type === 'daily'}
+                    disabled={isDailyLoading}
+                    data-testid="button-play-daily"
                   >
-                    {createGameMutation.isPending && createGameMutation.variables?.type === 'daily' ? (
+                    {isDailyLoading ? (
                       <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                     ) : dailyCompleted ? (
                       "View Results"
