@@ -24,15 +24,9 @@ export default function Home() {
   };
 
   const handlePlayDaily = () => {
-    // If daily game exists, resume it. If not, backend will create it.
+    // Navigate to the daily game - the endpoint auto-creates if it doesn't exist
     if (dailyGame) {
       setLocation(`/game/${dailyGame.id}`);
-    } else {
-      createGameMutation.mutate({ type: 'daily' }, {
-        onSuccess: (game) => {
-          setLocation(`/game/${game.id}`);
-        }
-      });
     }
   };
 
