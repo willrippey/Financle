@@ -111,21 +111,23 @@ export default function Game() {
           <Button variant="ghost" onClick={() => setLocation("/")} className="text-muted-foreground hover:text-foreground pl-0 h-8">
             <ArrowLeft className="mr-2 h-4 w-4" /> Back
           </Button>
+          
+          {/* Center: Current Streak for endless mode */}
+          {game.type === 'endless' && (
+            <div className="text-center">
+              <span className="text-xs font-medium text-muted-foreground uppercase tracking-widest block mb-1">Current Streak</span>
+              <span className="text-2xl font-mono font-bold text-primary">{game.endlessStreak || 0}</span>
+            </div>
+          )}
+
+          {/* Right: Game type and rounds */}
           <div className="text-right">
             <span className="text-xs font-medium text-muted-foreground uppercase tracking-widest block mb-0">
               {game.type === 'daily' ? 'Daily Challenge' : 'Endless Mode'}
             </span>
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <span className="text-xl font-mono font-bold">{game.round}/6</span>
-                <span className="text-xs text-muted-foreground">Rounds</span>
-              </div>
-              {game.type === 'endless' && (
-                <div className="flex items-center gap-2">
-                  <span className="text-xl font-mono font-bold text-primary">{game.endlessStreak || 0}</span>
-                  <span className="text-xs text-muted-foreground">Streak</span>
-                </div>
-              )}
+            <div className="flex items-center gap-2">
+              <span className="text-xl font-mono font-bold">{game.round}/6</span>
+              <span className="text-xs text-muted-foreground">Rounds</span>
             </div>
           </div>
         </div>
