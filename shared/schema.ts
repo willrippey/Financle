@@ -106,6 +106,7 @@ export type GameStateResponse = {
   type: 'daily' | 'endless';
   status: 'playing' | 'won' | 'lost';
   round: number;
+  endlessStreak?: number; // Current endless mode streak for the user
   clues: {
     sector?: string;
     subIndustry?: string;

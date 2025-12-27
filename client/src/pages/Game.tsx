@@ -115,9 +115,17 @@ export default function Game() {
             <span className="text-xs font-medium text-muted-foreground uppercase tracking-widest block mb-0">
               {game.type === 'daily' ? 'Daily Challenge' : 'Endless Mode'}
             </span>
-            <div className="flex items-center gap-2">
-              <span className="text-xl font-mono font-bold">{game.round}/6</span>
-              <span className="text-xs text-muted-foreground">Rounds</span>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <span className="text-xl font-mono font-bold">{game.round}/6</span>
+                <span className="text-xs text-muted-foreground">Rounds</span>
+              </div>
+              {game.type === 'endless' && (
+                <div className="flex items-center gap-2">
+                  <span className="text-xl font-mono font-bold text-primary">{game.endlessStreak || 0}</span>
+                  <span className="text-xs text-muted-foreground">Streak</span>
+                </div>
+              )}
             </div>
           </div>
         </div>

@@ -154,11 +154,19 @@ export async function registerRoutes(
     // If game over, reveal everything
     const isOver = game.status !== 'playing';
     
+    // Get user stats for endless mode streak
+    let endlessStreak = undefined;
+    if (game.type === 'endless') {
+      const stats = await storage.getUserStats(game.userId);
+      endlessStreak = stats?.currentStreak || 0;
+    }
+    
     return {
       id: game.id,
       type: game.type,
       status: game.status,
       round: guesses.length + 1,
+      endlessStreak,
       clues: isOver ? {
         category: `${target.sector} - ${target.subIndustry}`,
         marketCap: target.marketCap,
