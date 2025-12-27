@@ -54,7 +54,7 @@ export function CompanySearch({ onSelect, disabled, inputRef, guessedSymbols = [
             onValueChange={setSearchQuery}
             className="border-none focus:ring-0"
           />
-          <CommandList className="max-h-[300px]">
+          <CommandList className="max-h-[600px]">
             {isLoading && (
               <div className="py-6 text-center text-sm text-muted-foreground">
                 Searching market data...

@@ -69,7 +69,7 @@ export class DatabaseStorage implements IStorage {
     return await db.select()
       .from(companies)
       .where(sql`lower(${companies.name}) LIKE ${`%${query.toLowerCase()}%`} OR lower(${companies.symbol}) LIKE ${`%${query.toLowerCase()}%`}`)
-      .limit(10);
+      .limit(500);
   }
 
   async getCompanyBySymbol(symbol: string): Promise<Company | undefined> {
