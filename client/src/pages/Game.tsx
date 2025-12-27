@@ -7,7 +7,7 @@ import { CompanySearch } from "@/components/CompanySearch";
 import { GameOverModal } from "@/components/GameOverModal";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Loader2, ArrowLeft, History } from "lucide-react";
+import { Loader2, ArrowLeft, History, RefreshCw } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 
@@ -174,7 +174,7 @@ export default function Game() {
           )}
         </div>
 
-        {/* Previous Guesses Section */}
+        {/* Previous Guesses Section and Play Again Button */}
         {game.guesses.length > 0 && (
           <div className="max-w-xl mx-auto pt-4">
             <div className="flex items-center gap-2 text-sm text-muted-foreground uppercase tracking-widest font-semibold mb-4">
@@ -196,7 +196,7 @@ export default function Game() {
                           <span className="font-medium">{guess.name}</span>
                        </div>
                        {isCorrectGuess ? (
-                         <span className="text-xs font-mono text-green-500 font-semibold">HIT</span>
+                         <span className="text-xs font-mono text-green-500 font-semibold">Correct!</span>
                        ) : (
                          <span className="text-xs font-mono text-destructive">MISS</span>
                        )}
@@ -205,6 +205,22 @@ export default function Game() {
                 })}
               </AnimatePresence>
             </div>
+
+            {/* Play Again Button - Only show when game is over */}
+            {isGameOver && !showGameOverModal && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex gap-2 max-w-xl mx-auto pt-4"
+              >
+                <Button variant="outline" className="flex-1" onClick={() => setLocation("/")} data-testid="button-home">
+                  <ArrowLeft className="mr-2 h-4 w-4" /> Home
+                </Button>
+                <Button onClick={handlePlayAgain} className="flex-1" data-testid="button-play-again">
+                  <RefreshCw className="mr-2 h-4 w-4" /> Play Again
+                </Button>
+              </motion.div>
+            )}
           </div>
         )}
       </main>

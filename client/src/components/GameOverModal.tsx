@@ -33,62 +33,75 @@ export function GameOverModal({ open, game, onPlayAgain, isDaily, onClose }: Gam
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-md bg-card border-white/10 shadow-2xl">
+      <DialogContent className="sm:max-w-2xl bg-card border-white/10 shadow-2xl">
         <DialogHeader>
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-secondary/50">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/20">
             {isWin ? (
               <Trophy className="h-8 w-8 text-yellow-500 animate-bounce" />
             ) : (
               <XCircle className="h-8 w-8 text-destructive animate-pulse" />
             )}
           </div>
-          <DialogTitle className="text-center text-2xl font-bold">
+          <DialogTitle className="text-center text-3xl font-bold">
             {isWin ? "Market Guru!" : "Market Correction"}
           </DialogTitle>
-          <DialogDescription className="text-center text-base">
+          <DialogDescription className="text-center text-base mt-2">
             {isWin
-              ? `You identified the company in ${game.guesses.length} attempts.`
+              ? `You identified ${target.name} in ${game.guesses.length} attempt${game.guesses.length !== 1 ? 's' : ''}`
               : "Better luck next time. The market is unpredictable."}
           </DialogDescription>
         </DialogHeader>
 
-        <div className="my-6 p-6 rounded-xl bg-secondary/30 border border-white/5 space-y-4">
+        {/* Company Header Section */}
+        <div className="bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl p-6 border border-primary/20">
           <div className="text-center">
-            <span className="text-xs font-mono text-muted-foreground uppercase tracking-widest">The Company Was</span>
-            <h3 className="text-xl font-bold text-primary mt-1">{target.name}</h3>
-            <p className="text-sm font-mono text-foreground/80 mt-1">{target.symbol}</p>
-          </div>
-          
-          <div className="grid grid-cols-2 gap-3 pt-4 border-t border-white/5">
-             <div className="text-center">
-               <span className="text-xs text-muted-foreground block mb-1">Category</span>
-               <span className="text-sm font-medium">{target.sector}</span>
-               <span className="text-xs text-muted-foreground">{target.subIndustry}</span>
-             </div>
-             <div className="text-center">
-               <span className="text-xs text-muted-foreground block mb-1">Market Cap</span>
-               <span className="text-sm font-medium">{target.marketCap}</span>
-             </div>
-             <div className="text-center">
-               <span className="text-xs text-muted-foreground block mb-1">Headquarters</span>
-               <span className="text-sm font-medium">{target.headquarters}</span>
-             </div>
-             <div className="text-center">
-               <span className="text-xs text-muted-foreground block mb-1">Founded</span>
-               <span className="text-sm font-medium">{target.founded}</span>
-             </div>
-             <div className="text-center">
-               <span className="text-xs text-muted-foreground block mb-1">First Letter</span>
-               <span className="text-sm font-medium">{target.symbol.charAt(0)}</span>
-             </div>
-             <div className="text-center">
-               <span className="text-xs text-muted-foreground block mb-1">Description</span>
-               <p className="text-xs font-medium line-clamp-2">{target.description}</p>
-             </div>
+            <p className="text-xs font-mono text-muted-foreground uppercase tracking-widest mb-3">The Company</p>
+            <h2 className="text-3xl font-bold text-primary mb-1">{target.name}</h2>
+            <p className="text-lg font-mono text-foreground/70">{target.symbol}</p>
           </div>
         </div>
 
-        <DialogFooter className="sm:justify-center gap-2">
+        {/* Six Information Sections */}
+        <div className="grid grid-cols-2 gap-4">
+          {/* Section 1: Sector & Industry */}
+          <div className="rounded-lg bg-secondary/40 border border-white/5 p-4">
+            <p className="text-xs font-mono text-muted-foreground uppercase tracking-widest mb-2 font-semibold">Sector</p>
+            <p className="text-sm font-medium text-foreground">{target.sector}</p>
+            <p className="text-xs text-muted-foreground mt-1">{target.subIndustry}</p>
+          </div>
+
+          {/* Section 2: Market Cap */}
+          <div className="rounded-lg bg-secondary/40 border border-white/5 p-4">
+            <p className="text-xs font-mono text-muted-foreground uppercase tracking-widest mb-2 font-semibold">Market Cap</p>
+            <p className="text-sm font-medium text-foreground">{target.marketCap}</p>
+          </div>
+
+          {/* Section 3: Headquarters */}
+          <div className="rounded-lg bg-secondary/40 border border-white/5 p-4">
+            <p className="text-xs font-mono text-muted-foreground uppercase tracking-widest mb-2 font-semibold">Headquarters</p>
+            <p className="text-sm font-medium text-foreground">{target.headquarters}</p>
+          </div>
+
+          {/* Section 4: Founded */}
+          <div className="rounded-lg bg-secondary/40 border border-white/5 p-4">
+            <p className="text-xs font-mono text-muted-foreground uppercase tracking-widest mb-2 font-semibold">Founded</p>
+            <p className="text-sm font-medium text-foreground">{target.founded}</p>
+          </div>
+
+          {/* Section 5: First Letter */}
+          <div className="rounded-lg bg-secondary/40 border border-white/5 p-4">
+            <p className="text-xs font-mono text-muted-foreground uppercase tracking-widest mb-2 font-semibold">First Letter</p>
+            <p className="text-2xl font-bold text-primary">{target.symbol.charAt(0)}</p>
+          </div>
+
+          {/* Section 6: Description */}
+          <div className="rounded-lg bg-secondary/40 border border-white/5 p-4 col-span-2 md:col-span-1">
+            <p className="text-xs font-mono text-muted-foreground uppercase tracking-widest mb-2 font-semibold">About</p>
+            <p className="text-xs text-foreground/80 leading-relaxed">{target.description}</p>
+          </div>
+        </div>
+
+        <DialogFooter className="sm:justify-center gap-2 pt-4">
           {isDaily ? (
             <div className="text-center w-full">
               <p className="text-sm text-muted-foreground mb-4">Come back tomorrow for a new challenge!</p>
@@ -101,7 +114,7 @@ export function GameOverModal({ open, game, onPlayAgain, isDaily, onClose }: Gam
               <Button variant="outline" className="flex-1" asChild>
                 <a href="/">Home</a>
               </Button>
-              <Button onClick={onPlayAgain} className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground">
+              <Button onClick={onPlayAgain} className="flex-1">
                 <RefreshCw className="mr-2 h-4 w-4" />
                 Play Again
               </Button>
