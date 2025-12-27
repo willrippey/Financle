@@ -24,10 +24,10 @@ export function CompanySearch({ onSelect, disabled, inputRef, guessedSymbols = [
   
   const { data: companies, isLoading } = useCompanySearch(debouncedQuery);
   
-  // Filter out already guessed companies
+  // Filter out already guessed companies and sort alphabetically
   const filteredCompanies = companies?.filter(
     (company) => !guessedSymbols.includes(company.symbol)
-  ) || [];
+  ).sort((a, b) => a.name.localeCompare(b.name)) || [];
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
