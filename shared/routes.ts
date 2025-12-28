@@ -72,6 +72,15 @@ export const api = {
         404: errorSchemas.notFound,
       },
     },
+    skip: {
+      method: 'POST' as const,
+      path: '/api/games/:id/skip',
+      responses: {
+        200: z.custom<any>(), // GameStateResponse
+        400: errorSchemas.validation,
+        404: errorSchemas.notFound,
+      },
+    },
     daily: {
       method: 'GET' as const,
       path: '/api/games/daily/current',

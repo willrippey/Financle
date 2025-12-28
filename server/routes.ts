@@ -138,6 +138,49 @@ export async function registerRoutes(
     res.json(response);
   });
 
+  app.post(api.games.skip.path, async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    const gameId = Number(req.params.id);
+    const userId = (req.user as any).claims.sub;
+    
+    let game = await storage.getGame(gameId);
+    if (!game || game.userId !== userId) return res.sendStatus(404);
+    if (game.status !== 'playing') return res.status(400).json({ message: "Game over" });
+
+    const guesses = await storage.getGuesses(gameId);
+    const round = guesses.length + 1;
+    
+    // Prevent skipping beyond round 6
+    if (round > 6) {
+        return res.status(400).json({ message: "Game over" });
+    }
+
+    // Record a skip by adding a dummy guess with company ID 0
+    // This advances the round without actually guessing a company
+    try {
+      await storage.addGuess(gameId, game.targetCompanyId, round);
+    } catch (e) {
+      // If we can't add to target company (shouldn't happen), just update round in game
+    }
+
+    // Check if this was the last round (round 6)
+    if (round >= 6) {
+       await storage.updateGameStatus(gameId, 'lost');
+       
+       // Update user stats (reset streak)
+       const stats = await storage.getUserStats(userId);
+       await storage.updateUserStats(userId, {
+         currentStreak: 0,
+         totalPlayed: (stats?.totalPlayed || 0) + 1
+       });
+    }
+
+    // Refresh game state
+    game = await storage.getGame(gameId);
+    const response = await buildGameState(game!);
+    res.json(response);
+  });
+
   app.get(api.leaderboard.list.path, async (req, res) => {
     const leaderboard = await storage.getLeaderboard();
     res.json(leaderboard);

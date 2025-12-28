@@ -110,6 +110,38 @@ export function useCompanySearch(query: string) {
   });
 }
 
+// POST /api/games/:id/skip
+export function useSkipRound() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ gameId }: { gameId: number }) => {
+      const url = buildUrl(api.games.skip.path, { id: gameId });
+      const res = await fetch(url, {
+        method: api.games.skip.method,
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      });
+      if (!res.ok) throw new Error("Failed to skip round");
+      return api.games.skip.responses[200].parse(await res.json());
+    },
+    onSuccess: (data) => {
+      // Update the individual game cache
+      queryClient.setQueryData([api.games.get.path, data.id], data);
+      
+      // If it's the daily game, also update that cache key
+      if (data.type === 'daily') {
+        queryClient.setQueryData([api.games.daily.path], data);
+      }
+      
+      // Refresh user stats if game ended
+      if (data.status !== 'playing') {
+        queryClient.invalidateQueries({ queryKey: [api.auth.me.path] });
+        queryClient.invalidateQueries({ queryKey: [api.leaderboard.list.path] });
+      }
+    },
+  });
+}
+
 // GET /api/leaderboard
 export function useLeaderboard() {
   return useQuery({

@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useRoute } from "wouter";
-import { useGame, useSubmitGuess, useCreateGame } from "@/hooks/use-games";
+import { useGame, useSubmitGuess, useCreateGame, useSkipRound } from "@/hooks/use-games";
 import { Navbar } from "@/components/Navbar";
 import { GameCard } from "@/components/GameCard";
 import { CompanySearch } from "@/components/CompanySearch";
 import { GameOverModal } from "@/components/GameOverModal";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Loader2, ArrowLeft, History, RefreshCw } from "lucide-react";
+import { Loader2, ArrowLeft, History, RefreshCw, SkipForward } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 
@@ -20,6 +20,7 @@ export default function Game() {
   const gameId = params ? parseInt(params.id) : undefined;
   const { data: game, isLoading, error } = useGame(gameId);
   const submitGuess = useSubmitGuess();
+  const skipRound = useSkipRound();
   const createGame = useCreateGame();
 
   const [lastGuess, setLastGuess] = useState<string | null>(null);
@@ -70,6 +71,23 @@ export default function Game() {
       },
       onSuccess: () => {
         // Auto-focus input after guess
+        searchCompRef.current?.focusAndOpen();
+      }
+    });
+  };
+
+  const handleSkip = () => {
+    skipRound.mutate({
+      gameId: game.id,
+    }, {
+      onError: (err) => {
+        toast({
+          title: "Error",
+          description: err.message,
+          variant: "destructive"
+        });
+      },
+      onSuccess: () => {
         searchCompRef.current?.focusAndOpen();
       }
     });
@@ -175,12 +193,22 @@ export default function Game() {
                 <div className="flex-1">
                   <CompanySearch 
                     onSelect={handleGuess} 
-                    disabled={submitGuess.isPending} 
+                    disabled={submitGuess.isPending || skipRound.isPending} 
                     inputRef={searchInputRef}
                     guessedSymbols={game.guesses.map(g => g.symbol)}
                     searchRef={searchCompRef}
                   />
                 </div>
+                <Button 
+                  variant="outline" 
+                  size="icon"
+                  onClick={handleSkip}
+                  disabled={submitGuess.isPending || skipRound.isPending}
+                  data-testid="button-skip"
+                  title="Skip this round to reveal the next clue"
+                >
+                  <SkipForward className="h-4 w-4" />
+                </Button>
               </div>
             </motion.div>
           ) : (
