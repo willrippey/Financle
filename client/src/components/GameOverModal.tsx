@@ -22,7 +22,7 @@ interface GameOverModalProps {
 export function GameOverModal({ open, game, onPlayAgain, isDaily, onClose }: GameOverModalProps) {
   const isWin = game.status === "won";
   const target = game.targetCompany;
-  const streakMilestone = game.endlessStreak && game.endlessStreak >= 5;
+  const streakMilestone = isWin && game.endlessStreak && game.endlessStreak >= 5;
 
   if (!target) return null;
 
@@ -58,16 +58,21 @@ export function GameOverModal({ open, game, onPlayAgain, isDaily, onClose }: Gam
           <DialogTitle className="text-center text-3xl font-bold">
             {isWin ? "Market Guru!" : "Market Correction"}
           </DialogTitle>
-          {streakMilestone && isWin && (
+          {streakMilestone && (
             <div className="text-center mt-2 px-4 py-2 bg-orange-500/10 border border-orange-500/30 rounded-lg">
               <p className="text-sm font-semibold text-orange-500">On fire! {game.endlessStreak} game streak</p>
             </div>
           )}
-          <DialogDescription className="text-center text-base mt-2">
-            {isWin
-              ? `You identified ${target.name} in ${game.guesses.length} attempt${game.guesses.length !== 1 ? 's' : ''}`
-              : "Better luck next time. The market is unpredictable."}
-          </DialogDescription>
+          {isWin && (
+            <DialogDescription className="text-center text-base mt-2">
+              You identified {target.name} in {game.guesses.length} attempt{game.guesses.length !== 1 ? 's' : ''}
+            </DialogDescription>
+          )}
+          {!isWin && (
+            <DialogDescription className="text-center text-base mt-2">
+              Better luck next time. The market is unpredictable.
+            </DialogDescription>
+          )}
         </DialogHeader>
 
         {/* Company Header Section */}
