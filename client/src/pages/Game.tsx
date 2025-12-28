@@ -108,7 +108,7 @@ export default function Game() {
 
   const isGameOver = game.status !== 'playing';
   const attemptsLeft = Math.max(0, 7 - game.round);
-  const progress = ((game.round - 1) / 6) * 100;
+  const progress = (game.round / 6) * 100;
 
   // Clue display logic - always visible or revealed progressively
   const clues = [
@@ -208,7 +208,7 @@ export default function Game() {
                   className="h-12"
                 >
                   <SkipForward className="mr-2 h-4 w-4" />
-                  Skip
+                  Skip Round
                 </Button>
               </div>
             </motion.div>
