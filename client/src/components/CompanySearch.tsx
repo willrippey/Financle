@@ -39,6 +39,23 @@ export function CompanySearch({ onSelect, disabled, inputRef, guessedSymbols = [
     (company) => !guessedSymbols.includes(company.symbol)
   ).sort((a, b) => a.name.localeCompare(b.name)) || [];
 
+  // Find exact match based on ticker or company name (excluding Inc./Plc)
+  const normalizeCompanyName = (name: string) => {
+    return name.replace(/\s+(Inc\.?|PLC|Plc)$/i, "").trim().toLowerCase();
+  };
+  
+  const exactMatch = filteredCompanies.find(company => 
+    company.symbol.toLowerCase() === debouncedQuery.toLowerCase() ||
+    normalizeCompanyName(company.name) === normalizeCompanyName(debouncedQuery)
+  );
+  
+  // Auto-select exact match when found
+  React.useEffect(() => {
+    if (exactMatch && debouncedQuery.length > 0) {
+      setValue(exactMatch.symbol);
+    }
+  }, [exactMatch, debouncedQuery]);
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>

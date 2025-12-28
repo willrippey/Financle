@@ -83,7 +83,7 @@ export function GameOverModal({ open, game, onPlayAgain, isDaily, onClose }: Gam
         <div className="grid grid-cols-2 gap-4">
           {/* Section 1: Sector & Industry */}
           <div className="rounded-lg bg-secondary/40 border border-white/5 p-4">
-            <p className="text-xs font-mono text-muted-foreground uppercase tracking-widest mb-2 font-semibold">Sector</p>
+            <p className="text-xs font-mono text-muted-foreground uppercase tracking-widest mb-2 font-semibold">Sector & Industry</p>
             <p className="text-sm font-medium text-foreground">{target.sector}</p>
             <p className="text-xs text-muted-foreground mt-1">{target.subIndustry}</p>
           </div>
@@ -115,7 +115,7 @@ export function GameOverModal({ open, game, onPlayAgain, isDaily, onClose }: Gam
           {/* Section 6: Known For */}
           <div className="rounded-lg bg-secondary/40 border border-white/5 p-4 col-span-2 md:col-span-1">
             <p className="text-xs font-mono text-muted-foreground uppercase tracking-widest mb-2 font-semibold">Known For</p>
-            <p className="text-xs text-foreground/80 leading-relaxed">{target.description}</p>
+            <p className="text-foreground/80 leading-relaxed line-clamp-4 text-[clamp(0.625rem,2vw,0.875rem)]">{target.description}</p>
           </div>
         </div>
 
