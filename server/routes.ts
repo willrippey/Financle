@@ -155,8 +155,12 @@ export async function registerRoutes(
         return res.status(400).json({ message: "Game over" });
     }
 
+    // Record a skip by adding the target company as a guess (special marker for skips)
+    // This advances the round and reveals the next clue, but the guess is filtered out
+    // in buildGameState so it won't appear in the previous guesses list
+    await storage.addGuess(gameId, game.targetCompanyId, round);
+
     // Check if this was the last round (round 6)
-    // When skipping, we don't record a guess - we just check if they've run out of skips
     if (round >= 6) {
        await storage.updateGameStatus(gameId, 'lost');
        
@@ -180,17 +184,20 @@ export async function registerRoutes(
   });
 
   async function buildGameState(game: any) {
-    const guesses = await storage.getGuesses(game.id);
+    const allGuesses = await storage.getGuesses(game.id);
     const target = await storage.getCompany(game.targetCompanyId);
     if (!target) throw new Error("Target company not found");
 
+    // Filter out skip markers (guesses where company_id == targetCompanyId)
+    const actualGuesses = allGuesses.filter(g => g.companyId !== game.targetCompanyId);
+
     const clues = {
-      category: guesses.length >= 0 ? `${target.sector} - ${target.subIndustry}` : undefined,
-      marketCap: guesses.length >= 1 ? target.marketCap : undefined,
-      headquarters: guesses.length >= 2 ? target.headquarters : undefined,
-      founded: guesses.length >= 3 ? target.founded : undefined,
-      firstLetter: guesses.length >= 4 ? target.symbol[0] : undefined,
-      description: guesses.length >= 5 ? target.description : undefined,
+      category: allGuesses.length >= 0 ? `${target.sector} - ${target.subIndustry}` : undefined,
+      marketCap: allGuesses.length >= 1 ? target.marketCap : undefined,
+      headquarters: allGuesses.length >= 2 ? target.headquarters : undefined,
+      founded: allGuesses.length >= 3 ? target.founded : undefined,
+      firstLetter: allGuesses.length >= 4 ? target.symbol[0] : undefined,
+      description: allGuesses.length >= 5 ? target.description : undefined,
     };
 
     // If game over, reveal everything
@@ -207,7 +214,7 @@ export async function registerRoutes(
       id: game.id,
       type: game.type,
       status: game.status,
-      round: Math.min(guesses.length + 1, 6),
+      round: Math.min(allGuesses.length + 1, 6),
       endlessStreak,
       clues: isOver ? {
         category: `${target.sector} - ${target.subIndustry}`,
@@ -217,7 +224,7 @@ export async function registerRoutes(
         firstLetter: target.symbol[0],
         description: target.description
       } : clues,
-      guesses: guesses.map(g => ({
+      guesses: actualGuesses.map(g => ({
         symbol: g.company.symbol,
         name: g.company.name,
       })),

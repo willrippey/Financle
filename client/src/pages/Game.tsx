@@ -227,45 +227,58 @@ export default function Game() {
         </div>
 
         {/* Previous Guesses Section and Play Again Button */}
-        {game.guesses.length > 0 && (
+        {(game.guesses.length > 0 || skippedRounds.length > 0) && (
           <div className="max-w-xl mx-auto pt-4">
             <div className="flex items-center gap-2 text-sm text-muted-foreground uppercase tracking-widest font-semibold mb-4">
               <History className="h-4 w-4" /> Previous Guesses
             </div>
             <div className="space-y-2 pb-6">
               <AnimatePresence>
-                {game.guesses.slice().reverse().map((guess, idx) => {
-                  const reverseIdx = game.guesses.length - 1 - idx;
-                  const round = reverseIdx + 1;
-                  const isSkipped = skippedRounds.includes(round);
-                  const isCorrectGuess = game.status === 'won' && idx === 0;
-                  return (
-                    <motion.div
-                      key={guess.symbol + idx}
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      className="flex items-center justify-between p-3 rounded-lg bg-card border border-white/5 shadow-sm"
-                    >
-                       <div className="flex items-center gap-3">
-                          <span className="font-mono font-bold text-muted-foreground w-12">#{round}</span>
-                          {isSkipped ? (
-                            <span className="font-medium text-muted-foreground italic">Skipped</span>
-                          ) : (
-                            <>
-                              <span className="font-medium">{guess.name}</span>
-                            </>
-                          )}
-                       </div>
-                       {isSkipped ? (
-                         <span className="text-xs font-mono text-muted-foreground">—</span>
-                       ) : isCorrectGuess ? (
-                         <span className="text-xs font-mono text-green-500 font-semibold">Correct!</span>
-                       ) : (
-                         <span className="text-xs font-mono text-destructive">MISS</span>
-                       )}
-                    </motion.div>
-                  );
-                })}
+                {(() => {
+                  // Combine actual guesses and skipped rounds into a single history
+                  const allAttempts: Array<{ round: number; guess?: typeof game.guesses[0]; isSkipped: boolean }> = [];
+                  
+                  // Add actual guesses
+                  game.guesses.forEach((guess, idx) => {
+                    allAttempts.push({ round: idx + 1, guess, isSkipped: false });
+                  });
+                  
+                  // Add skipped rounds
+                  skippedRounds.forEach(round => {
+                    if (!allAttempts.find(a => a.round === round)) {
+                      allAttempts.push({ round, isSkipped: true });
+                    }
+                  });
+                  
+                  // Sort by round descending
+                  return allAttempts.sort((a, b) => b.round - a.round).map((attempt) => {
+                    const isCorrectGuess = game.status === 'won' && attempt.guess && !attempt.isSkipped && attempt.round === game.guesses.length;
+                    return (
+                      <motion.div
+                        key={`attempt-${attempt.round}`}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className="flex items-center justify-between p-3 rounded-lg bg-card border border-white/5 shadow-sm"
+                      >
+                         <div className="flex items-center gap-3">
+                            <span className="font-mono font-bold text-muted-foreground w-12">#{attempt.round}</span>
+                            {attempt.isSkipped ? (
+                              <span className="font-medium text-muted-foreground italic">Skipped</span>
+                            ) : (
+                              <span className="font-medium">{attempt.guess?.name}</span>
+                            )}
+                         </div>
+                         {attempt.isSkipped ? (
+                           <span className="text-xs font-mono text-muted-foreground">—</span>
+                         ) : isCorrectGuess ? (
+                           <span className="text-xs font-mono text-green-500 font-semibold">Correct!</span>
+                         ) : (
+                           <span className="text-xs font-mono text-destructive">MISS</span>
+                         )}
+                      </motion.div>
+                    );
+                  });
+                })()}
               </AnimatePresence>
             </div>
 
