@@ -113,7 +113,7 @@ export async function registerRoutes(
 
     // Check win/loss
     if (guessedCompany.id === game.targetCompanyId) {
-       const score = 100 - (guesses.length * 10);
+       const score = 100 - (actualGuesses.length * 10);
        await storage.updateGameStatus(gameId, 'won', score);
        
        // Update user stats
