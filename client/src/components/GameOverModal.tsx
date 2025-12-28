@@ -112,9 +112,9 @@ export function GameOverModal({ open, game, onPlayAgain, isDaily, onClose }: Gam
             <p className="text-2xl font-bold text-primary">{target.symbol.charAt(0)}</p>
           </div>
 
-          {/* Section 6: Description */}
+          {/* Section 6: Known For */}
           <div className="rounded-lg bg-secondary/40 border border-white/5 p-4 col-span-2 md:col-span-1">
-            <p className="text-xs font-mono text-muted-foreground uppercase tracking-widest mb-2 font-semibold">About</p>
+            <p className="text-xs font-mono text-muted-foreground uppercase tracking-widest mb-2 font-semibold">Known For</p>
             <p className="text-xs text-foreground/80 leading-relaxed">{target.description}</p>
           </div>
         </div>

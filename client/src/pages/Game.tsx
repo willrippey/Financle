@@ -99,7 +99,7 @@ export default function Game() {
     { title: "Headquarters", value: game.clues.headquarters, revealed: !!game.clues.headquarters },
     { title: "Founded", value: game.clues.founded, revealed: !!game.clues.founded },
     { title: "First Letter", value: game.clues.firstLetter, revealed: !!game.clues.firstLetter },
-    { title: "Description", value: game.clues.description, revealed: !!game.clues.description },
+    { title: "Known For", value: game.clues.description, revealed: !!game.clues.description },
   ];
 
   return (
