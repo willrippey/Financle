@@ -188,6 +188,9 @@ export default function Game() {
           ) : (
             <div className="text-center p-4 bg-secondary/20 rounded-xl border border-white/5">
               <h3 className="text-xl font-bold mb-2">Game Over</h3>
+              {game.targetCompany && (
+                <p className="text-lg font-semibold text-primary mb-2">{game.targetCompany.name}</p>
+              )}
               <p className="text-muted-foreground">Check out your results!</p>
             </div>
           )}

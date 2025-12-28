@@ -65,12 +65,6 @@ export function CompanySearch({ onSelect, disabled, inputRef, guessedSymbols = [
               <CommandEmpty>No company found.</CommandEmpty>
             )}
 
-            {!isLoading && debouncedQuery.length === 0 && (
-              <div className="py-6 text-center text-sm text-muted-foreground">
-                Start typing to search S&P 500 companies
-              </div>
-            )}
-
             <CommandGroup>
               {filteredCompanies.map((company) => (
                 <CommandItem
