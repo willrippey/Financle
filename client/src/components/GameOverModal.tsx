@@ -7,7 +7,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Trophy, XCircle, ArrowRight, RefreshCw } from "lucide-react";
+import { Trophy, XCircle, ArrowRight, RefreshCw, Flame } from "lucide-react";
 import type { GameStateResponse } from "@shared/schema";
 import { motion } from "framer-motion";
 
@@ -22,6 +22,7 @@ interface GameOverModalProps {
 export function GameOverModal({ open, game, onPlayAgain, isDaily, onClose }: GameOverModalProps) {
   const isWin = game.status === "won";
   const target = game.targetCompany;
+  const streakMilestone = game.endlessStreak && game.endlessStreak >= 5;
 
   if (!target) return null;
 
@@ -35,16 +36,33 @@ export function GameOverModal({ open, game, onPlayAgain, isDaily, onClose }: Gam
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-2xl bg-card border-white/10 shadow-2xl">
         <DialogHeader>
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/20">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/20 relative">
             {isWin ? (
               <Trophy className="h-8 w-8 text-yellow-500 animate-bounce" />
             ) : (
               <XCircle className="h-8 w-8 text-destructive animate-pulse" />
             )}
+            {streakMilestone && (
+              <motion.div
+                initial={{ scale: 0, rotate: -180 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{ type: "spring", stiffness: 200, damping: 10 }}
+                className="absolute -top-2 -right-2"
+              >
+                <div className="bg-orange-500 rounded-full p-1">
+                  <Flame className="h-5 w-5 text-white" />
+                </div>
+              </motion.div>
+            )}
           </div>
           <DialogTitle className="text-center text-3xl font-bold">
             {isWin ? "Market Guru!" : "Market Correction"}
           </DialogTitle>
+          {streakMilestone && isWin && (
+            <div className="text-center mt-2 px-4 py-2 bg-orange-500/10 border border-orange-500/30 rounded-lg">
+              <p className="text-sm font-semibold text-orange-500">On fire! {game.endlessStreak} game streak</p>
+            </div>
+          )}
           <DialogDescription className="text-center text-base mt-2">
             {isWin
               ? `You identified ${target.name} in ${game.guesses.length} attempt${game.guesses.length !== 1 ? 's' : ''}`

@@ -98,6 +98,11 @@ export async function registerRoutes(
     }
 
     const round = guesses.length + 1;
+    
+    // Prevent guessing beyond round 6
+    if (round > 6) {
+        return res.status(400).json({ message: "Game over" });
+    }
 
     // Record guess
     await storage.addGuess(gameId, guessedCompany.id, round);
