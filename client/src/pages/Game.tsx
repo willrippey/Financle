@@ -25,6 +25,7 @@ export default function Game() {
 
   const [lastGuess, setLastGuess] = useState<string | null>(null);
   const [showGameOverModal, setShowGameOverModal] = useState(false);
+  const [skippedRounds, setSkippedRounds] = useState<number[]>([]);
   const searchCompRef = useRef<{ focusAndOpen: () => void }>(null);
 
   // Update modal visibility when game status changes
@@ -77,6 +78,7 @@ export default function Game() {
   };
 
   const handleSkip = () => {
+    const currentRound = game.guesses.length + 1;
     skipRound.mutate({
       gameId: game.id,
     }, {
@@ -88,6 +90,7 @@ export default function Game() {
         });
       },
       onSuccess: () => {
+        setSkippedRounds([...skippedRounds, currentRound]);
         searchCompRef.current?.focusAndOpen();
       }
     });
@@ -200,14 +203,15 @@ export default function Game() {
                   />
                 </div>
                 <Button 
-                  variant="outline" 
-                  size="icon"
+                  variant="outline"
                   onClick={handleSkip}
                   disabled={submitGuess.isPending || skipRound.isPending}
                   data-testid="button-skip"
                   title="Skip this round to reveal the next clue"
+                  className="h-12"
                 >
-                  <SkipForward className="h-4 w-4" />
+                  <SkipForward className="mr-2 h-4 w-4" />
+                  Skip
                 </Button>
               </div>
             </motion.div>
@@ -231,6 +235,9 @@ export default function Game() {
             <div className="space-y-2 pb-6">
               <AnimatePresence>
                 {game.guesses.slice().reverse().map((guess, idx) => {
+                  const reverseIdx = game.guesses.length - 1 - idx;
+                  const round = reverseIdx + 1;
+                  const isSkipped = skippedRounds.includes(round);
                   const isCorrectGuess = game.status === 'won' && idx === 0;
                   return (
                     <motion.div
@@ -240,10 +247,18 @@ export default function Game() {
                       className="flex items-center justify-between p-3 rounded-lg bg-card border border-white/5 shadow-sm"
                     >
                        <div className="flex items-center gap-3">
-                          <span className="font-mono font-bold text-muted-foreground w-12">{guess.symbol}</span>
-                          <span className="font-medium">{guess.name}</span>
+                          <span className="font-mono font-bold text-muted-foreground w-12">#{round}</span>
+                          {isSkipped ? (
+                            <span className="font-medium text-muted-foreground italic">Skipped</span>
+                          ) : (
+                            <>
+                              <span className="font-medium">{guess.name}</span>
+                            </>
+                          )}
                        </div>
-                       {isCorrectGuess ? (
+                       {isSkipped ? (
+                         <span className="text-xs font-mono text-muted-foreground">—</span>
+                       ) : isCorrectGuess ? (
                          <span className="text-xs font-mono text-green-500 font-semibold">Correct!</span>
                        ) : (
                          <span className="text-xs font-mono text-destructive">MISS</span>
