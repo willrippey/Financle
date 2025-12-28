@@ -15,7 +15,8 @@ const COMPANIES_SEED = [
   { symbol: "TSLA", name: "Tesla, Inc.", sector: "Consumer Discretionary", subIndustry: "Automobile Manufacturers", headquarters: "Austin, Texas", founded: "2003", description: "Designs and manufactures electric vehicles, battery energy storage from home to grid-scale, solar panels and solar roof tiles.", marketCap: "$900B" },
   { symbol: "BRK.B", name: "Berkshire Hathaway", sector: "Financials", subIndustry: "Multi-Sector Holdings", headquarters: "Omaha, Nebraska", founded: "1839", description: "A multinational conglomerate holding company owning a diverse range of businesses.", marketCap: "$1.0T" },
   { symbol: "V", name: "Visa Inc.", sector: "Financials", subIndustry: "Transaction & Payment Processing Services", headquarters: "San Francisco, California", founded: "1958", description: "Facilitates electronic funds transfers throughout the world.", marketCap: "$680B" },
-  { symbol: "JPM", name: "JPMorgan Chase & Co.", sector: "Financials", subIndustry: "Diversified Banks", headquarters: "New York, New York", founded: "2000", description: "A multinational finance and insurance corporation.", marketCap: "$580B" }
+  { symbol: "JPM", name: "JPMorgan Chase & Co.", sector: "Financials", subIndustry: "Diversified Banks", headquarters: "New York, New York", founded: "2000", description: "A multinational finance and insurance corporation.", marketCap: "$580B" },
+  { symbol: "AFL", name: "Aflac Incorporated", sector: "Financials", subIndustry: "Insurance", headquarters: "Columbus, Ohio", founded: "1955", description: "A global insurance company providing supplemental health and life insurance products.", marketCap: "$45B" }
 ];
 
 export async function registerRoutes(
