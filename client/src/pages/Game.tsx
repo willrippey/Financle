@@ -107,8 +107,8 @@ export default function Game() {
   };
 
   const isGameOver = game.status !== 'playing';
-  const attemptsLeft = Math.max(0, 6 - game.guesses.length);
-  const progress = (game.guesses.length / 6) * 100;
+  const attemptsLeft = Math.max(0, 7 - game.round);
+  const progress = ((game.round - 1) / 6) * 100;
 
   // Clue display logic - always visible or revealed progressively
   const clues = [
@@ -232,25 +232,25 @@ export default function Game() {
             <div className="space-y-2 pb-6">
               <AnimatePresence>
                 {(() => {
-                  // Combine actual guesses and skipped rounds into a single history
-                  const allAttempts: Array<{ round: number; guess?: typeof game.guesses[0]; isSkipped: boolean }> = [];
-                  
-                  // Add actual guesses
-                  game.guesses.forEach((guess, idx) => {
-                    allAttempts.push({ round: idx + 1, guess, isSkipped: false });
-                  });
-                  
-                  // Add skipped rounds from response
                   const skippedRounds = (game as any).skippedRounds || [];
-                  skippedRounds.forEach((round: number) => {
-                    if (!allAttempts.find(a => a.round === round)) {
-                      allAttempts.push({ round, isSkipped: true });
-                    }
-                  });
+                  const totalRoundsPlayed = game.round - 1;
                   
-                  // Sort by round descending
-                  return allAttempts.sort((a, b) => b.round - a.round).map((attempt) => {
-                    const isCorrectGuess = game.status === 'won' && attempt.guess && !attempt.isSkipped && attempt.round === game.guesses.length;
+                  // Build complete history for all rounds played
+                  const attempts = [];
+                  let guessIdx = 0;
+                  
+                  for (let round = 1; round <= totalRoundsPlayed; round++) {
+                    if (skippedRounds.includes(round)) {
+                      attempts.push({ round, isSkipped: true, guess: undefined });
+                    } else {
+                      attempts.push({ round, isSkipped: false, guess: game.guesses[guessIdx] });
+                      guessIdx++;
+                    }
+                  }
+                  
+                  // Sort by round descending for display
+                  return attempts.sort((a, b) => b.round - a.round).map((attempt) => {
+                    const isCorrectGuess = game.status === 'won' && attempt.guess && !attempt.isSkipped && attempt.round === totalRoundsPlayed;
                     return (
                       <motion.div
                         key={`attempt-${attempt.round}`}
