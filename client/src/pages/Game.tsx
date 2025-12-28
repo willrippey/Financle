@@ -24,6 +24,7 @@ export default function Game() {
 
   const [lastGuess, setLastGuess] = useState<string | null>(null);
   const [showGameOverModal, setShowGameOverModal] = useState(false);
+  const searchCompRef = useRef<{ focusAndOpen: () => void }>(null);
 
   // Update modal visibility when game status changes
   useEffect(() => {
@@ -65,15 +66,11 @@ export default function Game() {
           variant: "destructive"
         });
         // Auto-focus input after incorrect guess
-        setTimeout(() => {
-          searchInputRef.current?.focus();
-        }, 100);
+        searchCompRef.current?.focusAndOpen();
       },
       onSuccess: () => {
         // Auto-focus input after guess
-        setTimeout(() => {
-          searchInputRef.current?.focus();
-        }, 100);
+        searchCompRef.current?.focusAndOpen();
       }
     });
   };
@@ -181,6 +178,7 @@ export default function Game() {
                     disabled={submitGuess.isPending} 
                     inputRef={searchInputRef}
                     guessedSymbols={game.guesses.map(g => g.symbol)}
+                    searchRef={searchCompRef}
                   />
                 </div>
               </div>

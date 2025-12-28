@@ -12,15 +12,25 @@ interface CompanySearchProps {
   disabled?: boolean;
   inputRef?: React.RefObject<HTMLInputElement>;
   guessedSymbols?: string[];
+  searchRef?: React.RefObject<{ focusAndOpen: () => void }>;
 }
 
-export function CompanySearch({ onSelect, disabled, inputRef, guessedSymbols = [] }: CompanySearchProps) {
+export function CompanySearch({ onSelect, disabled, inputRef, guessedSymbols = [], searchRef }: CompanySearchProps) {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
   const [searchQuery, setSearchQuery] = React.useState("");
   const debouncedQuery = useDebounce(searchQuery, 300);
   const internalRef = React.useRef<HTMLInputElement>(null);
   const ref = inputRef || internalRef;
+  
+  React.useImperativeHandle(searchRef, () => ({
+    focusAndOpen: () => {
+      setOpen(true);
+      setTimeout(() => {
+        ref.current?.focus();
+      }, 0);
+    }
+  }));
   
   const { data: companies, isLoading } = useCompanySearch(debouncedQuery);
   
