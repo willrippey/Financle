@@ -170,7 +170,7 @@ export async function registerRoutes(
       id: game.id,
       type: game.type,
       status: game.status,
-      round: guesses.length + 1,
+      round: Math.min(guesses.length + 1, 6),
       endlessStreak,
       clues: isOver ? {
         category: `${target.sector} - ${target.subIndustry}`,

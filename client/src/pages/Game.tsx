@@ -92,8 +92,8 @@ export default function Game() {
   };
 
   const isGameOver = game.status !== 'playing';
-  const attemptsLeft = 6 - game.round;
-  const progress = (game.round / 6) * 100;
+  const attemptsLeft = Math.max(0, 6 - game.guesses.length);
+  const progress = (game.guesses.length / 6) * 100;
 
   // Clue display logic - always visible or revealed progressively
   const clues = [
