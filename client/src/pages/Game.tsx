@@ -25,7 +25,6 @@ export default function Game() {
 
   const [lastGuess, setLastGuess] = useState<string | null>(null);
   const [showGameOverModal, setShowGameOverModal] = useState(false);
-  const [skippedRounds, setSkippedRounds] = useState<number[]>([]);
   const searchCompRef = useRef<{ focusAndOpen: () => void }>(null);
 
   // Update modal visibility when game status changes
@@ -78,7 +77,6 @@ export default function Game() {
   };
 
   const handleSkip = () => {
-    const currentRound = game.guesses.length + 1;
     skipRound.mutate({
       gameId: game.id,
     }, {
@@ -90,7 +88,6 @@ export default function Game() {
         });
       },
       onSuccess: () => {
-        setSkippedRounds([...skippedRounds, currentRound]);
         searchCompRef.current?.focusAndOpen();
       }
     });
@@ -227,7 +224,7 @@ export default function Game() {
         </div>
 
         {/* Previous Guesses Section and Play Again Button */}
-        {(game.guesses.length > 0 || skippedRounds.length > 0) && (
+        {(game.guesses.length > 0 || (game as any).skippedRounds?.length > 0) && (
           <div className="max-w-xl mx-auto pt-4">
             <div className="flex items-center gap-2 text-sm text-muted-foreground uppercase tracking-widest font-semibold mb-4">
               <History className="h-4 w-4" /> Previous Guesses
@@ -243,8 +240,9 @@ export default function Game() {
                     allAttempts.push({ round: idx + 1, guess, isSkipped: false });
                   });
                   
-                  // Add skipped rounds
-                  skippedRounds.forEach(round => {
+                  // Add skipped rounds from response
+                  const skippedRounds = (game as any).skippedRounds || [];
+                  skippedRounds.forEach((round: number) => {
                     if (!allAttempts.find(a => a.round === round)) {
                       allAttempts.push({ round, isSkipped: true });
                     }

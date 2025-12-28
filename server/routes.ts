@@ -228,6 +228,7 @@ export async function registerRoutes(
         symbol: g.company.symbol,
         name: g.company.name,
       })),
+      skippedRounds: allGuesses.filter(g => g.companyId === game.targetCompanyId).map(g => g.roundNumber),
       score: game.score,
       targetCompany: isOver ? target : undefined
     };
