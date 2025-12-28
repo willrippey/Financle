@@ -73,7 +73,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getCompanyBySymbol(symbol: string): Promise<Company | undefined> {
-    const [company] = await db.select().from(companies).where(eq(companies.symbol, symbol.toUpperCase()));
+    const [company] = await db.select().from(companies).where(eq(companies.symbol, symbol.trim().toUpperCase()));
     return company;
   }
 
