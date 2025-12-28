@@ -91,14 +91,17 @@ export async function registerRoutes(
     const guessedCompany = await storage.getCompanyBySymbol(companySymbol);
     if (!guessedCompany) return res.status(400).json({ message: "Invalid company" });
 
-    const guesses = await storage.getGuesses(gameId);
+    const allGuesses = await storage.getGuesses(gameId);
     
-    // Check if already guessed
-    if (guesses.some(g => g.companyId === guessedCompany.id)) {
+    // Filter out skip markers (guesses where company_id == targetCompanyId)
+    const actualGuesses = allGuesses.filter(g => g.companyId !== game.targetCompanyId);
+    
+    // Check if already guessed (only check actual guesses, not skip markers)
+    if (actualGuesses.some(g => g.companyId === guessedCompany.id)) {
         return res.status(400).json({ message: "Already guessed this company" });
     }
 
-    const round = guesses.length + 1;
+    const round = allGuesses.length + 1;
     
     // Prevent guessing beyond round 6
     if (round > 6) {
