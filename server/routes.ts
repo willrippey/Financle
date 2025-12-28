@@ -155,15 +155,8 @@ export async function registerRoutes(
         return res.status(400).json({ message: "Game over" });
     }
 
-    // Record a skip by adding a dummy guess with company ID 0
-    // This advances the round without actually guessing a company
-    try {
-      await storage.addGuess(gameId, game.targetCompanyId, round);
-    } catch (e) {
-      // If we can't add to target company (shouldn't happen), just update round in game
-    }
-
     // Check if this was the last round (round 6)
+    // When skipping, we don't record a guess - we just check if they've run out of skips
     if (round >= 6) {
        await storage.updateGameStatus(gameId, 'lost');
        
