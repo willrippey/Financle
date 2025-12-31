@@ -55,6 +55,16 @@ export function CompanySearch({ onSelect, disabled, inputRef, guessedSymbols = [
     }
   }, [exactMatch, debouncedQuery]);
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && exactMatch) {
+      e.preventDefault();
+      setValue("");
+      onSelect(exactMatch.symbol);
+      setOpen(false);
+      setSearchQuery("");
+    }
+  };
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -63,11 +73,20 @@ export function CompanySearch({ onSelect, disabled, inputRef, guessedSymbols = [
           <input
             ref={ref}
             placeholder="Search company or ticker..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            value={exactMatch ? exactMatch.name : searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setValue("");
+            }}
             onFocus={() => setOpen(true)}
+            onKeyDown={handleKeyDown}
             disabled={disabled}
-            className="h-12 w-full pl-10 pr-4 bg-secondary/50 border border-white/10 rounded-md focus:bg-secondary/70 focus:border-white/20 transition-all focus:outline-none focus:ring-0"
+            className={cn(
+              "h-12 w-full pl-10 pr-4 bg-secondary/50 border rounded-md transition-all focus:outline-none focus:ring-0",
+              exactMatch
+                ? "border-primary/30 focus:bg-secondary/70 focus:border-primary/50"
+                : "border-white/10 focus:bg-secondary/70 focus:border-white/20"
+            )}
           />
         </div>
       </PopoverTrigger>
