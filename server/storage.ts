@@ -68,7 +68,7 @@ export class DatabaseStorage implements IStorage {
   async searchCompanies(query: string): Promise<Company[]> {
     return await db.select()
       .from(companies)
-      .where(sql`lower(${companies.name}) LIKE ${`%${query.toLowerCase()}%`} OR lower(${companies.symbol}) LIKE ${`%${query.toLowerCase()}%`}`)
+      .where(sql`lower(${companies.name}) LIKE ${`${query.toLowerCase()}%`} OR lower(${companies.symbol}) LIKE ${`${query.toLowerCase()}%`}`)
       .limit(500);
   }
 
