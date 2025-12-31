@@ -45,7 +45,7 @@ export function CompanySearch({ onSelect, disabled, inputRef, guessedSymbols = [
   };
   
   const exactMatch = filteredCompanies.find(company => 
-    company.symbol.toLowerCase() === debouncedQuery.toLowerCase() ||
+    (company.symbol.length > 2 && company.symbol.toLowerCase() === debouncedQuery.toLowerCase()) ||
     normalizeCompanyName(company.name) === normalizeCompanyName(debouncedQuery)
   );
   

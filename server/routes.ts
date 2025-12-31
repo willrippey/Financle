@@ -207,7 +207,7 @@ export async function registerRoutes(
       marketCap: allGuesses.length >= 1 ? target.marketCap : undefined,
       headquarters: allGuesses.length >= 2 ? target.headquarters : undefined,
       founded: allGuesses.length >= 3 ? target.founded : undefined,
-      firstLetter: allGuesses.length >= 4 ? target.symbol[0] : undefined,
+      firstLetter: allGuesses.length >= 4 ? target.name[0] : undefined,
       description: allGuesses.length >= 5 ? target.description : undefined,
     };
 
@@ -233,7 +233,7 @@ export async function registerRoutes(
         marketCap: target.marketCap,
         headquarters: target.headquarters,
         founded: target.founded,
-        firstLetter: target.symbol[0],
+        firstLetter: target.name[0],
         description: target.description
       } : clues,
       guesses: actualGuesses.map(g => ({
