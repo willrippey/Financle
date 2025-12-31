@@ -187,12 +187,12 @@ export default function Home() {
               <div className="text-xl sm:text-2xl font-bold font-mono">{user.totalWins}</div>
               <div className="text-xs text-muted-foreground uppercase tracking-tight mt-0.5">Wins</div>
             </Card>
-            <Card className="bg-secondary/20 border-white/5 text-center p-2 sm:p-4 flex flex-col items-center justify-center">
+            <Card className="bg-secondary/20 border-white/5 text-center p-2 sm:p-4 flex flex-col items-center justify-center col-span-2 sm:col-span-1">
               <div className="text-sm sm:text-xl text-blue-500 mx-auto mb-0.5 sm:mb-1 font-bold">%</div>
               <div className="text-xl sm:text-2xl font-bold font-mono">
                 {user.totalPlayed > 0 ? Math.round((user.totalWins / user.totalPlayed) * 100) : 0}%
               </div>
-              <div className="text-xs text-muted-foreground uppercase tracking-tight mt-0.5">Rate</div>
+              <div className="text-xs text-muted-foreground uppercase tracking-tight mt-0.5">Win Rate</div>
             </Card>
           </motion.div>
         )}
