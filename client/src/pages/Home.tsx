@@ -46,12 +46,12 @@ export default function Home() {
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       <Navbar />
       
-      <main className="flex-1 container mx-auto px-2 sm:px-4 py-2 sm:py-3 lg:py-4 flex flex-col items-center justify-center max-w-5xl">
+      <main className="flex-1 container mx-auto px-2 sm:px-4 py-1 sm:py-1 lg:py-2 flex flex-col items-center justify-center max-w-5xl">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-4 sm:mb-8 lg:mb-12 space-y-1 sm:space-y-2 lg:space-y-3"
+          className="text-center mb-3 sm:mb-6 lg:mb-10 space-y-1 sm:space-y-2 lg:space-y-3"
         >
           <h1 className="text-2xl sm:text-4xl lg:text-7xl font-extrabold tracking-tight mb-1 sm:mb-2">
             <span className="text-gradient-primary">Marketle</span>
