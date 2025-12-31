@@ -129,35 +129,34 @@ export default function Game() {
     <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
       
-      <main className="flex-1 container mx-auto px-4 py-4 max-w-4xl overflow-y-auto">
+      <main className="flex-1 container mx-auto px-2 sm:px-4 py-3 sm:py-4 max-w-4xl overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between mb-4">
-          <Button variant="ghost" onClick={() => setLocation("/")} className="text-muted-foreground hover:text-foreground pl-0 h-8">
-            <ArrowLeft className="mr-2 h-4 w-4" /> Back
+        <div className="flex items-center justify-between mb-3 sm:mb-4 gap-2">
+          <Button variant="ghost" onClick={() => setLocation("/")} className="text-muted-foreground hover:text-foreground pl-0 h-8 text-xs sm:text-sm flex-shrink-0">
+            <ArrowLeft className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
           </Button>
           
           {/* Center: Current Streak for endless mode */}
           {game.type === 'endless' && (
-            <div className="text-center">
-              <span className="text-xs font-medium text-muted-foreground uppercase tracking-widest block mb-1">Current Streak</span>
-              <span className="text-2xl font-mono font-bold text-primary">{game.endlessStreak || 0}</span>
+            <div className="text-center flex-1">
+              <span className="text-xs font-medium text-muted-foreground uppercase tracking-widest block mb-0">Streak</span>
+              <span className="text-lg sm:text-2xl font-mono font-bold text-primary">{game.endlessStreak || 0}</span>
             </div>
           )}
 
           {/* Right: Game type and rounds */}
-          <div className="text-right">
+          <div className="text-right flex-shrink-0">
             <span className="text-xs font-medium text-muted-foreground uppercase tracking-widest block mb-0">
-              {game.type === 'daily' ? 'Daily Challenge' : 'Endless Mode'}
+              {game.type === 'daily' ? 'Daily' : 'Endless'}
             </span>
-            <div className="flex items-center gap-2">
-              <span className="text-xl font-mono font-bold">{game.round}/6</span>
-              <span className="text-xs text-muted-foreground">Rounds</span>
+            <div className="flex items-center gap-1">
+              <span className="text-lg sm:text-xl font-mono font-bold">{game.round}/6</span>
             </div>
           </div>
         </div>
 
         {/* Progress Bar */}
-        <div className="mb-4 relative h-2 bg-secondary rounded-full overflow-hidden">
+        <div className="mb-3 sm:mb-4 relative h-1.5 sm:h-2 bg-secondary rounded-full overflow-hidden">
           <motion.div 
             className="absolute top-0 left-0 h-full bg-primary"
             initial={{ width: 0 }}
@@ -167,7 +166,7 @@ export default function Game() {
         </div>
 
         {/* Game Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-3 mb-3 sm:mb-4">
           {clues.map((clue, idx) => (
             <div key={clue.title} className={clue.fullWidth ? "col-span-2 md:col-span-3" : "col-span-1"}>
               <GameCard 
@@ -175,27 +174,28 @@ export default function Game() {
                 value={clue.value} 
                 revealed={clue.revealed}
                 delay={idx}
-                className={clue.fullWidth ? "h-40" : "h-32"}
+                className={clue.fullWidth ? "h-28 sm:h-32 md:h-40" : "h-24 sm:h-28 md:h-32"}
+                isMultiLine={clue.isMultiLine}
               />
             </div>
           ))}
         </div>
 
         {/* Input Area */}
-        <div className="max-w-xl mx-auto space-y-3 mb-6">
+        <div className="max-w-xl mx-auto space-y-2 sm:space-y-3 mb-4 sm:mb-6">
           {!isGameOver ? (
             <motion.div 
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               className="space-y-2"
             >
-              <div className="text-center mb-2">
-                <h3 className="text-base font-medium text-foreground mb-0">Make your guess</h3>
-                <p className="text-xs text-muted-foreground">{attemptsLeft} attempts remaining</p>
+              <div className="text-center mb-1 sm:mb-2">
+                <h3 className="text-sm sm:text-base font-medium text-foreground mb-0">Make your guess</h3>
+                <p className="text-xs text-muted-foreground">{attemptsLeft} remaining</p>
               </div>
               
-              <div className="flex gap-2">
-                <div className="flex-1">
+              <div className="flex gap-1 sm:gap-2 w-full overflow-hidden">
+                <div className="flex-1 min-w-0">
                   <CompanySearch 
                     onSelect={handleGuess} 
                     disabled={submitGuess.isPending || skipRound.isPending} 
@@ -210,28 +210,28 @@ export default function Game() {
                   disabled={submitGuess.isPending || skipRound.isPending}
                   data-testid="button-skip"
                   title="Skip this round to reveal the next clue"
-                  className="h-12"
+                  className="h-10 sm:h-12 px-2 sm:px-4 text-xs sm:text-sm flex-shrink-0"
                 >
-                  <SkipForward className="mr-2 h-4 w-4" />
-                  Skip Round
+                  <SkipForward className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-1" />
+                  <span className="hidden sm:inline">Skip</span>
                 </Button>
               </div>
             </motion.div>
           ) : (
-            <div className="text-center p-4 bg-secondary/20 rounded-xl border border-white/5">
-              <h3 className="text-xl font-bold mb-2">Game Over</h3>
+            <div className="text-center p-2 sm:p-4 bg-secondary/20 rounded-lg border border-white/5">
+              <h3 className="text-lg sm:text-xl font-bold mb-1">Game Over</h3>
               {game.targetCompany && (
-                <p className="text-lg font-semibold text-primary mb-2">{game.targetCompany.name}</p>
+                <p className="text-base sm:text-lg font-semibold text-primary mb-1">{game.targetCompany.name}</p>
               )}
-              <p className="text-muted-foreground">Check out your results!</p>
+              <p className="text-xs sm:text-sm text-muted-foreground">Check your results!</p>
             </div>
           )}
         </div>
 
         {/* Previous Guesses Section and Play Again Button */}
         {(game.guesses.length > 0 || (game as any).skippedRounds?.length > 0) && (
-          <div className="max-w-xl mx-auto pt-4">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground uppercase tracking-widest font-semibold mb-4">
+          <div className="max-w-xl mx-auto pt-2 sm:pt-4">
+            <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground uppercase tracking-widest font-semibold mb-2 sm:mb-3">
               <History className="h-4 w-4" /> Previous Guesses
             </div>
             <div className="space-y-2 pb-6">
