@@ -52,7 +52,7 @@ export function GameCard({ title, value, revealed, delay = 0, className, isMulti
                 ))}
               </div>
             ) : (
-              <span className="text-sm md:text-base font-semibold text-foreground text-center line-clamp-3 text-balance">
+              <span className="text-xs sm:text-sm md:text-base font-semibold text-foreground text-center line-clamp-3 text-balance">
                 {value}
               </span>
             )}
