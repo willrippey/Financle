@@ -65,7 +65,7 @@ export function GameOverModal({ open, game, onPlayAgain, isDaily, onClose }: Gam
           )}
           {isWin && (
             <DialogDescription className="text-center text-base mt-2">
-              You identified {target.name} in {game.guesses.length} attempt{game.guesses.length !== 1 ? 's' : ''}
+              You identified {target.name} in round {Math.max(1, game.guesses.length)}
             </DialogDescription>
           )}
           {!isWin && (
