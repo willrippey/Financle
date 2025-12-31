@@ -9,13 +9,14 @@ interface GameCardProps {
   delay?: number;
   className?: string;
   isMultiLine?: boolean;
+  dynamicHeight?: boolean;
 }
 
-export function GameCard({ title, value, revealed, delay = 0, className, isMultiLine }: GameCardProps) {
+export function GameCard({ title, value, revealed, delay = 0, className, isMultiLine, dynamicHeight }: GameCardProps) {
   const displayValue = isMultiLine ? value?.split('\n') : undefined;
   
   return (
-    <div className={cn("relative h-32 w-full perspective-1000", className)}>
+    <div className={cn(dynamicHeight ? "relative w-full perspective-1000" : "relative h-32 w-full perspective-1000", className)}>
       <AnimatePresence mode="wait">
         {!revealed ? (
           <motion.div
@@ -38,7 +39,11 @@ export function GameCard({ title, value, revealed, delay = 0, className, isMulti
             initial={{ opacity: 0, rotateX: -90 }}
             animate={{ opacity: 1, rotateX: 0 }}
             transition={{ type: "spring", stiffness: 200, damping: 20 }}
-            className="absolute inset-0 w-full h-full bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 rounded-xl flex flex-col items-center justify-center p-4 shadow-lg shadow-primary/5"
+            className={cn(
+              dynamicHeight 
+                ? "relative w-full bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 rounded-xl flex flex-col items-center justify-center p-4 shadow-lg shadow-primary/5"
+                : "absolute inset-0 w-full h-full bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 rounded-xl flex flex-col items-center justify-center p-4 shadow-lg shadow-primary/5"
+            )}
           >
             <span className="text-xs font-bold text-primary/80 uppercase tracking-widest mb-2 text-center">
               {title}
@@ -52,7 +57,12 @@ export function GameCard({ title, value, revealed, delay = 0, className, isMulti
                 ))}
               </div>
             ) : (
-              <span className="text-xs sm:text-sm md:text-base font-semibold text-foreground text-center line-clamp-3 text-balance">
+              <span className={cn(
+                "font-semibold text-foreground text-center text-balance",
+                dynamicHeight 
+                  ? "text-xs sm:text-sm md:text-base"
+                  : "text-xs sm:text-sm md:text-base line-clamp-3"
+              )}>
                 {value}
               </span>
             )}

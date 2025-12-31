@@ -125,13 +125,14 @@ export default function Game() {
       title: "Sector & Industry", 
       value: game.clues.category && (game.clues as any).subIndustry ? `${game.clues.category}\n${(game.clues as any).subIndustry}` : undefined,
       revealed: !!(game.clues.category && (game.clues as any).subIndustry),
-      isMultiLine: true
+      isMultiLine: true,
+      dynamicHeight: false
     },
-    { title: "Market Cap", value: game.clues.marketCap, revealed: !!game.clues.marketCap },
-    { title: "Headquarters", value: game.clues.headquarters, revealed: !!game.clues.headquarters },
-    { title: "Founded", value: game.clues.founded, revealed: !!game.clues.founded },
-    { title: "First Letter", value: game.clues.firstLetter, revealed: !!game.clues.firstLetter },
-    { title: "Known For", value: game.clues.description, revealed: !!game.clues.description },
+    { title: "Market Cap", value: game.clues.marketCap, revealed: !!game.clues.marketCap, dynamicHeight: false },
+    { title: "Headquarters", value: game.clues.headquarters, revealed: !!game.clues.headquarters, dynamicHeight: false },
+    { title: "Founded", value: game.clues.founded, revealed: !!game.clues.founded, dynamicHeight: false },
+    { title: "First Letter", value: game.clues.firstLetter, revealed: !!game.clues.firstLetter, dynamicHeight: false },
+    { title: "Known For", value: game.clues.description, revealed: !!game.clues.description, dynamicHeight: true },
   ];
 
   return (
@@ -177,14 +178,15 @@ export default function Game() {
         {/* Game Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-3 mb-3 sm:mb-4">
           {clues.map((clue, idx) => (
-            <div key={clue.title} className={clue.fullWidth ? "col-span-2 md:col-span-3" : "col-span-1"}>
+            <div key={clue.title} className={clue.dynamicHeight ? "col-span-2 md:col-span-3" : "col-span-1"}>
               <GameCard 
                 title={clue.title} 
                 value={clue.value} 
                 revealed={clue.revealed}
                 delay={idx}
-                className={clue.fullWidth ? "h-28 sm:h-32 md:h-40" : "h-24 sm:h-28 md:h-32"}
+                className={!clue.dynamicHeight ? "h-24 sm:h-28 md:h-32" : ""}
                 isMultiLine={clue.isMultiLine}
+                dynamicHeight={clue.dynamicHeight}
               />
             </div>
           ))}
