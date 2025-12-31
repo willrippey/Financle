@@ -8,37 +8,45 @@ export function MarketleHeader() {
   const [directions, setDirections] = useState<Record<string, boolean>>(
     SYMBOLS.reduce((acc, symbol) => ({ ...acc, [symbol]: Math.random() > 0.5 }), {})
   );
-  const [bounceKeys, setBounceKeys] = useState<Record<string, number>>(
+  const [flipKeys, setFlipKeys] = useState<Record<string, number>>(
     SYMBOLS.reduce((acc, symbol) => ({ ...acc, [symbol]: 0 }), {})
   );
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setDirections(prev => {
-        const newDirections = Object.entries(prev).reduce((acc, [symbol, _]) => ({
-          ...acc,
-          [symbol]: Math.random() > 0.5
-        }), {});
-        
-        // Trigger flip animation for changed symbols
-        setBounceKeys(prevKeys =>
-          Object.entries(newDirections).reduce((acc, [symbol, newDir]) => ({
-            ...acc,
-            [symbol]: (prevKeys[symbol] || 0) + (newDir !== prev[symbol] ? 1 : 0)
-          }), {})
-        );
-        
-        return newDirections;
-      });
-    }, 2500);
-    return () => clearInterval(interval);
+    const intervals: NodeJS.Timeout[] = [];
+
+    SYMBOLS.forEach(symbol => {
+      const scheduleFlip = () => {
+        const delay = Math.random() * 2000 + 2000; // 2-4 seconds
+        const timeout = setTimeout(() => {
+          setDirections(prev => {
+            const newDir = !prev[symbol];
+            setFlipKeys(prevKeys => ({
+              ...prevKeys,
+              [symbol]: (prevKeys[symbol] || 0) + 1
+            }));
+            return {
+              ...prev,
+              [symbol]: newDir
+            };
+          });
+          scheduleFlip();
+        }, delay);
+        intervals.push(timeout);
+      };
+      scheduleFlip();
+    });
+
+    return () => {
+      intervals.forEach(interval => clearTimeout(interval));
+    };
   }, []);
 
   const flipVariants = {
     flip: {
       rotateX: [0, 180, 360, 540, 720],
       transition: {
-        duration: 0.6,
+        duration: 0.8,
         ease: "easeInOut"
       }
     }
@@ -59,9 +67,9 @@ export function MarketleHeader() {
           >
             {symbol}
             <motion.div
-              key={`${symbol}-${bounceKeys[symbol]}`}
+              key={`${symbol}-${flipKeys[symbol]}`}
               variants={flipVariants}
-              animate={bounceKeys[symbol] > 0 ? "flip" : "normal"}
+              animate={flipKeys[symbol] > 0 ? "flip" : "normal"}
               style={{ perspective: 1000 }}
             >
               {directions[symbol] ? (
