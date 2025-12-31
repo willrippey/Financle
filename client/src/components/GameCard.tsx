@@ -8,9 +8,12 @@ interface GameCardProps {
   revealed: boolean;
   delay?: number;
   className?: string;
+  isMultiLine?: boolean;
 }
 
-export function GameCard({ title, value, revealed, delay = 0, className }: GameCardProps) {
+export function GameCard({ title, value, revealed, delay = 0, className, isMultiLine }: GameCardProps) {
+  const displayValue = isMultiLine ? value?.split('\n') : undefined;
+  
   return (
     <div className={cn("relative h-32 w-full perspective-1000", className)}>
       <AnimatePresence mode="wait">
@@ -40,9 +43,19 @@ export function GameCard({ title, value, revealed, delay = 0, className }: GameC
             <span className="text-xs font-bold text-primary/80 uppercase tracking-widest mb-2 text-center">
               {title}
             </span>
-            <span className="text-sm md:text-base font-semibold text-foreground text-center line-clamp-3 text-balance">
-              {value}
-            </span>
+            {isMultiLine && displayValue ? (
+              <div className="text-center space-y-1">
+                {displayValue.map((line, idx) => (
+                  <div key={idx} className="text-sm md:text-base font-semibold text-foreground text-balance">
+                    {line}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <span className="text-sm md:text-base font-semibold text-foreground text-center line-clamp-3 text-balance">
+                {value}
+              </span>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
