@@ -34,7 +34,7 @@ export function GameOverModal({ open, game, onPlayAgain, isDaily, onClose }: Gam
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="max-w-[80vw] sm:max-w-2xl bg-card border-white/10 shadow-2xl">
+      <DialogContent className="max-w-[80vw] max-h-[85vh] overflow-y-auto sm:max-w-2xl bg-card border-white/10 shadow-2xl">
         <DialogHeader>
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/20 relative">
             {isWin ? (

@@ -46,6 +46,15 @@ export default function Game() {
     }
   }, [error, setLocation, toast]);
 
+  // Focus search input when game loads
+  useEffect(() => {
+    if (game && game.status === 'playing') {
+      setTimeout(() => {
+        searchCompRef.current?.focusAndOpen();
+      }, 100);
+    }
+  }, [game?.id]);
+
   if (isLoading || !game) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -210,7 +219,7 @@ export default function Game() {
                   disabled={submitGuess.isPending || skipRound.isPending}
                   data-testid="button-skip"
                   title="Skip this round to reveal the next clue"
-                  className="h-10 sm:h-12 px-2 sm:px-4 text-xs sm:text-sm flex-shrink-0"
+                  className="h-12 px-2 sm:px-4 text-xs sm:text-sm flex-shrink-0"
                 >
                   <SkipForward className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-1" />
                   <span className="hidden sm:inline">Skip</span>
