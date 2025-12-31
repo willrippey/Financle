@@ -57,19 +57,20 @@ export function CompanySearch({ onSelect, disabled, inputRef, guessedSymbols = [
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <div className="relative w-full">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 opacity-50 pointer-events-none" />
-        <PopoverTrigger asChild>
+      <PopoverTrigger asChild>
+        <div className="relative w-full">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 opacity-50 pointer-events-none z-10" />
           <input
             ref={ref}
             placeholder="Search company or ticker..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            onFocus={() => setOpen(true)}
             disabled={disabled}
             className="h-12 w-full pl-10 pr-4 bg-secondary/50 border border-white/10 rounded-md focus:bg-secondary/70 focus:border-white/20 transition-all focus:outline-none focus:ring-0"
           />
-        </PopoverTrigger>
-      </div>
+        </div>
+      </PopoverTrigger>
       <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0 bg-card border-white/10 shadow-2xl" align="start">
         <Command shouldFilter={false} className="bg-transparent">
           <CommandList className="max-h-[300px]">
