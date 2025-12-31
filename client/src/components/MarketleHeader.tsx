@@ -8,18 +8,41 @@ export function MarketleHeader() {
   const [directions, setDirections] = useState<Record<string, boolean>>(
     SYMBOLS.reduce((acc, symbol) => ({ ...acc, [symbol]: Math.random() > 0.5 }), {})
   );
+  const [bounceKeys, setBounceKeys] = useState<Record<string, number>>(
+    SYMBOLS.reduce((acc, symbol) => ({ ...acc, [symbol]: 0 }), {})
+  );
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setDirections(prev =>
-        Object.entries(prev).reduce((acc, [symbol, _]) => ({
+      setDirections(prev => {
+        const newDirections = Object.entries(prev).reduce((acc, [symbol, _]) => ({
           ...acc,
           [symbol]: Math.random() > 0.5
-        }), {})
-      );
+        }), {});
+        
+        // Trigger bounce animation for changed symbols
+        setBounceKeys(prevKeys =>
+          Object.entries(newDirections).reduce((acc, [symbol, newDir]) => ({
+            ...acc,
+            [symbol]: (prevKeys[symbol] || 0) + (newDir !== prev[symbol] ? 1 : 0)
+          }), {})
+        );
+        
+        return newDirections;
+      });
     }, 3000);
     return () => clearInterval(interval);
   }, []);
+
+  const bounceVariants = {
+    bounce: {
+      rotateZ: [0, -30, 30, -30, 0],
+      transition: {
+        duration: 0.6,
+        ease: "easeInOut"
+      }
+    }
+  };
 
   return (
     <div className="text-center w-full space-y-3 sm:space-y-4">
@@ -32,14 +55,20 @@ export function MarketleHeader() {
           <div
             key={symbol}
             style={{ color: directions[symbol] ? "#22c55e" : "#ef4444" }}
-            className="inline-flex items-center gap-2 sm:gap-3 text-sm sm:text-lg lg:text-2xl font-bold transition-colors duration-500"
+            className="inline-flex items-center gap-2 sm:gap-3 text-base sm:text-2xl lg:text-4xl font-bold transition-colors duration-500"
           >
             {symbol}
-            {directions[symbol] ? (
-              <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6" />
-            ) : (
-              <TrendingDown className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6" />
-            )}
+            <motion.div
+              key={`${symbol}-${bounceKeys[symbol]}`}
+              variants={bounceVariants}
+              animate={bounceKeys[symbol] > 0 ? "bounce" : "normal"}
+            >
+              {directions[symbol] ? (
+                <TrendingUp className="h-5 w-5 sm:h-7 sm:w-7 lg:h-8 lg:w-8" />
+              ) : (
+                <TrendingDown className="h-5 w-5 sm:h-7 sm:w-7 lg:h-8 lg:w-8" />
+              )}
+            </motion.div>
           </div>
         ))}
       </div>
