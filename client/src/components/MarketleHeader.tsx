@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { TrendingUp, TrendingDown } from "lucide-react";
+import { TrendingUp } from "lucide-react";
 import { useState, useEffect } from "react";
 
 const SYMBOLS = ["AAPL", "MSFT", "GOOGL", "AMZN"];
@@ -33,18 +33,14 @@ export function MarketleHeader() {
             key={symbol}
             animate={{ color: directions[symbol] ? "#22c55e" : "#ef4444" }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm lg:text-lg font-bold"
+            className="inline-flex items-center gap-2 sm:gap-3 text-sm sm:text-lg lg:text-2xl font-bold"
           >
             {symbol}
             <motion.span
-              animate={{ rotate: directions[symbol] ? 0 : 180 }}
+              style={{ scaleX: directions[symbol] ? 1 : -1 }}
               transition={{ duration: 0.5 }}
             >
-              {directions[symbol] ? (
-                <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4 lg:h-5 lg:w-5" />
-              ) : (
-                <TrendingDown className="h-3 w-3 sm:h-4 sm:w-4 lg:h-5 lg:w-5" />
-              )}
+              <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6" />
             </motion.span>
           </motion.span>
         ))}
