@@ -20,7 +20,7 @@ export function MarketleHeader() {
           [symbol]: Math.random() > 0.5
         }), {});
         
-        // Trigger bounce animation for changed symbols
+        // Trigger flip animation for changed symbols
         setBounceKeys(prevKeys =>
           Object.entries(newDirections).reduce((acc, [symbol, newDir]) => ({
             ...acc,
@@ -30,13 +30,13 @@ export function MarketleHeader() {
         
         return newDirections;
       });
-    }, 3000);
+    }, 2500);
     return () => clearInterval(interval);
   }, []);
 
-  const bounceVariants = {
-    bounce: {
-      rotateZ: [0, -30, 30, -30, 0],
+  const flipVariants = {
+    flip: {
+      rotateX: [0, 180, 360, 540, 720],
       transition: {
         duration: 0.6,
         ease: "easeInOut"
@@ -60,8 +60,9 @@ export function MarketleHeader() {
             {symbol}
             <motion.div
               key={`${symbol}-${bounceKeys[symbol]}`}
-              variants={bounceVariants}
-              animate={bounceKeys[symbol] > 0 ? "bounce" : "normal"}
+              variants={flipVariants}
+              animate={bounceKeys[symbol] > 0 ? "flip" : "normal"}
+              style={{ perspective: 1000 }}
             >
               {directions[symbol] ? (
                 <TrendingUp className="h-5 w-5 sm:h-7 sm:w-7 lg:h-8 lg:w-8" />
