@@ -51,13 +51,13 @@ export function GameCard({ title, value, revealed, delay = 0, className, isMulti
             {isMultiLine && displayValue ? (
               <div className="text-center space-y-1 w-full">
                 {displayValue.map((line, idx) => (
-                  <div key={idx} className="text-sm md:text-base font-semibold text-foreground text-balance line-clamp-1">
+                  <div key={idx} className="text-sm md:text-base font-semibold text-foreground text-balance whitespace-normal">
                     {line}
                   </div>
                 ))}
               </div>
             ) : (
-              <span className="text-xs sm:text-sm md:text-base font-semibold text-foreground text-center text-balance break-words overflow-hidden">
+              <span className="text-xs sm:text-sm md:text-base font-semibold text-foreground text-center text-balance whitespace-normal">
                 {value}
               </span>
             )}
