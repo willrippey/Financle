@@ -122,9 +122,7 @@ export default function Home() {
                     ) : dailyCompleted ? (
                       "Results"
                     ) : (
-                      <>
-                        <Play className="h-3 w-3 sm:h-4 sm:w-4 fill-current" />
-                      </>
+                      "Play"
                     )}
                   </Button>
                 </CardFooter>
