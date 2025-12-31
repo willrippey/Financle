@@ -158,10 +158,10 @@ export async function registerRoutes(
         return res.status(400).json({ message: "Game over" });
     }
 
-    // Record a skip by adding company ID 0 as a special marker for skips
+    // Record a skip by adding NULL company_id as a special marker for skips
     // This advances the round and reveals the next clue, but the marker is filtered out
     // in buildGameState so it won't appear in the previous guesses list
-    await storage.addGuess(gameId, 0, round);
+    await storage.addGuess(gameId, null as any, round);
 
     // Check if this was the last round (round 6)
     if (round >= 6) {
@@ -191,8 +191,8 @@ export async function registerRoutes(
     const target = await storage.getCompany(game.targetCompanyId);
     if (!target) throw new Error("Target company not found");
 
-    // Filter out skip markers (guesses where company_id == 0)
-    const actualGuesses = allGuesses.filter(g => g.companyId !== 0);
+    // Filter out skip markers (guesses where company_id == null)
+    const actualGuesses = allGuesses.filter(g => g.companyId !== null);
 
     const clues = {
       category: allGuesses.length >= 0 ? `${target.sector} ${target.subIndustry}` : undefined,
@@ -231,7 +231,7 @@ export async function registerRoutes(
         symbol: g.company.symbol,
         name: g.company.name,
       })),
-      skippedRounds: allGuesses.filter(g => g.companyId === 0).map(g => g.roundNumber),
+      skippedRounds: allGuesses.filter(g => g.companyId === null).map(g => g.roundNumber),
       score: game.score,
       targetCompany: isOver ? target : undefined
     };

@@ -42,7 +42,7 @@ export const games = pgTable("games", {
 export const guesses = pgTable("guesses", {
   id: serial("id").primaryKey(),
   gameId: integer("game_id").references(() => games.id).notNull(),
-  companyId: integer("company_id").references(() => companies.id).notNull(), // The guessed company
+  companyId: integer("company_id").references(() => companies.id), // The guessed company (NULL for skips)
   roundNumber: integer("round_number").notNull(),
   createdAt: timestamp("created_at").defaultNow(),
 });
