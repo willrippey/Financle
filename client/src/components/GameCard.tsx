@@ -41,11 +41,11 @@ export function GameCard({ title, value, revealed, delay = 0, className, isMulti
             transition={{ type: "spring", stiffness: 200, damping: 20 }}
             className={cn(
               dynamicHeight 
-                ? "relative w-full bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 rounded-xl flex flex-col items-center justify-center p-2 sm:p-3 md:p-4 shadow-lg shadow-primary/5 overflow-hidden"
-                : "absolute inset-0 w-full h-full bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 rounded-xl flex flex-col items-center justify-center p-2 sm:p-3 md:p-4 shadow-lg shadow-primary/5 overflow-hidden"
+                ? "relative w-full bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 rounded-xl flex flex-col items-center p-2 sm:p-3 md:p-4 shadow-lg shadow-primary/5 overflow-hidden"
+                : "absolute inset-0 w-full h-full bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 rounded-xl flex flex-col items-center p-2 sm:p-3 md:p-4 shadow-lg shadow-primary/5 overflow-hidden"
             )}
           >
-            <span className="text-xs sm:text-sm md:text-lg font-bold text-primary/80 uppercase tracking-tight mb-1 text-center break-words overflow-hidden max-w-full px-0.5 line-clamp-2">
+            <span className="shrink-0 text-xs sm:text-sm md:text-lg font-bold text-primary/80 uppercase tracking-tight mb-2 text-center break-words overflow-hidden max-w-full px-0.5 line-clamp-2">
               {title}
             </span>
             {isMultiLine && displayValue ? (
