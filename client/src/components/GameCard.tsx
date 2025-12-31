@@ -49,20 +49,15 @@ export function GameCard({ title, value, revealed, delay = 0, className, isMulti
               {title}
             </span>
             {isMultiLine && displayValue ? (
-              <div className="text-center space-y-1">
+              <div className="text-center space-y-1 w-full">
                 {displayValue.map((line, idx) => (
-                  <div key={idx} className="text-sm md:text-base font-semibold text-foreground text-balance">
+                  <div key={idx} className="text-sm md:text-base font-semibold text-foreground text-balance line-clamp-1">
                     {line}
                   </div>
                 ))}
               </div>
             ) : (
-              <span className={cn(
-                "font-semibold text-foreground text-center text-balance",
-                dynamicHeight 
-                  ? "text-xs sm:text-sm md:text-base"
-                  : "text-xs sm:text-sm md:text-base line-clamp-3"
-              )}>
+              <span className="text-xs sm:text-sm md:text-base font-semibold text-foreground text-center text-balance break-words overflow-hidden">
                 {value}
               </span>
             )}

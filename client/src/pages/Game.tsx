@@ -125,14 +125,13 @@ export default function Game() {
       title: "Sector & Industry", 
       value: game.clues.category && (game.clues as any).subIndustry ? `${game.clues.category}\n${(game.clues as any).subIndustry}` : undefined,
       revealed: !!(game.clues.category && (game.clues as any).subIndustry),
-      isMultiLine: true,
-      dynamicHeight: false
+      isMultiLine: true
     },
-    { title: "Market Cap", value: game.clues.marketCap, revealed: !!game.clues.marketCap, dynamicHeight: false },
-    { title: "Headquarters", value: game.clues.headquarters, revealed: !!game.clues.headquarters, dynamicHeight: false },
-    { title: "Founded", value: game.clues.founded, revealed: !!game.clues.founded, dynamicHeight: false },
-    { title: "First Letter", value: game.clues.firstLetter, revealed: !!game.clues.firstLetter, dynamicHeight: false },
-    { title: "Known For", value: game.clues.description, revealed: !!game.clues.description, dynamicHeight: true },
+    { title: "Market Cap", value: game.clues.marketCap, revealed: !!game.clues.marketCap },
+    { title: "Headquarters", value: game.clues.headquarters, revealed: !!game.clues.headquarters },
+    { title: "Founded", value: game.clues.founded, revealed: !!game.clues.founded },
+    { title: "First Letter", value: game.clues.firstLetter, revealed: !!game.clues.firstLetter },
+    { title: "Known For", value: game.clues.description, revealed: !!game.clues.description },
   ];
 
   return (
@@ -178,19 +177,34 @@ export default function Game() {
         {/* Game Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-3 mb-3 sm:mb-4">
           {clues.map((clue, idx) => (
-            <div key={clue.title} className={clue.dynamicHeight ? "col-span-2 md:col-span-3" : "col-span-1"}>
+            <div key={clue.title} className="col-span-1">
               <GameCard 
                 title={clue.title} 
                 value={clue.value} 
                 revealed={clue.revealed}
                 delay={idx}
-                className={!clue.dynamicHeight ? "h-24 sm:h-28 md:h-32" : ""}
+                className="h-24 sm:h-28 md:h-32"
                 isMultiLine={clue.isMultiLine}
-                dynamicHeight={clue.dynamicHeight}
               />
             </div>
           ))}
         </div>
+
+        {/* Game Over Buttons - shown between clues and input/game over message */}
+        {isGameOver && !showGameOverModal && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex gap-2 max-w-xl mx-auto mb-4 sm:mb-6"
+          >
+            <Button variant="outline" className="flex-1" onClick={() => setLocation("/")} data-testid="button-home">
+              <ArrowLeft className="mr-2 h-4 w-4" /> Home
+            </Button>
+            <Button onClick={handlePlayAgain} className="flex-1" data-testid="button-play-again">
+              <RefreshCw className="mr-2 h-4 w-4" /> Play Again
+            </Button>
+          </motion.div>
+        )}
 
         {/* Input Area */}
         <div className="max-w-xl mx-auto space-y-2 sm:space-y-3 mb-4 sm:mb-6">
@@ -296,21 +310,6 @@ export default function Game() {
               </AnimatePresence>
             </div>
 
-            {/* Play Again Button - Only show when game is over */}
-            {isGameOver && !showGameOverModal && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex gap-2 max-w-xl mx-auto pt-4"
-              >
-                <Button variant="outline" className="flex-1" onClick={() => setLocation("/")} data-testid="button-home">
-                  <ArrowLeft className="mr-2 h-4 w-4" /> Home
-                </Button>
-                <Button onClick={handlePlayAgain} className="flex-1" data-testid="button-play-again">
-                  <RefreshCw className="mr-2 h-4 w-4" /> Play Again
-                </Button>
-              </motion.div>
-            )}
           </div>
         )}
       </main>
