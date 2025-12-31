@@ -19,17 +19,20 @@ export function MarketleHeader() {
       const scheduleFlip = () => {
         const delay = Math.random() * 2000 + 2000; // 2-4 seconds
         const timeout = setTimeout(() => {
-          setDirections(prev => {
-            const newDir = !prev[symbol];
-            setFlipKeys(prevKeys => ({
-              ...prevKeys,
-              [symbol]: (prevKeys[symbol] || 0) + 1
-            }));
-            return {
-              ...prev,
-              [symbol]: newDir
-            };
-          });
+          // 50/50 chance to skip this flip
+          if (Math.random() > 0.5) {
+            setDirections(prev => {
+              const newDir = !prev[symbol];
+              setFlipKeys(prevKeys => ({
+                ...prevKeys,
+                [symbol]: (prevKeys[symbol] || 0) + 1
+              }));
+              return {
+                ...prev,
+                [symbol]: newDir
+              };
+            });
+          }
           scheduleFlip();
         }, delay);
         intervals.push(timeout);
@@ -46,7 +49,7 @@ export function MarketleHeader() {
     flip: {
       rotateX: [0, 180, 360, 540, 720],
       transition: {
-        duration: 0.8,
+        duration: 1.0,
         ease: "easeInOut"
       }
     }
