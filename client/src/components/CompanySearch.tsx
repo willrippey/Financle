@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Check, Search } from "lucide-react";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useCompanySearch } from "@/hooks/use-games";
 import { cn } from "@/lib/utils";
 import { useDebounce } from "@/hooks/use-debounce";
@@ -55,62 +56,60 @@ export function CompanySearch({ onSelect, disabled, inputRef, guessedSymbols = [
   }, [exactMatch, debouncedQuery]);
 
   return (
-    <div className="relative w-full">
-      <div className="relative h-12 w-full">
+    <Popover open={open} onOpenChange={setOpen}>
+      <div className="relative w-full">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 opacity-50 pointer-events-none" />
-        <CommandInput 
-          ref={ref}
-          placeholder="Search company or ticker..." 
-          value={searchQuery}
-          onValueChange={setSearchQuery}
-          onFocus={() => setOpen(true)}
-          onBlur={() => setTimeout(() => setOpen(false), 200)}
-          disabled={disabled}
-          className="h-full pl-10 pr-4 bg-secondary/50 border border-white/10 rounded-md focus:bg-secondary/70 focus:border-white/20 transition-all"
-        />
+        <PopoverTrigger asChild>
+          <input
+            ref={ref}
+            placeholder="Search company or ticker..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            disabled={disabled}
+            className="h-12 w-full pl-10 pr-4 bg-secondary/50 border border-white/10 rounded-md focus:bg-secondary/70 focus:border-white/20 transition-all focus:outline-none focus:ring-0"
+          />
+        </PopoverTrigger>
       </div>
-      {open && (
-        <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-card border border-white/10 rounded-md shadow-2xl">
-          <Command shouldFilter={false} className="bg-transparent">
-            <CommandList className="max-h-[300px]">
-              {isLoading && (
-                <div className="py-6 text-center text-sm text-muted-foreground">
-                  Searching market data...
-                </div>
-              )}
-              
-              {!isLoading && companies?.length === 0 && debouncedQuery.length > 0 && (
-                <CommandEmpty>No company found.</CommandEmpty>
-              )}
+      <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0 bg-card border-white/10 shadow-2xl" align="start">
+        <Command shouldFilter={false} className="bg-transparent">
+          <CommandList className="max-h-[300px]">
+            {isLoading && (
+              <div className="py-6 text-center text-sm text-muted-foreground">
+                Searching market data...
+              </div>
+            )}
+            
+            {!isLoading && companies?.length === 0 && debouncedQuery.length > 0 && (
+              <CommandEmpty>No company found.</CommandEmpty>
+            )}
 
-              <CommandGroup>
-                {filteredCompanies.map((company) => (
-                  <CommandItem
-                    key={company.symbol}
-                    value={company.symbol}
-                    onSelect={(currentValue) => {
-                      setValue("");
-                      onSelect(currentValue);
-                      setOpen(false);
-                      setSearchQuery(""); // Reset search after selection
-                    }}
-                    className="cursor-pointer aria-selected:bg-primary/10 aria-selected:text-primary"
-                  >
-                    <Check
-                      className={cn(
-                        "mr-2 h-4 w-4",
-                        value === company.symbol ? "opacity-100" : "opacity-0"
-                      )}
-                    />
-                    <span className="font-mono font-bold w-16">{company.symbol}</span>
-                    <span className="truncate">{company.name}</span>
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            </CommandList>
-          </Command>
-        </div>
-      )}
-    </div>
+            <CommandGroup>
+              {filteredCompanies.map((company) => (
+                <CommandItem
+                  key={company.symbol}
+                  value={company.symbol}
+                  onSelect={(currentValue) => {
+                    setValue("");
+                    onSelect(currentValue);
+                    setOpen(false);
+                    setSearchQuery(""); // Reset search after selection
+                  }}
+                  className="cursor-pointer aria-selected:bg-primary/10 aria-selected:text-primary"
+                >
+                  <Check
+                    className={cn(
+                      "mr-2 h-4 w-4",
+                      value === company.symbol ? "opacity-100" : "opacity-0"
+                    )}
+                  />
+                  <span className="font-mono font-bold w-16">{company.symbol}</span>
+                  <span className="truncate">{company.name}</span>
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
   );
 }
