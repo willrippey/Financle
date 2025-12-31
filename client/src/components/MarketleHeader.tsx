@@ -1,8 +1,8 @@
 import { motion } from "framer-motion";
-import { TrendingUp, TrendingDown } from "lucide-react";
+import { ArrowUp, ArrowDown } from "lucide-react";
 import { useState, useEffect } from "react";
 
-const SYMBOLS = ["AAPL", "MSFT", "GOOGL", "AMZN", "TSLA"];
+const SYMBOLS = ["AAPL", "MSFT", "GOOGL", "AMZN"];
 
 export function MarketleHeader() {
   const [directions, setDirections] = useState<Record<string, boolean>>(
@@ -22,69 +22,30 @@ export function MarketleHeader() {
   }, []);
 
   return (
-    <div className="text-center space-y-2 sm:space-y-3">
-      <div className="flex items-center justify-center gap-4 sm:gap-6 flex-wrap">
-        <motion.div
-          key="left"
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-lg sm:text-2xl font-bold"
-        >
-          {SYMBOLS.slice(0, 2).map(symbol => (
+    <div className="text-center w-full">
+      <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 lg:gap-8 flex-wrap">
+        {/* Mobile and tablet: stack vertically or in smaller rows */}
+        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 lg:gap-6">
+          {SYMBOLS.map(symbol => (
             <motion.span
               key={symbol}
               animate={{ color: directions[symbol] ? "#22c55e" : "#ef4444" }}
               transition={{ duration: 0.5 }}
-              className="mr-3 inline-flex items-center gap-1"
+              className="inline-flex items-center gap-1.5 sm:gap-2 text-sm sm:text-lg lg:text-2xl font-bold"
             >
               {symbol}
-              <motion.span
-                animate={{ rotate: directions[symbol] ? 0 : 180 }}
-                transition={{ duration: 0.5 }}
-              >
-                {directions[symbol] ? (
-                  <TrendingUp className="h-4 w-4" />
-                ) : (
-                  <TrendingDown className="h-4 w-4" />
-                )}
-              </motion.span>
+              {directions[symbol] ? (
+                <ArrowUp className="h-3 w-3 sm:h-4 sm:w-4 lg:h-6 lg:w-6" />
+              ) : (
+                <ArrowDown className="h-3 w-3 sm:h-4 sm:w-4 lg:h-6 lg:w-6" />
+              )}
             </motion.span>
           ))}
-        </motion.div>
+        </div>
 
-        <h1 className="text-5xl sm:text-6xl lg:text-8xl font-extrabold tracking-tight">
+        <h1 className="text-4xl sm:text-5xl lg:text-8xl font-extrabold tracking-tight">
           <span className="text-gradient-primary">Marketle</span>
         </h1>
-
-        <motion.div
-          key="right"
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-lg sm:text-2xl font-bold"
-        >
-          {SYMBOLS.slice(2, 4).map(symbol => (
-            <motion.span
-              key={symbol}
-              animate={{ color: directions[symbol] ? "#22c55e" : "#ef4444" }}
-              transition={{ duration: 0.5 }}
-              className="ml-3 inline-flex items-center gap-1"
-            >
-              <motion.span
-                animate={{ rotate: directions[symbol] ? 0 : 180 }}
-                transition={{ duration: 0.5 }}
-              >
-                {directions[symbol] ? (
-                  <TrendingUp className="h-4 w-4" />
-                ) : (
-                  <TrendingDown className="h-4 w-4" />
-                )}
-              </motion.span>
-              {symbol}
-            </motion.span>
-          ))}
-        </motion.div>
       </div>
     </div>
   );
