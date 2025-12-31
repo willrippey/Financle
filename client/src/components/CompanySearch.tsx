@@ -18,6 +18,7 @@ export function CompanySearch({ onSelect, disabled, inputRef, guessedSymbols = [
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
   const [searchQuery, setSearchQuery] = React.useState("");
+  const [selectedIndex, setSelectedIndex] = React.useState(0);
   const debouncedQuery = useDebounce(searchQuery, 300);
   const internalRef = React.useRef<HTMLInputElement>(null);
   const ref = inputRef || internalRef;
@@ -55,13 +56,36 @@ export function CompanySearch({ onSelect, disabled, inputRef, guessedSymbols = [
     }
   }, [exactMatch, debouncedQuery]);
 
+  // Reset selected index when query changes
+  React.useEffect(() => {
+    setSelectedIndex(0);
+  }, [debouncedQuery]);
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && exactMatch) {
+    if (e.key === "ArrowDown") {
       e.preventDefault();
-      setValue("");
-      onSelect(exactMatch.symbol);
-      setOpen(false);
-      setSearchQuery("");
+      setSelectedIndex((prev) => 
+        prev < filteredCompanies.length - 1 ? prev + 1 : prev
+      );
+      setOpen(true);
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setSelectedIndex((prev) => (prev > 0 ? prev - 1 : 0));
+      setOpen(true);
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      if (exactMatch) {
+        setValue("");
+        onSelect(exactMatch.symbol);
+        setOpen(false);
+        setSearchQuery("");
+      } else if (filteredCompanies.length > 0 && selectedIndex < filteredCompanies.length) {
+        const selected = filteredCompanies[selectedIndex];
+        setValue("");
+        onSelect(selected.symbol);
+        setOpen(false);
+        setSearchQuery("");
+      }
     }
   };
 
@@ -104,7 +128,7 @@ export function CompanySearch({ onSelect, disabled, inputRef, guessedSymbols = [
             )}
 
             <CommandGroup>
-              {filteredCompanies.map((company) => (
+              {filteredCompanies.map((company, idx) => (
                 <CommandItem
                   key={company.symbol}
                   value={company.symbol}
@@ -114,7 +138,13 @@ export function CompanySearch({ onSelect, disabled, inputRef, guessedSymbols = [
                     setOpen(false);
                     setSearchQuery(""); // Reset search after selection
                   }}
-                  className="cursor-pointer aria-selected:bg-primary/10 aria-selected:text-primary"
+                  onMouseEnter={() => setSelectedIndex(idx)}
+                  className={cn(
+                    "cursor-pointer",
+                    selectedIndex === idx
+                      ? "bg-primary/20 text-primary"
+                      : "aria-selected:bg-primary/10 aria-selected:text-primary"
+                  )}
                 >
                   <Check
                     className={cn(
