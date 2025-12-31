@@ -132,17 +132,17 @@ export class DatabaseStorage implements IStorage {
     return guess;
   }
 
-  async getGuesses(gameId: number): Promise<(Guess & { company: Company })[]> {
+  async getGuesses(gameId: number): Promise<(Guess & { company?: Company })[]> {
     const result = await db.select({
       guess: guesses,
       company: companies
     })
     .from(guesses)
-    .innerJoin(companies, eq(guesses.companyId, companies.id))
+    .leftJoin(companies, eq(guesses.companyId, companies.id))
     .where(eq(guesses.gameId, gameId))
     .orderBy(guesses.roundNumber);
 
-    return result.map(r => ({ ...r.guess, company: r.company }));
+    return result.map(r => ({ ...r.guess, company: r.company || undefined }));
   }
 
   async seedCompanies(data: any[]): Promise<void> {

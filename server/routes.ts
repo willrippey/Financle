@@ -195,7 +195,8 @@ export async function registerRoutes(
     const actualGuesses = allGuesses.filter(g => g.companyId !== null);
 
     const clues = {
-      category: allGuesses.length >= 0 ? `${target.sector} ${target.subIndustry}` : undefined,
+      category: allGuesses.length >= 0 ? target.sector : undefined,
+      subIndustry: allGuesses.length >= 0 ? target.subIndustry : undefined,
       marketCap: allGuesses.length >= 1 ? target.marketCap : undefined,
       headquarters: allGuesses.length >= 2 ? target.headquarters : undefined,
       founded: allGuesses.length >= 3 ? target.founded : undefined,
@@ -220,7 +221,8 @@ export async function registerRoutes(
       round: Math.min(allGuesses.length + 1, 6),
       endlessStreak,
       clues: isOver ? {
-        category: `${target.sector} ${target.subIndustry}`,
+        category: target.sector,
+        subIndustry: target.subIndustry,
         marketCap: target.marketCap,
         headquarters: target.headquarters,
         founded: target.founded,

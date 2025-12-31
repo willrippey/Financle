@@ -108,8 +108,9 @@ export type GameStateResponse = {
   round: number;
   endlessStreak?: number; // Current endless mode streak for the user
   clues: {
-    sector?: string;
+    category?: string;
     subIndustry?: string;
+    marketCap?: string;
     headquarters?: string;
     founded?: string;
     firstLetter?: string;
@@ -119,6 +120,7 @@ export type GameStateResponse = {
     symbol: string;
     name: string;
   }[];
+  skippedRounds?: number[];
   score: number;
   targetCompany?: Company; // Revealed only when game ends
 };

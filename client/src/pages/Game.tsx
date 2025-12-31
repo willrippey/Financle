@@ -112,7 +112,8 @@ export default function Game() {
 
   // Clue display logic - always visible or revealed progressively
   const clues = [
-    { title: "Sector & Industry", value: game.clues.category, revealed: !!game.clues.category },
+    { title: "Sector", value: game.clues.category, revealed: !!game.clues.category },
+    { title: "Industry", value: (game.clues as any).subIndustry, revealed: !!(game.clues as any).subIndustry },
     { title: "Market Cap", value: game.clues.marketCap, revealed: !!game.clues.marketCap },
     { title: "Headquarters", value: game.clues.headquarters, revealed: !!game.clues.headquarters },
     { title: "Founded", value: game.clues.founded, revealed: !!game.clues.founded },

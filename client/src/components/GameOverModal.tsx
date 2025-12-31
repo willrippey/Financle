@@ -65,7 +65,7 @@ export function GameOverModal({ open, game, onPlayAgain, isDaily, onClose }: Gam
           )}
           {isWin && (
             <DialogDescription className="text-center text-base mt-2">
-              You identified {target.name} in round {Math.max(1, game.guesses.length)}
+              You identified {target.name} in {Math.max(1, game.guesses.length)} rounds
             </DialogDescription>
           )}
           {!isWin && (
@@ -86,11 +86,16 @@ export function GameOverModal({ open, game, onPlayAgain, isDaily, onClose }: Gam
 
         {/* Six Information Sections */}
         <div className="grid grid-cols-2 gap-4">
-          {/* Section 1: Sector & Industry */}
+          {/* Section 1: Sector */}
           <div className="rounded-lg bg-secondary/40 border border-white/5 p-4">
-            <p className="text-xs font-mono text-muted-foreground uppercase tracking-widest mb-2 font-semibold">Sector & Industry</p>
+            <p className="text-xs font-mono text-muted-foreground uppercase tracking-widest mb-2 font-semibold">Sector</p>
             <p className="text-sm font-medium text-foreground">{target.sector}</p>
-            <p className="text-xs text-muted-foreground mt-1">{target.subIndustry}</p>
+          </div>
+
+          {/* Section 1b: Industry */}
+          <div className="rounded-lg bg-secondary/40 border border-white/5 p-4">
+            <p className="text-xs font-mono text-muted-foreground uppercase tracking-widest mb-2 font-semibold">Industry</p>
+            <p className="text-sm font-medium text-foreground">{target.subIndustry}</p>
           </div>
 
           {/* Section 2: Market Cap */}
