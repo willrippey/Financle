@@ -3,6 +3,7 @@ import { useCreateGame, useDailyGame } from "@/hooks/use-games";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Navbar } from "@/components/Navbar";
+import { MarketleHeader } from "@/components/MarketleHeader";
 import { useLocation } from "wouter";
 import { Calendar, Infinity as InfinityIcon, Trophy, Flame, Play, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
@@ -46,17 +47,15 @@ export default function Home() {
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       <Navbar />
       
-      <main className="flex-1 container mx-auto px-2 sm:px-4 py-1 sm:py-1 lg:py-2 flex flex-col items-center justify-center max-w-5xl">
+      <main className="flex-1 container mx-auto px-2 sm:px-4 py-3 sm:py-4 flex flex-col items-center justify-start max-w-5xl">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-3 sm:mb-6 lg:mb-10 space-y-1 sm:space-y-2 lg:space-y-3"
+          className="w-full mb-4 sm:mb-8"
         >
-          <h1 className="text-2xl sm:text-4xl lg:text-7xl font-extrabold tracking-tight mb-1 sm:mb-2">
-            <span className="text-gradient-primary">Marketle</span>
-          </h1>
-          <p className="text-xs sm:text-sm lg:text-lg text-muted-foreground max-w-2xl mx-auto text-balance">
+          <MarketleHeader />
+          <p className="text-xs sm:text-sm lg:text-base text-muted-foreground max-w-2xl mx-auto text-balance text-center mt-3 sm:mt-4">
             Guess the S&P 500 company from 6 clues.
           </p>
         </motion.div>
