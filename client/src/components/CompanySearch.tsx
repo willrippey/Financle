@@ -184,7 +184,7 @@ export function CompanySearch({ onSelect, disabled, inputRef, guessedSymbols = [
                     "data-[selected='true']:bg-transparent data-[highlighted='true']:bg-transparent",
                     "hover:bg-transparent focus:bg-transparent",
                     selectedIndex === idx
-                      ? "bg-primary/20 text-primary !bg-primary/20"
+                      ? "bg-primary/20 text-primary !bg-primary/20 !text-primary"
                       : "text-foreground"
                   )}
                 >
