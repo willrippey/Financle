@@ -196,7 +196,7 @@ export async function registerRoutes(
   async function buildGameState(game: any) {
     const allGuesses = await storage.getGuesses(game.id);
     const target = await storage.getCompany(game.targetCompanyId);
-    if (!target) throw new Error("Target company not found");
+    if (!target || !game) throw new Error("Target company or game not found");
 
     // Filter out skip markers (guesses where company_id == null)
     const actualGuesses = allGuesses.filter(g => g.companyId !== null);
@@ -237,8 +237,8 @@ export async function registerRoutes(
         description: target.description
       } : clues,
       guesses: actualGuesses.map(g => ({
-        symbol: g.company.symbol,
-        name: g.company.name,
+        symbol: g.company?.symbol || "???",
+        name: g.company?.name || "Unknown Company",
       })),
       skippedRounds: allGuesses.filter(g => g.companyId === null).map(g => g.roundNumber),
       score: game.score,
