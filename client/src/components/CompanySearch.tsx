@@ -101,7 +101,7 @@ export function CompanySearch({ onSelect, disabled, inputRef, guessedSymbols = [
           <input
             ref={ref}
             placeholder="Search company or ticker..."
-            value={exactMatch ? exactMatch.name : searchQuery}
+            value={searchQuery}
             onChange={(e) => {
               setSearchQuery(e.target.value);
               setValue("");
@@ -116,6 +116,13 @@ export function CompanySearch({ onSelect, disabled, inputRef, guessedSymbols = [
                 : "border-white/10 focus:bg-secondary/70 focus:border-white/20"
             )}
           />
+          {exactMatch && (
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none">
+              <span className="text-[10px] sm:text-xs font-medium text-primary bg-primary/10 px-2 py-0.5 rounded border border-primary/20 animate-in fade-in zoom-in duration-300">
+                {exactMatch.name}
+              </span>
+            </div>
+          )}
         </div>
       </PopoverTrigger>
       <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0 bg-card border-white/10 shadow-2xl" align="start">

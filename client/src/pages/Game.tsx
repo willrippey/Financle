@@ -123,8 +123,8 @@ export default function Game() {
   const clues = [
     { 
       title: "Sector & Industry", 
-      value: game.clues.category && (game.clues as any).subIndustry ? `${game.clues.category}\n${(game.clues as any).subIndustry}` : undefined,
-      revealed: !!(game.clues.category && (game.clues as any).subIndustry),
+      value: game.clues.category && game.clues.subIndustry ? `${game.clues.category}\n${game.clues.subIndustry}` : undefined,
+      revealed: !!(game.clues.category && game.clues.subIndustry),
       isMultiLine: true
     },
     { title: "Market Cap", value: game.clues.marketCap, revealed: !!game.clues.marketCap },
