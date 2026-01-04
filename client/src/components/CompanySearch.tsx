@@ -44,10 +44,14 @@ export function CompanySearch({ onSelect, disabled, inputRef, guessedSymbols = [
     return name.replace(/\s+(Inc\.?|PLC|Plc)$/i, "").trim().toLowerCase();
   };
   
-  const exactMatch = filteredCompanies.find(company => 
-    (company.symbol.length > 2 && company.symbol.toLowerCase() === debouncedQuery.toLowerCase()) ||
-    normalizeCompanyName(company.name) === normalizeCompanyName(debouncedQuery)
-  );
+  const exactMatch = filteredCompanies.find(company => {
+    const query = debouncedQuery.toLowerCase().trim();
+    // Only auto-select by ticker if ticker is 4 or more letters
+    // This prevents "AME" from matching Ametek too aggressively while typing for other companies
+    const tickerMatch = company.symbol.toLowerCase() === query && query.length >= 4;
+    const nameMatch = normalizeCompanyName(company.name) === normalizeCompanyName(debouncedQuery);
+    return tickerMatch || nameMatch;
+  });
   
   // Auto-select exact match when found
   React.useEffect(() => {
