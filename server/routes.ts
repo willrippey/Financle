@@ -143,8 +143,8 @@ export async function registerRoutes(
     }
 
     // Refresh game state
-    const finalGameData = await storage.getGame(gameId);
-    const response = await buildGameState(finalGameData!);
+    const finalGameResult = await storage.getGame(gameId);
+    const response = await buildGameState(finalGameResult!);
     res.json(response);
   });
 
