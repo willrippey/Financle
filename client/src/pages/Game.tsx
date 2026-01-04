@@ -123,7 +123,7 @@ export default function Game() {
   const clues = [
     { 
       title: "Sector & Industry", 
-      value: game.clues.category && game.clues.subIndustry ? `${game.clues.category}\n${game.clues.subIndustry}` : undefined,
+      value: (game.clues.category && game.clues.subIndustry) ? `${game.clues.category}\n${game.clues.subIndustry}` : undefined,
       revealed: !!(game.clues.category && game.clues.subIndustry),
       isMultiLine: true
     },
@@ -225,7 +225,7 @@ export default function Game() {
                     onSelect={handleGuess} 
                     disabled={submitGuess.isPending || skipRound.isPending} 
                     inputRef={searchInputRef}
-                    guessedSymbols={game.guesses.map(g => g.symbol)}
+                    guessedSymbols={game.guesses.map((g: any) => g.symbol)}
                     searchRef={searchCompRef}
                   />
                 </div>

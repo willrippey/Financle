@@ -154,7 +154,7 @@ export function CompanySearch({ onSelect, disabled, inputRef, guessedSymbols = [
                     "cursor-pointer",
                     selectedIndex === idx
                       ? "bg-primary/20 text-primary"
-                      : "aria-selected:bg-primary/10 aria-selected:text-primary"
+                      : "hover:bg-primary/20 hover:text-primary"
                   )}
                 >
                   <Check
