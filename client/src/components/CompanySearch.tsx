@@ -33,26 +33,55 @@ export function CompanySearch({ onSelect, disabled, inputRef, guessedSymbols = [
   }));
   
   const { data: companies, isLoading } = useCompanySearch(debouncedQuery);
-  
-  // Filter out already guessed companies and sort alphabetically
-  const filteredCompanies = companies?.filter(
-    (company) => !guessedSymbols.includes(company.symbol)
-  ).sort((a, b) => a.name.localeCompare(b.name)) || [];
 
-  // Find exact match based on ticker or company name (excluding Inc./Plc)
   const normalizeCompanyName = (name: string) => {
     return name.replace(/\s+(Inc\.?|PLC|Plc)$/i, "").trim().toLowerCase();
   };
-  
-  const exactMatch = filteredCompanies.find(company => {
+
+  // Custom sorting and matching logic
+  const filteredCompanies = React.useMemo(() => {
+    if (!companies || !debouncedQuery) return [];
+
     const query = debouncedQuery.toLowerCase().trim();
-    // Only auto-select by ticker if ticker is 4 or more letters
-    // This prevents "AME" from matching Ametek too aggressively while typing for other companies
-    const tickerMatch = company.symbol.toLowerCase() === query && query.length >= 4;
-    const nameMatch = normalizeCompanyName(company.name) === normalizeCompanyName(debouncedQuery);
-    return tickerMatch || nameMatch;
-  });
-  
+
+    return companies
+      .filter((company) => !guessedSymbols.includes(company.symbol))
+      .map((company) => {
+        const symbol = company.symbol.toLowerCase();
+        const normalizedName = normalizeCompanyName(company.name);
+
+        // Exact ticker match (only for 4+ chars)
+        const isTickerMatch = symbol === query && query.length >= 4;
+
+        // Name starts with query
+        const startsWith = normalizedName.startsWith(query);
+
+        // Query exists as a word in the name
+        const words = normalizedName.split(/\s+/);
+        const wordIndex = words.indexOf(query);
+        const isWordMatch = wordIndex !== -1;
+
+        // General inclusion
+        const includes = normalizedName.includes(query);
+
+        // Calculate relevance score
+        let score = 0;
+        if (isTickerMatch) score = 100;
+        else if (startsWith) score = 90;
+        else if (isWordMatch) score = 80 - wordIndex; // Earlier words are better
+        else if (includes) score = 50;
+
+        return { ...company, score };
+      })
+      .filter(c => c.score > 0)
+      .sort((a, b) => {
+        if (b.score !== a.score) return b.score - a.score;
+        return a.name.localeCompare(b.name);
+      });
+  }, [companies, debouncedQuery, guessedSymbols]);
+
+  const exactMatch = filteredCompanies.length > 0 && filteredCompanies[0].score >= 90 ? filteredCompanies[0] : undefined;
+
   // Auto-select exact match when found
   React.useEffect(() => {
     if (exactMatch && debouncedQuery.length > 0) {
