@@ -147,13 +147,9 @@ export function CompanySearch({ onSelect, disabled, inputRef, guessedSymbols = [
           />
           {exactMatch && (
             <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none">
-              <motion.span 
-                initial={{ scale: 0.95, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                className="text-[10px] sm:text-xs font-medium text-primary bg-primary/10 px-2 py-0.5 rounded border border-primary/20"
-              >
+              <span className="text-[10px] sm:text-xs font-medium text-primary bg-primary/10 px-2 py-0.5 rounded border border-primary/20 animate-in fade-in zoom-in duration-300">
                 {exactMatch.name}
-              </motion.span>
+              </span>
             </div>
           )}
         </div>
@@ -186,7 +182,7 @@ export function CompanySearch({ onSelect, disabled, inputRef, guessedSymbols = [
                   className={cn(
                     "cursor-pointer outline-none",
                     "data-[selected='true']:bg-transparent data-[highlighted='true']:bg-transparent",
-                    "hover:bg-transparent focus:bg-transparent transition-colors duration-200",
+                    "hover:bg-transparent focus:bg-transparent",
                     selectedIndex === idx
                       ? "bg-primary/20 text-primary !bg-primary/20 !text-primary"
                       : "text-foreground"
