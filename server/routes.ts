@@ -91,9 +91,9 @@ export async function registerRoutes(
     const gameId = Number(req.params.id);
     const userId = (req.user as any).claims.sub;
     
-    let game = await storage.getGame(gameId);
-    if (!game || game.userId !== userId) return res.sendStatus(404);
-    if (game.status !== 'playing') return res.status(400).json({ message: "Game over" });
+    const gameData = await storage.getGame(gameId);
+    if (!gameData || gameData.userId !== userId) return res.sendStatus(404);
+    if (gameData.status !== 'playing') return res.status(400).json({ message: "Game over" });
 
     const guessedCompany = await storage.getCompanyBySymbol(companySymbol);
     if (!guessedCompany) return res.status(400).json({ message: "Invalid company" });
@@ -101,7 +101,7 @@ export async function registerRoutes(
     const allGuesses = await storage.getGuesses(gameId);
     
     // Filter out skip markers (guesses where company_id == targetCompanyId)
-    const actualGuesses = allGuesses.filter(g => g.companyId !== game.targetCompanyId);
+    const actualGuesses = allGuesses.filter(g => g.companyId !== gameData.targetCompanyId);
     
     // Check if already guessed (only check actual guesses, not skip markers)
     if (actualGuesses.some(g => g.companyId === guessedCompany.id)) {
@@ -119,7 +119,7 @@ export async function registerRoutes(
     await storage.addGuess(gameId, guessedCompany.id, round);
 
     // Check win/loss
-    if (guessedCompany.id === game.targetCompanyId) {
+    if (guessedCompany.id === gameData.targetCompanyId) {
        const score = 100 - (actualGuesses.length * 10);
        await storage.updateGameStatus(gameId, 'won', score);
        
@@ -143,8 +143,8 @@ export async function registerRoutes(
     }
 
     // Refresh game state
-    game = await storage.getGame(gameId);
-    const response = await buildGameState(game!);
+    const finalGameData = await storage.getGame(gameId);
+    const response = await buildGameState(finalGameData!);
     res.json(response);
   });
 
@@ -153,9 +153,9 @@ export async function registerRoutes(
     const gameId = Number(req.params.id);
     const userId = (req.user as any).claims.sub;
     
-    let game = await storage.getGame(gameId);
-    if (!game || game.userId !== userId) return res.sendStatus(404);
-    if (game.status !== 'playing') return res.status(400).json({ message: "Game over" });
+    let gameData = await storage.getGame(gameId);
+    if (!gameData || gameData.userId !== userId) return res.sendStatus(404);
+    if (gameData.status !== 'playing') return res.status(400).json({ message: "Game over" });
 
     const guesses = await storage.getGuesses(gameId);
     const round = guesses.length + 1;
@@ -183,8 +183,8 @@ export async function registerRoutes(
     }
 
     // Refresh game state
-    game = await storage.getGame(gameId);
-    const response = await buildGameState(game!);
+    gameData = await storage.getGame(gameId);
+    const response = await buildGameState(gameData!);
     res.json(response);
   });
 
@@ -194,6 +194,7 @@ export async function registerRoutes(
   });
 
   async function buildGameState(game: any) {
+    if (!game) throw new Error("Game not found");
     const allGuesses = await storage.getGuesses(game.id);
     const target = await storage.getCompany(game.targetCompanyId);
     if (!target || !game) throw new Error("Target company or game not found");
