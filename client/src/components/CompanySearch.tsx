@@ -151,10 +151,12 @@ export function CompanySearch({ onSelect, disabled, inputRef, guessedSymbols = [
                   }}
                   onMouseEnter={() => setSelectedIndex(idx)}
                   className={cn(
-                    "cursor-pointer",
+                    "cursor-pointer outline-none",
+                    "data-[selected='true']:bg-transparent data-[highlighted='true']:bg-transparent",
+                    "hover:bg-transparent focus:bg-transparent",
                     selectedIndex === idx
-                      ? "bg-primary/20 text-primary"
-                      : "hover:bg-primary/20 hover:text-primary"
+                      ? "bg-primary/20 text-primary !bg-primary/20"
+                      : "text-foreground"
                   )}
                 >
                   <Check
