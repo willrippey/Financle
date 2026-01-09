@@ -67,6 +67,75 @@ export function CustomGameModal({ open, onOpenChange, onStartGame, isPending }: 
     return indexA - indexB;
   }) || [];
 
+  const getMergedMarketCapRanges = (caps: string[]): string => {
+    const sortedCaps = [...caps].sort((a, b) => {
+      const indexA = MARKET_CAP_ORDER.indexOf(a);
+      const indexB = MARKET_CAP_ORDER.indexOf(b);
+      return indexA - indexB;
+    });
+
+    const ranges: string[] = [];
+    let rangeStart: string | null = null;
+    let rangeEnd: string | null = null;
+    let prevIndex = -2;
+
+    for (const cap of sortedCaps) {
+      const currentIndex = MARKET_CAP_ORDER.indexOf(cap);
+      
+      if (prevIndex === -2 || currentIndex !== prevIndex + 1) {
+        if (rangeStart !== null) {
+          ranges.push(rangeStart === rangeEnd ? rangeStart! : formatMergedRange(rangeStart!, rangeEnd!));
+        }
+        rangeStart = cap;
+        rangeEnd = cap;
+      } else {
+        rangeEnd = cap;
+      }
+      prevIndex = currentIndex;
+    }
+    
+    if (rangeStart !== null) {
+      ranges.push(rangeStart === rangeEnd ? rangeStart! : formatMergedRange(rangeStart!, rangeEnd!));
+    }
+
+    if (ranges.length === 1) {
+      return `market cap ${ranges[0]}`;
+    }
+    return `market cap (${ranges.slice(0, 2).join(" or ")}${ranges.length > 2 ? ` +${ranges.length - 2} more` : ""})`;
+  };
+
+  const formatMergedRange = (start: string, end: string): string => {
+    const getUpperBound = (cap: string): string => {
+      if (cap === "$1T+") return "$1T+";
+      if (cap === "$500B - $1T") return "$1T";
+      if (cap === "$200B - $500B") return "$500B";
+      if (cap === "$100B - $200B") return "$200B";
+      if (cap === "$50B - $100B" || cap === "$50B - 100B") return "$100B";
+      if (cap === "$20B - $50B") return "$50B";
+      if (cap === "<$20B") return "$20B";
+      return cap;
+    };
+    
+    const getLowerBound = (cap: string): string => {
+      if (cap === "$1T+") return "$1T";
+      if (cap === "$500B - $1T") return "$500B";
+      if (cap === "$200B - $500B") return "$200B";
+      if (cap === "$100B - $200B") return "$100B";
+      if (cap === "$50B - $100B" || cap === "$50B - 100B") return "$50B";
+      if (cap === "$20B - $50B") return "$20B";
+      if (cap === "<$20B") return "<$20B";
+      return cap;
+    };
+
+    const lower = getLowerBound(end);
+    const upper = getUpperBound(start);
+    
+    if (start === "$1T+" && end === "<$20B") return "all market caps";
+    if (start === "$1T+") return `${upper}`;
+    if (end === "<$20B") return `<${upper}`;
+    return `${lower} - ${upper}`;
+  };
+
   const filterSummary = useMemo(() => {
     if (!hasSelections) {
       return "Your game will include all S&P 500 companies.";
@@ -75,11 +144,7 @@ export function CustomGameModal({ open, onOpenChange, onStartGame, isPending }: 
     const parts: string[] = [];
     
     if (selectedMarketCaps.length > 0) {
-      if (selectedMarketCaps.length === 1) {
-        parts.push(`market cap ${selectedMarketCaps[0]}`);
-      } else {
-        parts.push(`market cap (${selectedMarketCaps.slice(0, 2).join(" or ")}${selectedMarketCaps.length > 2 ? ` +${selectedMarketCaps.length - 2} more` : ""})`);
-      }
+      parts.push(getMergedMarketCapRanges(selectedMarketCaps));
     }
     
     if (selectedSectors.length > 0) {
