@@ -67,6 +67,36 @@ export function CustomGameModal({ open, onOpenChange, onStartGame, isPending }: 
     return indexA - indexB;
   }) || [];
 
+  const getLowerBound = (cap: string): string => {
+    if (cap === "$1T+") return "$1T";
+    if (cap === "$500B - $1T") return "$500B";
+    if (cap === "$200B - $500B") return "$200B";
+    if (cap === "$100B - $200B") return "$100B";
+    if (cap === "$50B - $100B" || cap === "$50B - 100B") return "$50B";
+    if (cap === "$20B - $50B") return "$20B";
+    if (cap === "<$20B") return "$0";
+    return cap;
+  };
+
+  const formatMergedRange = (highCap: string, lowCap: string): string => {
+    const includesTop = highCap === "$1T+";
+    const includesBottom = lowCap === "<$20B";
+    
+    if (includesTop && includesBottom) {
+      return "all market caps";
+    }
+    
+    if (includesTop) {
+      return `${getLowerBound(lowCap)}+`;
+    }
+    
+    if (includesBottom) {
+      return `<${getLowerBound(highCap)}`;
+    }
+    
+    return `${getLowerBound(lowCap)} - ${getLowerBound(highCap)}`;
+  };
+
   const getMergedMarketCapRanges = (caps: string[]): string => {
     const sortedCaps = [...caps].sort((a, b) => {
       const indexA = MARKET_CAP_ORDER.indexOf(a);
@@ -75,65 +105,36 @@ export function CustomGameModal({ open, onOpenChange, onStartGame, isPending }: 
     });
 
     const ranges: string[] = [];
-    let rangeStart: string | null = null;
-    let rangeEnd: string | null = null;
-    let prevIndex = -2;
+    let rangeStartIdx = -1;
+    let rangeEndIdx = -1;
 
-    for (const cap of sortedCaps) {
-      const currentIndex = MARKET_CAP_ORDER.indexOf(cap);
+    for (let i = 0; i < sortedCaps.length; i++) {
+      const currentIndex = MARKET_CAP_ORDER.indexOf(sortedCaps[i]);
       
-      if (prevIndex === -2 || currentIndex !== prevIndex + 1) {
-        if (rangeStart !== null) {
-          ranges.push(rangeStart === rangeEnd ? rangeStart! : formatMergedRange(rangeStart!, rangeEnd!));
-        }
-        rangeStart = cap;
-        rangeEnd = cap;
+      if (rangeStartIdx === -1) {
+        rangeStartIdx = currentIndex;
+        rangeEndIdx = currentIndex;
+      } else if (currentIndex === rangeEndIdx + 1) {
+        rangeEndIdx = currentIndex;
       } else {
-        rangeEnd = cap;
+        const highCap = MARKET_CAP_ORDER[rangeStartIdx];
+        const lowCap = MARKET_CAP_ORDER[rangeEndIdx];
+        ranges.push(rangeStartIdx === rangeEndIdx ? highCap : formatMergedRange(highCap, lowCap));
+        rangeStartIdx = currentIndex;
+        rangeEndIdx = currentIndex;
       }
-      prevIndex = currentIndex;
     }
     
-    if (rangeStart !== null) {
-      ranges.push(rangeStart === rangeEnd ? rangeStart! : formatMergedRange(rangeStart!, rangeEnd!));
+    if (rangeStartIdx !== -1) {
+      const highCap = MARKET_CAP_ORDER[rangeStartIdx];
+      const lowCap = MARKET_CAP_ORDER[rangeEndIdx];
+      ranges.push(rangeStartIdx === rangeEndIdx ? highCap : formatMergedRange(highCap, lowCap));
     }
 
     if (ranges.length === 1) {
       return `market cap ${ranges[0]}`;
     }
     return `market cap (${ranges.slice(0, 2).join(" or ")}${ranges.length > 2 ? ` +${ranges.length - 2} more` : ""})`;
-  };
-
-  const formatMergedRange = (start: string, end: string): string => {
-    const getUpperBound = (cap: string): string => {
-      if (cap === "$1T+") return "$1T+";
-      if (cap === "$500B - $1T") return "$1T";
-      if (cap === "$200B - $500B") return "$500B";
-      if (cap === "$100B - $200B") return "$200B";
-      if (cap === "$50B - $100B" || cap === "$50B - 100B") return "$100B";
-      if (cap === "$20B - $50B") return "$50B";
-      if (cap === "<$20B") return "$20B";
-      return cap;
-    };
-    
-    const getLowerBound = (cap: string): string => {
-      if (cap === "$1T+") return "$1T";
-      if (cap === "$500B - $1T") return "$500B";
-      if (cap === "$200B - $500B") return "$200B";
-      if (cap === "$100B - $200B") return "$100B";
-      if (cap === "$50B - $100B" || cap === "$50B - 100B") return "$50B";
-      if (cap === "$20B - $50B") return "$20B";
-      if (cap === "<$20B") return "<$20B";
-      return cap;
-    };
-
-    const lower = getLowerBound(end);
-    const upper = getUpperBound(start);
-    
-    if (start === "$1T+" && end === "<$20B") return "all market caps";
-    if (start === "$1T+") return `${upper}`;
-    if (end === "<$20B") return `<${upper}`;
-    return `${lower} - ${upper}`;
   };
 
   const filterSummary = useMemo(() => {
