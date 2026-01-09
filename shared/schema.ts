@@ -97,6 +97,7 @@ export type CustomGameFilters = {
   marketCaps?: string[];
   sectors?: string[];
   subIndustries?: string[];
+  filterMode?: 'and' | 'or';
 };
 
 export type CreateGameRequest = {

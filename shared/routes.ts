@@ -50,6 +50,7 @@ export const api = {
           marketCaps: z.array(z.string()).optional(),
           sectors: z.array(z.string()).optional(),
           subIndustries: z.array(z.string()).optional(),
+          filterMode: z.enum(['and', 'or']).optional(),
         }).optional(),
       }),
       responses: {

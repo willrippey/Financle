@@ -85,6 +85,7 @@ export class DatabaseStorage implements IStorage {
 
   async getRandomCompany(filters?: CustomGameFilters): Promise<Company | undefined> {
     let conditions: any[] = [];
+    const useOrLogic = filters?.filterMode === 'or';
     
     if (filters?.marketCaps && filters.marketCaps.length > 0) {
       conditions.push(sql`${companies.marketCap} IN ${filters.marketCaps}`);
@@ -100,7 +101,7 @@ export class DatabaseStorage implements IStorage {
     
     if (conditions.length > 0) {
       const whereClause = conditions.reduce((acc, cond, idx) => 
-        idx === 0 ? cond : sql`${acc} AND ${cond}`
+        idx === 0 ? cond : (useOrLogic ? sql`${acc} OR ${cond}` : sql`${acc} AND ${cond}`)
       );
       query = query.where(whereClause) as any;
     }
