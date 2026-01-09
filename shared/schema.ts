@@ -93,8 +93,15 @@ export type Company = typeof companies.$inferSelect;
 export type Game = typeof games.$inferSelect;
 export type Guess = typeof guesses.$inferSelect;
 
+export type CustomGameFilters = {
+  marketCaps?: string[];
+  sectors?: string[];
+  subIndustries?: string[];
+};
+
 export type CreateGameRequest = {
-  type: 'daily' | 'endless';
+  type: 'daily' | 'endless' | 'custom';
+  filters?: CustomGameFilters;
 };
 
 export type SubmitGuessRequest = {
@@ -103,7 +110,7 @@ export type SubmitGuessRequest = {
 
 export type GameStateResponse = {
   id: number;
-  type: 'daily' | 'endless';
+  type: 'daily' | 'endless' | 'custom';
   status: 'playing' | 'won' | 'lost';
   round: number;
   endlessStreak?: number; // Current endless mode streak for the user

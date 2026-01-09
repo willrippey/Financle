@@ -2,7 +2,7 @@ import { db } from "./db";
 import {
   users, userStats, companies, games, guesses,
   type User, type UserStats, type Company, type Game, type Guess,
-  type CreateGameRequest, type GameStateResponse
+  type CreateGameRequest, type GameStateResponse, type CustomGameFilters
 } from "@shared/schema";
 import { eq, and, desc, sql } from "drizzle-orm";
 
@@ -16,10 +16,11 @@ export interface IStorage {
   searchCompanies(query: string): Promise<Company[]>;
   getCompanyBySymbol(symbol: string): Promise<Company | undefined>;
   getCompany(id: number): Promise<Company | undefined>;
-  getRandomCompany(): Promise<Company>;
+  getRandomCompany(filters?: CustomGameFilters): Promise<Company | undefined>;
+  getAvailableFilters(): Promise<{ marketCaps: string[]; sectors: string[]; subIndustries: string[] }>;
   
   // Games
-  createGame(userId: string, type: 'daily' | 'endless', targetCompanyId: number): Promise<Game>;
+  createGame(userId: string, type: 'daily' | 'endless' | 'custom', targetCompanyId: number): Promise<Game>;
   getGame(id: number): Promise<Game | undefined>;
   getDailyGame(userId: string, date: string): Promise<Game | undefined>;
   updateGameStatus(id: number, status: 'won' | 'lost', score?: number): Promise<Game>;
@@ -82,12 +83,45 @@ export class DatabaseStorage implements IStorage {
     return company;
   }
 
-  async getRandomCompany(): Promise<Company> {
-    const [company] = await db.select().from(companies).orderBy(sql`RANDOM()`).limit(1);
+  async getRandomCompany(filters?: CustomGameFilters): Promise<Company | undefined> {
+    let conditions: any[] = [];
+    
+    if (filters?.marketCaps && filters.marketCaps.length > 0) {
+      conditions.push(sql`${companies.marketCap} IN ${filters.marketCaps}`);
+    }
+    if (filters?.sectors && filters.sectors.length > 0) {
+      conditions.push(sql`${companies.sector} IN ${filters.sectors}`);
+    }
+    if (filters?.subIndustries && filters.subIndustries.length > 0) {
+      conditions.push(sql`${companies.subIndustry} IN ${filters.subIndustries}`);
+    }
+    
+    let query = db.select().from(companies);
+    
+    if (conditions.length > 0) {
+      const whereClause = conditions.reduce((acc, cond, idx) => 
+        idx === 0 ? cond : sql`${acc} AND ${cond}`
+      );
+      query = query.where(whereClause) as any;
+    }
+    
+    const [company] = await query.orderBy(sql`RANDOM()`).limit(1);
     return company;
   }
 
-  async createGame(userId: string, type: 'daily' | 'endless', targetCompanyId: number): Promise<Game> {
+  async getAvailableFilters(): Promise<{ marketCaps: string[]; sectors: string[]; subIndustries: string[] }> {
+    const marketCapsResult = await db.selectDistinct({ value: companies.marketCap }).from(companies).orderBy(companies.marketCap);
+    const sectorsResult = await db.selectDistinct({ value: companies.sector }).from(companies).orderBy(companies.sector);
+    const subIndustriesResult = await db.selectDistinct({ value: companies.subIndustry }).from(companies).orderBy(companies.subIndustry);
+    
+    return {
+      marketCaps: marketCapsResult.map(r => r.value).filter(v => v.trim() !== ''),
+      sectors: sectorsResult.map(r => r.value).filter(v => v.trim() !== ''),
+      subIndustries: subIndustriesResult.map(r => r.value).filter(v => v.trim() !== ''),
+    };
+  }
+
+  async createGame(userId: string, type: 'daily' | 'endless' | 'custom', targetCompanyId: number): Promise<Game> {
     const [game] = await db.insert(games).values({
       userId,
       type,

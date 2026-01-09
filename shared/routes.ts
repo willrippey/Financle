@@ -45,11 +45,27 @@ export const api = {
       method: 'POST' as const,
       path: '/api/games',
       input: z.object({
-        type: z.enum(['daily', 'endless']),
+        type: z.enum(['daily', 'endless', 'custom']),
+        filters: z.object({
+          marketCaps: z.array(z.string()).optional(),
+          sectors: z.array(z.string()).optional(),
+          subIndustries: z.array(z.string()).optional(),
+        }).optional(),
       }),
       responses: {
         201: z.custom<any>(), // GameStateResponse
         400: errorSchemas.validation,
+      },
+    },
+    getFilters: {
+      method: 'GET' as const,
+      path: '/api/games/filters',
+      responses: {
+        200: z.object({
+          marketCaps: z.array(z.string()),
+          sectors: z.array(z.string()),
+          subIndustries: z.array(z.string()),
+        }),
       },
     },
     get: {

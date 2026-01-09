@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { api, buildUrl, type SubmitGuessRequest, type CreateGameRequest } from "@shared/routes";
+import { api, buildUrl } from "@shared/routes";
+import type { CreateGameRequest, SubmitGuessRequest } from "@shared/schema";
 
 // GET /api/games/daily/current
 export function useDailyGame() {
@@ -150,6 +151,18 @@ export function useLeaderboard() {
       const res = await fetch(api.leaderboard.list.path, { credentials: "include" });
       if (!res.ok) throw new Error("Failed to fetch leaderboard");
       return api.leaderboard.list.responses[200].parse(await res.json());
+    },
+  });
+}
+
+// GET /api/games/filters
+export function useGameFilters() {
+  return useQuery({
+    queryKey: [api.games.getFilters.path],
+    queryFn: async () => {
+      const res = await fetch(api.games.getFilters.path, { credentials: "include" });
+      if (!res.ok) throw new Error("Failed to fetch game filters");
+      return api.games.getFilters.responses[200].parse(await res.json());
     },
   });
 }

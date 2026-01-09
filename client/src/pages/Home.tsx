@@ -1,17 +1,21 @@
+import { useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useCreateGame, useDailyGame } from "@/hooks/use-games";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Navbar } from "@/components/Navbar";
 import { MarketleHeader } from "@/components/MarketleHeader";
+import { CustomGameModal } from "@/components/CustomGameModal";
 import { useLocation } from "wouter";
-import { Calendar, Infinity as InfinityIcon, Trophy, Flame, Play, Loader2 } from "lucide-react";
+import { Calendar, Infinity as InfinityIcon, Trophy, Flame, Loader2, Settings2 } from "lucide-react";
 import { motion } from "framer-motion";
+import type { CustomGameFilters } from "@shared/schema";
 
 export default function Home() {
   const { user, isLoading: isAuthLoading } = useAuth();
   const [, setLocation] = useLocation();
   const createGameMutation = useCreateGame();
+  const [customGameModalOpen, setCustomGameModalOpen] = useState(false);
   
   // Prefetch daily game to check status
   const { data: dailyGame, isLoading: isDailyLoading } = useDailyGame();
@@ -31,6 +35,15 @@ export default function Home() {
         setLocation(`/game/${dailyGame.id}`);
       }, 0);
     }
+  };
+
+  const handleStartCustomGame = (filters: CustomGameFilters) => {
+    createGameMutation.mutate({ type: 'custom', filters }, {
+      onSuccess: (game) => {
+        setCustomGameModalOpen(false);
+        setLocation(`/game/${game.id}`);
+      }
+    });
   };
 
   if (isAuthLoading || (user && isDailyLoading)) {
@@ -84,7 +97,7 @@ export default function Home() {
             </Card>
           </motion.div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 w-full max-w-4xl px-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 w-full max-w-4xl px-2">
             {/* Daily Challenge Card */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
@@ -163,6 +176,38 @@ export default function Home() {
                 </CardFooter>
               </Card>
             </motion.div>
+
+            {/* Custom Game Card */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="sm:col-span-2 lg:col-span-1"
+            >
+              <Card className="h-full border-white/10 bg-card/50 hover:border-white/20 transition-all duration-300 group flex flex-col">
+                <CardHeader className="pb-1 sm:pb-2">
+                  <div className="flex justify-between items-start mb-1 sm:mb-2">
+                    <div className="p-1.5 sm:p-2 bg-cyan-500/20 rounded-lg text-cyan-400">
+                      <Settings2 className="h-4 w-4 sm:h-6 sm:w-6" />
+                    </div>
+                  </div>
+                  <CardTitle className="text-base sm:text-xl text-cyan-100">Custom Game</CardTitle>
+                  <CardDescription className="text-xs sm:text-sm">
+                    Filter by sector, market cap, or industry.
+                  </CardDescription>
+                </CardHeader>
+                <CardFooter className="pt-3 sm:pt-4 mt-auto pb-0">
+                  <Button 
+                    variant="outline" 
+                    className="w-full h-9 sm:h-10 text-xs sm:text-sm border-white/10 hover:bg-white/5 hover:text-white"
+                    onClick={() => setCustomGameModalOpen(true)}
+                    data-testid="button-custom-game"
+                  >
+                    Customize
+                  </Button>
+                </CardFooter>
+              </Card>
+            </motion.div>
           </div>
         )}
 
@@ -198,6 +243,13 @@ export default function Home() {
       <footer className="w-full py-2 sm:py-4 border-t border-white/5 text-center text-xs text-muted-foreground px-2">
         <p>© 2024 Marketle</p>
       </footer>
+
+      <CustomGameModal
+        open={customGameModalOpen}
+        onOpenChange={setCustomGameModalOpen}
+        onStartGame={handleStartCustomGame}
+        isPending={createGameMutation.isPending && createGameMutation.variables?.type === 'custom'}
+      />
     </div>
   );
 }

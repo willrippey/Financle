@@ -54,6 +54,9 @@ export async function registerRoutes(
     let game = await storage.getDailyGame(userId, today);
     if (!game) {
       const target = await storage.getRandomCompany();
+      if (!target) {
+        return res.status(500).json({ message: "No companies available" });
+      }
       game = await storage.createGame(userId, 'daily', target.id);
     }
     
@@ -61,17 +64,26 @@ export async function registerRoutes(
     res.json(response);
   });
 
+  app.get(api.games.getFilters.path, async (req, res) => {
+    const filters = await storage.getAvailableFilters();
+    res.json(filters);
+  });
+
   app.post(api.games.create.path, async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
     const userId = (req.user as any).claims.sub;
-    const { type } = req.body;
+    const { type, filters } = req.body;
     
     if (type === 'daily') {
        return res.status(400).json({ message: "Use get daily endpoint" });
     }
 
-    const target = await storage.getRandomCompany();
-    const game = await storage.createGame(userId, 'endless', target.id);
+    const target = await storage.getRandomCompany(type === 'custom' ? filters : undefined);
+    if (!target) {
+      return res.status(400).json({ message: "No companies match your filters. Please adjust your criteria." });
+    }
+    
+    const game = await storage.createGame(userId, type, target.id);
     const response = await buildGameState(game);
     res.status(201).json(response);
   });
