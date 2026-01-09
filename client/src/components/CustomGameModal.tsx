@@ -120,6 +120,7 @@ export function CustomGameModal({ open, onOpenChange, onStartGame, isPending }: 
       return `${formatBillions(span.min)} - ${formatBillions(span.max)}`;
     };
     
+    mergedSpans.reverse();
     const formattedRanges = mergedSpans.map(formatSpan);
     
     if (formattedRanges.length === 1) {
