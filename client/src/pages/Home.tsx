@@ -18,8 +18,8 @@ export default function Home() {
   const createGameMutation = useCreateGame();
   const [customGameModalOpen, setCustomGameModalOpen] = useState(false);
   
-  // Prefetch daily game to check status
-  const { data: dailyGame, isLoading: isDailyLoading } = useDailyGame();
+  // Prefetch daily game to check status (only when user is authenticated)
+  const { data: dailyGame, isLoading: isDailyLoading } = useDailyGame(!!user);
 
   const handlePlayEndless = (difficulty: 'easy' | 'hard') => {
     createGameMutation.mutate({ type: 'endless', difficulty }, {

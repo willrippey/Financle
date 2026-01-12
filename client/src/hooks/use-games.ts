@@ -3,11 +3,16 @@ import { api, buildUrl } from "@shared/routes";
 import type { CreateGameRequest, SubmitGuessRequest } from "@shared/schema";
 
 // GET /api/games/daily/current
-export function useDailyGame() {
+export function useDailyGame(enabled: boolean = true) {
   return useQuery({
     queryKey: [api.games.daily.path],
+    enabled,
     queryFn: async () => {
-      const res = await fetch(api.games.daily.path, { credentials: "include" });
+      const res = await fetch(api.games.daily.path, { 
+        credentials: "include",
+        cache: "no-store" // Prevent 304 caching issues
+      });
+      if (res.status === 401) return null; // Return null for unauthenticated
       if (!res.ok) throw new Error("Failed to fetch daily game");
       return api.games.daily.responses[200].parse(await res.json());
     },
