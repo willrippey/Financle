@@ -87,7 +87,9 @@ export async function registerRoutes(
       return res.status(400).json({ message: "No companies match your filters. Please adjust your criteria." });
     }
     
-    const game = await storage.createGame(userId, type, target.id, type === 'custom' ? filters : undefined);
+    // Store filters for custom games, or difficulty for endless games
+    const gameFilters = type === 'custom' ? filters : (type === 'endless' && difficulty ? { difficulty } : undefined);
+    const game = await storage.createGame(userId, type, target.id, gameFilters);
     const response = await buildGameState(game);
     res.status(201).json(response);
   });

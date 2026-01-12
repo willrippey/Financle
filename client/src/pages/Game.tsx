@@ -117,9 +117,14 @@ export default function Game() {
 
   const handlePlayAgain = () => {
     const gameType = game.type === 'custom' ? 'custom' : 'endless';
-    const gameFilters = game.type === 'custom' && (game as any).filters ? (game as any).filters : undefined;
+    const storedFilters = (game as any).filters;
     
-    createGame.mutate({ type: gameType, filters: gameFilters }, {
+    // For custom games, pass the filters
+    // For endless games, extract difficulty from stored filters
+    const gameFilters = game.type === 'custom' ? storedFilters : undefined;
+    const gameDifficulty = game.type === 'endless' && storedFilters?.difficulty ? storedFilters.difficulty : undefined;
+    
+    createGame.mutate({ type: gameType, filters: gameFilters, difficulty: gameDifficulty }, {
       onSuccess: (newGame) => {
         setLocation(`/game/${newGame.id}`);
       }
