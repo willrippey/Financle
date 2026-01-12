@@ -26,18 +26,55 @@ function generateShareText(game: any, isDaily: boolean): string {
   const totalRounds = 6;
   const roundsUsed = Math.max(1, (game?.round || 1) - 1);
   const skippedRounds = game?.skippedRounds || [];
+  const guesses = game?.guesses || [];
+  const target = game?.targetCompany;
+  
+  // Check if a guess matches any revealed clue at a given round
+  const matchesClueAtRound = (guess: any, round: number): boolean => {
+    if (!target || !guess) return false;
+    
+    // Clues revealed by round:
+    // Round 1: Sector + Sub-Industry (always visible)
+    // Round 2: Market Cap  
+    // Round 3: Headquarters
+    // Round 4: Founded
+    // Round 5: First Letter
+    // Round 6: Description
+    
+    // Always check sector and sub-industry (revealed from start)
+    if (guess.sector === target.sector) return true;
+    if (guess.subIndustry === target.subIndustry) return true;
+    
+    // Check additional clues based on round
+    if (round >= 2 && guess.marketCap === target.marketCap) return true;
+    if (round >= 3 && guess.headquarters === target.headquarters) return true;
+    if (round >= 4 && guess.founded === target.founded) return true;
+    if (round >= 5 && guess.firstLetter === target.name?.[0]) return true;
+    
+    return false;
+  };
   
   // Build emoji grid
   let emojiGrid = "";
+  let guessIndex = 0;
+  
   for (let round = 1; round <= totalRounds; round++) {
     if (round > roundsUsed) {
       emojiGrid += "\u2B1C"; // white square - unused
     } else if (isWin && round === roundsUsed) {
       emojiGrid += "\uD83D\uDFE9"; // green square - correct
     } else if (skippedRounds.includes(round)) {
-      emojiGrid += "\uD83D\uDFE8"; // yellow square - skipped
+      emojiGrid += "\u27A1\uFE0F"; // arrow - skipped
     } else {
-      emojiGrid += "\uD83D\uDFE5"; // red square - wrong guess
+      // Get the guess for this round
+      const guess = guesses[guessIndex];
+      guessIndex++;
+      
+      if (matchesClueAtRound(guess, round)) {
+        emojiGrid += "\uD83D\uDFE8"; // yellow square - partial match
+      } else {
+        emojiGrid += "\uD83D\uDFE5"; // red square - no match
+      }
     }
   }
   

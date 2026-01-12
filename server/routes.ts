@@ -257,6 +257,13 @@ export async function registerRoutes(
       guesses: actualGuesses.map(g => ({
         symbol: g.company?.symbol || "???",
         name: g.company?.name || "Unknown Company",
+        sector: g.company?.sector,
+        subIndustry: g.company?.subIndustry,
+        marketCap: g.company?.marketCap,
+        headquarters: g.company?.headquarters,
+        founded: g.company?.founded,
+        firstLetter: g.company?.name?.[0],
+        roundNumber: g.roundNumber,
       })),
       skippedRounds: allGuesses.filter(g => g.companyId === null).map(g => g.roundNumber),
       score: game.score,
