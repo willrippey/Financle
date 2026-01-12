@@ -29,29 +29,32 @@ function generateShareText(game: any, isDaily: boolean): string {
   const guesses = game?.guesses || [];
   const target = game?.targetCompany;
   
-  // Check if a guess matches any revealed clue at a given round
+  // Check if a guess matches the specific clue for that round
   const matchesClueAtRound = (guess: any, round: number): boolean => {
     if (!target || !guess) return false;
     
-    // Clues revealed by round:
-    // Round 1: Sector + Sub-Industry (always visible)
+    // Each round checks ONLY the clue revealed at that round:
+    // Round 1: Sector + Sub-Industry
     // Round 2: Market Cap  
     // Round 3: Headquarters
     // Round 4: Founded
     // Round 5: First Letter
-    // Round 6: Description
+    // Round 6: Description (no match possible)
     
-    // Always check sector and sub-industry (revealed from start)
-    if (guess.sector === target.sector) return true;
-    if (guess.subIndustry === target.subIndustry) return true;
-    
-    // Check additional clues based on round
-    if (round >= 2 && guess.marketCap === target.marketCap) return true;
-    if (round >= 3 && guess.headquarters === target.headquarters) return true;
-    if (round >= 4 && guess.founded === target.founded) return true;
-    if (round >= 5 && guess.firstLetter === target.name?.[0]) return true;
-    
-    return false;
+    switch (round) {
+      case 1:
+        return guess.sector === target.sector || guess.subIndustry === target.subIndustry;
+      case 2:
+        return guess.marketCap === target.marketCap;
+      case 3:
+        return guess.headquarters === target.headquarters;
+      case 4:
+        return guess.founded === target.founded;
+      case 5:
+        return guess.firstLetter === target.name?.[0];
+      default:
+        return false;
+    }
   };
   
   // Build emoji grid
@@ -239,23 +242,14 @@ export function GameOverModal({ open, game, onPlayAgain, isDaily, onClose }: Gam
             ) : (
               <div className="w-full space-y-1.5">
                 <div className="flex gap-1.5 w-full">
-                  <Button 
-                    variant="outline" 
-                    className="flex-1 h-8 sm:h-9 text-xs sm:text-sm" 
-                    onClick={handleShare}
-                    data-testid="button-share"
-                  >
-                    {copied ? <Check className="mr-1.5 h-3.5 w-3.5" /> : <Share2 className="mr-1.5 h-3.5 w-3.5" />}
-                    {copied ? "Copied!" : "Share"}
+                  <Button variant="outline" className="flex-1 h-8 sm:h-9 text-xs sm:text-sm" asChild>
+                    <a href="/">Home</a>
                   </Button>
                   <Button onClick={onPlayAgain} className="flex-1 h-8 sm:h-9 text-xs sm:text-sm">
                     <RefreshCw className="mr-1.5 h-3.5 w-3.5" />
                     Play Again
                   </Button>
                 </div>
-                <Button variant="ghost" className="w-full h-7 text-xs text-muted-foreground" asChild>
-                  <a href="/">Back to Home</a>
-                </Button>
               </div>
             )}
           </DialogFooter>
