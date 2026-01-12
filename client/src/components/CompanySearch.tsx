@@ -116,12 +116,7 @@ export function CompanySearch({ onSelect, disabled, inputRef, guessedSymbols = [
       setOpen(true);
     } else if (e.key === "Enter") {
       e.preventDefault();
-      if (exactMatch) {
-        setValue("");
-        onSelect(exactMatch.symbol);
-        setOpen(false);
-        setSearchQuery("");
-      } else if (filteredCompanies.length > 0 && selectedIndex < filteredCompanies.length) {
+      if (filteredCompanies.length > 0 && selectedIndex < filteredCompanies.length) {
         const selected = filteredCompanies[selectedIndex];
         setValue("");
         onSelect(selected.symbol);
