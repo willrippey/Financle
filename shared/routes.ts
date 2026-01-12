@@ -106,15 +106,31 @@ export const api = {
       }
     }
   },
-  leaderboard: {
-    list: {
+  stats: {
+    get: {
       method: 'GET' as const,
-      path: '/api/leaderboard',
+      path: '/api/stats',
       responses: {
-        200: z.array(z.object({
-          username: z.string(),
-          score: z.number(),
-        })),
+        200: z.object({
+          daily: z.object({
+            totalPlayed: z.number(),
+            totalWins: z.number(),
+            winPercentage: z.number(),
+            avgGuesses: z.number(),
+            bestSector: z.string().nullable(),
+            worstSector: z.string().nullable(),
+          }),
+          endless: z.object({
+            totalPlayed: z.number(),
+            totalWins: z.number(),
+            winPercentage: z.number(),
+            avgGuesses: z.number(),
+            bestSector: z.string().nullable(),
+            worstSector: z.string().nullable(),
+            currentStreak: z.number(),
+            maxStreak: z.number(),
+          }),
+        }),
       },
     },
   }

@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useGameFilters } from "@/hooks/use-games";
-import { Loader2, Building2, DollarSign, Briefcase } from "lucide-react";
+import { Loader2, DollarSign, Briefcase } from "lucide-react";
 import type { CustomGameFilters } from "@shared/schema";
 
 interface CustomGameModalProps {
@@ -48,7 +48,6 @@ export function CustomGameModal({ open, onOpenChange, onStartGame, isPending }: 
   const { data: filters, isLoading } = useGameFilters();
   const [selectedMarketCaps, setSelectedMarketCaps] = useState<string[]>([]);
   const [selectedSectors, setSelectedSectors] = useState<string[]>([]);
-  const [selectedSubIndustries, setSelectedSubIndustries] = useState<string[]>([]);
   const [filterMode, setFilterMode] = useState<'and' | 'or'>('and');
 
   const handleToggle = (
@@ -67,12 +66,11 @@ export function CustomGameModal({ open, onOpenChange, onStartGame, isPending }: 
     const gameFilters: CustomGameFilters = {};
     if (selectedMarketCaps.length > 0) gameFilters.marketCaps = selectedMarketCaps;
     if (selectedSectors.length > 0) gameFilters.sectors = selectedSectors;
-    if (selectedSubIndustries.length > 0) gameFilters.subIndustries = selectedSubIndustries;
     gameFilters.filterMode = filterMode;
     onStartGame(gameFilters);
   };
 
-  const hasSelections = selectedMarketCaps.length > 0 || selectedSectors.length > 0 || selectedSubIndustries.length > 0;
+  const hasSelections = selectedMarketCaps.length > 0 || selectedSectors.length > 0;
 
   const sortedMarketCaps = filters?.marketCaps.sort((a, b) => {
     const indexA = MARKET_CAP_ORDER.indexOf(a);
@@ -148,28 +146,20 @@ export function CustomGameModal({ open, onOpenChange, onStartGame, isPending }: 
       }
     }
     
-    if (selectedSubIndustries.length > 0) {
-      if (selectedSubIndustries.length === 1) {
-        parts.push(selectedSubIndustries[0]);
-      } else {
-        parts.push(`(${selectedSubIndustries.slice(0, 2).join(" or ")}${selectedSubIndustries.length > 2 ? ` +${selectedSubIndustries.length - 2} more` : ""})`);
-      }
-    }
-
     const connector = filterMode === 'and' ? ' AND ' : ' OR ';
     return `Your game will include companies with ${parts.join(connector)}.`;
-  }, [selectedMarketCaps, selectedSectors, selectedSubIndustries, filterMode, hasSelections]);
+  }, [selectedMarketCaps, selectedSectors, filterMode, hasSelections]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg max-h-[85vh] flex flex-col">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Building2 className="h-5 w-5 text-primary" />
+            <Briefcase className="h-5 w-5 text-primary" />
             Custom Game
           </DialogTitle>
           <DialogDescription>
-            Filter companies by market cap, sector, or industry. Leave all unchecked to include all companies.
+            Filter companies by market cap or sector. Leave all unchecked to include all companies.
           </DialogDescription>
         </DialogHeader>
 
@@ -200,10 +190,10 @@ export function CustomGameModal({ open, onOpenChange, onStartGame, isPending }: 
             </div>
 
             <Tabs defaultValue="marketCap" className="flex-1 min-h-0">
-              <TabsList className="grid w-full grid-cols-3 gap-1">
+              <TabsList className="grid w-full grid-cols-2 gap-1">
                 <TabsTrigger value="marketCap" className="text-xs sm:text-sm" data-testid="tab-market-cap">
                   <DollarSign className="h-3 w-3 mr-1" />
-                  Cap
+                  Market Cap
                   {selectedMarketCaps.length > 0 && (
                     <span className="ml-1 text-xs bg-primary/20 text-primary px-1.5 rounded-full">
                       {selectedMarketCaps.length}
@@ -216,15 +206,6 @@ export function CustomGameModal({ open, onOpenChange, onStartGame, isPending }: 
                   {selectedSectors.length > 0 && (
                     <span className="ml-1 text-xs bg-primary/20 text-primary px-1.5 rounded-full">
                       {selectedSectors.length}
-                    </span>
-                  )}
-                </TabsTrigger>
-                <TabsTrigger value="subIndustry" className="text-xs sm:text-sm" data-testid="tab-sub-industry">
-                  <Building2 className="h-3 w-3 mr-1" />
-                  Industry
-                  {selectedSubIndustries.length > 0 && (
-                    <span className="ml-1 text-xs bg-primary/20 text-primary px-1.5 rounded-full">
-                      {selectedSubIndustries.length}
                     </span>
                   )}
                 </TabsTrigger>
@@ -270,25 +251,6 @@ export function CustomGameModal({ open, onOpenChange, onStartGame, isPending }: 
                 </ScrollArea>
               </TabsContent>
 
-              <TabsContent value="subIndustry" className="mt-3">
-                <ScrollArea className="h-[200px] border rounded-md p-3">
-                  <div className="space-y-2">
-                    {filters?.subIndustries.map((subIndustry) => (
-                      <label
-                        key={subIndustry}
-                        className="flex items-center gap-3 p-2 rounded-md hover-elevate cursor-pointer"
-                        data-testid={`filter-sub-industry-${subIndustry}`}
-                      >
-                        <Checkbox
-                          checked={selectedSubIndustries.includes(subIndustry)}
-                          onCheckedChange={() => handleToggle(subIndustry, selectedSubIndustries, setSelectedSubIndustries)}
-                        />
-                        <span className="text-sm">{subIndustry}</span>
-                      </label>
-                    ))}
-                  </div>
-                </ScrollArea>
-              </TabsContent>
             </Tabs>
 
             <div className="mt-3 p-3 bg-secondary/30 rounded-md border border-white/5">

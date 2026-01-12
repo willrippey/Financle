@@ -1,7 +1,7 @@
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
-import { BarChart3, LogOut, TrendingUp, User } from "lucide-react";
+import { BarChart2, LogOut, TrendingUp, User } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,14 +29,14 @@ export function Navbar() {
         </Link>
 
         <div className="flex items-center gap-4">
-          <Link href="/leaderboard">
+          <Link href="/stats">
             <Button 
               variant="ghost" 
               size="sm" 
-              className={location === "/leaderboard" ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-primary"}
+              className={location === "/stats" ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-primary"}
             >
-              <BarChart3 className="mr-2 h-4 w-4" />
-              Leaderboard
+              <BarChart2 className="mr-2 h-4 w-4" />
+              My Stats
             </Button>
           </Link>
 

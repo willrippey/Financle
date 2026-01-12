@@ -7,11 +7,32 @@ import {
 } from "@shared/schema";
 import { eq, and, desc, sql, inArray, notInArray } from "drizzle-orm";
 
+export type DetailedStats = {
+  daily: {
+    totalPlayed: number;
+    totalWins: number;
+    winPercentage: number;
+    avgGuesses: number;
+    bestSector: string | null;
+    worstSector: string | null;
+  };
+  endless: {
+    totalPlayed: number;
+    totalWins: number;
+    winPercentage: number;
+    avgGuesses: number;
+    bestSector: string | null;
+    worstSector: string | null;
+    currentStreak: number;
+    maxStreak: number;
+  };
+};
+
 export interface IStorage {
   // User Stats
   getUserStats(userId: string): Promise<UserStats | undefined>;
   updateUserStats(userId: string, stats: Partial<UserStats>): Promise<UserStats>;
-  getLeaderboard(): Promise<{ username: string, score: number }[]>;
+  getDetailedStats(userId: string): Promise<DetailedStats>;
 
   // Companies
   searchCompanies(query: string): Promise<Company[]>;
@@ -54,20 +75,82 @@ export class DatabaseStorage implements IStorage {
     return updated;
   }
 
-  async getLeaderboard(): Promise<{ username: string, score: number }[]> {
-    const results = await db.select({
-      username: users.email, // Using email as username for now, ideally firstName/lastName or a username field
-      score: userStats.totalWins
-    })
-    .from(userStats)
-    .innerJoin(users, eq(userStats.userId, users.id))
-    .orderBy(desc(userStats.totalWins))
-    .limit(10);
-
-    return results.map(r => ({
-      username: r.username?.split('@')[0] || 'Anonymous',
-      score: r.score || 0
-    }));
+  async getDetailedStats(userId: string): Promise<DetailedStats> {
+    // Get user's base stats for streaks
+    const baseStats = await this.getUserStats(userId);
+    
+    // Helper to compute stats for a game type
+    const computeTypeStats = async (type: 'daily' | 'endless') => {
+      // Get all completed games for this type
+      const userGames = await db.select({
+        game: games,
+        company: companies
+      })
+      .from(games)
+      .innerJoin(companies, eq(games.targetCompanyId, companies.id))
+      .where(and(
+        eq(games.userId, userId),
+        eq(games.type, type),
+        sql`${games.status} IN ('won', 'lost')`
+      ));
+      
+      const totalPlayed = userGames.length;
+      const wins = userGames.filter(g => g.game.status === 'won');
+      const totalWins = wins.length;
+      const winPercentage = totalPlayed > 0 ? Math.round((totalWins / totalPlayed) * 100) : 0;
+      
+      // Calculate average guesses for wins
+      let totalGuesses = 0;
+      for (const g of wins) {
+        const gameGuesses = await db.select().from(guesses).where(eq(guesses.gameId, g.game.id));
+        totalGuesses += gameGuesses.length;
+      }
+      const avgGuesses = totalWins > 0 ? Math.round((totalGuesses / totalWins) * 10) / 10 : 0;
+      
+      // Calculate sector performance (wins and losses per sector)
+      const sectorStats: Record<string, { wins: number; losses: number }> = {};
+      for (const g of userGames) {
+        const sector = g.company.sector;
+        if (!sectorStats[sector]) sectorStats[sector] = { wins: 0, losses: 0 };
+        if (g.game.status === 'won') sectorStats[sector].wins++;
+        else sectorStats[sector].losses++;
+      }
+      
+      // Find best and worst sectors (by win rate, min 2 games)
+      let bestSector: string | null = null;
+      let worstSector: string | null = null;
+      let bestRate = -1;
+      let worstRate = 2;
+      
+      for (const [sector, stats] of Object.entries(sectorStats)) {
+        const total = stats.wins + stats.losses;
+        if (total >= 2) {
+          const rate = stats.wins / total;
+          if (rate > bestRate) {
+            bestRate = rate;
+            bestSector = sector;
+          }
+          if (rate < worstRate) {
+            worstRate = rate;
+            worstSector = sector;
+          }
+        }
+      }
+      
+      return { totalPlayed, totalWins, winPercentage, avgGuesses, bestSector, worstSector };
+    };
+    
+    const dailyStats = await computeTypeStats('daily');
+    const endlessStats = await computeTypeStats('endless');
+    
+    return {
+      daily: dailyStats,
+      endless: {
+        ...endlessStats,
+        currentStreak: baseStats?.currentStreak || 0,
+        maxStreak: baseStats?.maxStreak || 0
+      }
+    };
   }
 
   async searchCompanies(query: string): Promise<Company[]> {

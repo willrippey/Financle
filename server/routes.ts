@@ -205,9 +205,11 @@ export async function registerRoutes(
     res.json(response);
   });
 
-  app.get(api.leaderboard.list.path, async (req, res) => {
-    const leaderboard = await storage.getLeaderboard();
-    res.json(leaderboard);
+  app.get(api.stats.get.path, async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    const userId = (req.user as any).claims.sub;
+    const stats = await storage.getDetailedStats(userId);
+    res.json(stats);
   });
 
   async function buildGameState(game: any) {
