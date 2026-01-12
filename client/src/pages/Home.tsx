@@ -219,7 +219,7 @@ export default function Home() {
                   </div>
                   <CardTitle className="text-base sm:text-xl text-cyan-100">Custom Game</CardTitle>
                   <CardDescription className="text-xs sm:text-sm">
-                    Filter by sector, market cap, or industry.
+                    Filter by market cap and sector only.
                   </CardDescription>
                 </CardHeader>
                 <CardFooter className="pt-3 sm:pt-4 mt-auto pb-0">
