@@ -97,11 +97,18 @@ export function CompanySearch({ onSelect, disabled, inputRef, guessedSymbols = [
 
   // Scroll selected item into view
   React.useEffect(() => {
-    const item = itemRefs.current[selectedIndex];
-    if (item) {
-      item.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-    }
+    requestAnimationFrame(() => {
+      const item = itemRefs.current[selectedIndex];
+      if (item) {
+        item.scrollIntoView({ block: 'nearest' });
+      }
+    });
   }, [selectedIndex]);
+
+  // Clear refs when filtered companies change
+  React.useEffect(() => {
+    itemRefs.current = [];
+  }, [filteredCompanies.length]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "ArrowDown") {
