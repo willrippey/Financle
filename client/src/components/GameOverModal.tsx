@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -7,9 +8,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Trophy, XCircle, ArrowRight, RefreshCw, Flame } from "lucide-react";
+import { Trophy, XCircle, ArrowRight, RefreshCw, Flame, Share2, Check } from "lucide-react";
 import type { GameStateResponse } from "@shared/schema";
 import { motion } from "framer-motion";
+import { useToast } from "@/hooks/use-toast";
 
 interface GameOverModalProps {
   open: boolean;
@@ -19,9 +21,73 @@ interface GameOverModalProps {
   onClose?: () => void;
 }
 
+function generateShareText(game: any, isDaily: boolean): string {
+  const isWin = game?.status === "won";
+  const totalRounds = 6;
+  const roundsUsed = Math.max(1, (game?.round || 1) - 1);
+  const skippedRounds = game?.skippedRounds || [];
+  
+  // Build emoji grid
+  let emojiGrid = "";
+  for (let round = 1; round <= totalRounds; round++) {
+    if (round > roundsUsed) {
+      emojiGrid += "\u2B1C"; // white square - unused
+    } else if (isWin && round === roundsUsed) {
+      emojiGrid += "\uD83D\uDFE9"; // green square - correct
+    } else if (skippedRounds.includes(round)) {
+      emojiGrid += "\uD83D\uDFE8"; // yellow square - skipped
+    } else {
+      emojiGrid += "\uD83D\uDFE5"; // red square - wrong guess
+    }
+  }
+  
+  // Format date for daily
+  const today = new Date();
+  const dateStr = `${today.getMonth() + 1}/${today.getDate()}/${today.getFullYear()}`;
+  
+  // Build share text
+  const gameType = isDaily ? "Daily" : game?.filters?.difficulty === "easy" ? "Easy" : "Endless";
+  const title = `Marketle ${gameType} ${isDaily ? dateStr : ""}`.trim();
+  const score = isWin ? `${roundsUsed}/6` : "X/6";
+  
+  let text = `${title}\n${score}\n\n${emojiGrid}`;
+  
+  // Add streak for endless mode
+  if (!isDaily && game?.endlessStreak && game.endlessStreak > 1) {
+    text += `\n\nStreak: ${game.endlessStreak}`;
+  }
+  
+  text += "\n\nhttps://marketle.replit.app";
+  
+  return text;
+}
+
 export function GameOverModal({ open, game, onPlayAgain, isDaily, onClose }: GameOverModalProps) {
+  const [copied, setCopied] = useState(false);
+  const { toast } = useToast();
   const isWin = game?.status === "won";
   const target = game?.targetCompany;
+
+  const handleShare = async () => {
+    const shareText = generateShareText(game, isDaily || false);
+    
+    try {
+      await navigator.clipboard.writeText(shareText);
+      setCopied(true);
+      toast({
+        title: "Copied to clipboard!",
+        description: "Share your results with friends.",
+      });
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      // Fallback for browsers that don't support clipboard API
+      toast({
+        title: "Unable to copy",
+        description: "Please copy the text manually.",
+        variant: "destructive",
+      });
+    }
+  };
   const streakMilestone = isWin && game?.endlessStreak && game?.endlessStreak >= 5;
 
   if (!target) return null;
@@ -116,20 +182,42 @@ export function GameOverModal({ open, game, onPlayAgain, isDaily, onClose }: Gam
 
           <DialogFooter className="sm:justify-center gap-1.5 pt-1.5 sm:pt-4 shrink-0">
             {isDaily ? (
-              <div className="text-center w-full">
-                <p className="text-[0.65rem] sm:text-sm text-muted-foreground mb-1.5">New challenge tomorrow!</p>
-                <Button className="w-full h-8 sm:h-9" asChild>
-                  <a href="/leaderboard">Leaderboard <ArrowRight className="ml-1.5 h-3.5 w-3.5" /></a>
-                </Button>
+              <div className="w-full space-y-1.5">
+                <div className="flex gap-1.5 w-full">
+                  <Button 
+                    variant="outline" 
+                    className="flex-1 h-8 sm:h-9 text-xs sm:text-sm" 
+                    onClick={handleShare}
+                    data-testid="button-share"
+                  >
+                    {copied ? <Check className="mr-1.5 h-3.5 w-3.5" /> : <Share2 className="mr-1.5 h-3.5 w-3.5" />}
+                    {copied ? "Copied!" : "Share"}
+                  </Button>
+                  <Button className="flex-1 h-8 sm:h-9 text-xs sm:text-sm" asChild>
+                    <a href="/leaderboard">Leaderboard <ArrowRight className="ml-1.5 h-3.5 w-3.5" /></a>
+                  </Button>
+                </div>
+                <p className="text-[0.65rem] sm:text-sm text-muted-foreground text-center">New challenge tomorrow!</p>
               </div>
             ) : (
-              <div className="flex gap-1.5 w-full">
-                <Button variant="outline" className="flex-1 h-8 sm:h-9 text-xs sm:text-sm" asChild>
-                  <a href="/">Home</a>
-                </Button>
-                <Button onClick={onPlayAgain} className="flex-1 h-8 sm:h-9 text-xs sm:text-sm">
-                  <RefreshCw className="mr-1.5 h-3.5 w-3.5" />
-                  Play Again
+              <div className="w-full space-y-1.5">
+                <div className="flex gap-1.5 w-full">
+                  <Button 
+                    variant="outline" 
+                    className="flex-1 h-8 sm:h-9 text-xs sm:text-sm" 
+                    onClick={handleShare}
+                    data-testid="button-share"
+                  >
+                    {copied ? <Check className="mr-1.5 h-3.5 w-3.5" /> : <Share2 className="mr-1.5 h-3.5 w-3.5" />}
+                    {copied ? "Copied!" : "Share"}
+                  </Button>
+                  <Button onClick={onPlayAgain} className="flex-1 h-8 sm:h-9 text-xs sm:text-sm">
+                    <RefreshCw className="mr-1.5 h-3.5 w-3.5" />
+                    Play Again
+                  </Button>
+                </div>
+                <Button variant="ghost" className="w-full h-7 text-xs text-muted-foreground" asChild>
+                  <a href="/">Back to Home</a>
                 </Button>
               </div>
             )}
