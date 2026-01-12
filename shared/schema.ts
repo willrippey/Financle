@@ -48,6 +48,14 @@ export const guesses = pgTable("guesses", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Daily challenge - one company per day for all players
+export const dailyChallenges = pgTable("daily_challenges", {
+  id: serial("id").primaryKey(),
+  date: date("date").notNull().unique(), // The date of this challenge
+  companyId: integer("company_id").references(() => companies.id).notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // === RELATIONS ===
 
 export const userStatsRelations = relations(userStats, ({ one }) => ({
@@ -80,12 +88,20 @@ export const guessesRelations = relations(guesses, ({ one }) => ({
   }),
 }));
 
+export const dailyChallengesRelations = relations(dailyChallenges, ({ one }) => ({
+  company: one(companies, {
+    fields: [dailyChallenges.companyId],
+    references: [companies.id],
+  }),
+}));
+
 // === BASE SCHEMAS ===
 
 export const insertUserStatsSchema = createInsertSchema(userStats).omit({ id: true, updatedAt: true });
 export const insertCompanySchema = createInsertSchema(companies).omit({ id: true });
 export const insertGameSchema = createInsertSchema(games).omit({ id: true, createdAt: true });
 export const insertGuessSchema = createInsertSchema(guesses).omit({ id: true, createdAt: true });
+export const insertDailyChallengeSchema = createInsertSchema(dailyChallenges).omit({ id: true, createdAt: true });
 
 // === EXPLICIT API CONTRACT TYPES ===
 
@@ -93,6 +109,7 @@ export type UserStats = typeof userStats.$inferSelect;
 export type Company = typeof companies.$inferSelect;
 export type Game = typeof games.$inferSelect;
 export type Guess = typeof guesses.$inferSelect;
+export type DailyChallenge = typeof dailyChallenges.$inferSelect;
 
 export type CustomGameFilters = {
   marketCaps?: string[];
@@ -111,7 +128,7 @@ export type CreateGameRequest = {
 export const EASY_MODE_SYMBOLS = new Set([
   // Tech Giants
   "AAPL", "MSFT", "GOOGL", "AMZN", "META", "NVDA", "TSLA", "NFLX", "ORCL", "CRM",
-  "ADBE", "CSCO", "INTC", "AMD", "IBM", "PYPL", "UBER", "ABNB", "SPOT", "SNAP",
+  "ADBE", "CSCO", "INTC", "AMD", "IBM", "PYPL", "UBER", "ABNB", "SPOT", "SNAP", "AVGO",
   // Finance & Banking
   "JPM", "BAC", "WFC", "GS", "MS", "V", "MA", "AXP", "BLK", "C",
   // Retail & Consumer
@@ -122,11 +139,11 @@ export const EASY_MODE_SYMBOLS = new Set([
   // Healthcare & Pharma
   "JNJ", "PFE", "MRK", "ABBV", "LLY", "UNH", "CVS", "WBA", "CI",
   // Consumer Products
-  "PG", "KO", "PEP", "PM", "MO", "CL", "KHC", "MDLZ", "GIS", "K",
+  "PG", "KO", "PEP", "PM", "MO", "CL", "KHC", "MDLZ", "GIS", "K", "KDP", "LULU",
   // Auto & Transport
   "F", "GM", "DAL", "UAL", "AAL", "LUV", "FDX", "UPS",
   // Energy
-  "XOM", "CVX", "COP", "OXY", "SLB", "HAL",
+  "XOM", "CVX", "COP", "OXY",
   // Industrial & Manufacturing
   "BA", "CAT", "DE", "GE", "HON", "MMM", "LMT", "RTX",
   // Conglomerates
