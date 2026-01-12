@@ -87,7 +87,7 @@ function generateShareText(game: any, isDaily: boolean): string {
   
   // Build share text
   const gameType = isDaily ? "Daily" : game?.filters?.difficulty === "easy" ? "Easy" : "Endless";
-  const title = `Marketle ${gameType} ${isDaily ? dateStr : ""}`.trim();
+  const title = `Financle ${gameType} ${isDaily ? dateStr : ""}`.trim();
   const score = isWin ? `${roundsUsed}/6` : "X/6";
   
   let text = `${title}\n${score}\n\n${emojiGrid}`;
@@ -97,7 +97,7 @@ function generateShareText(game: any, isDaily: boolean): string {
     text += `\n\nStreak: ${game.endlessStreak}`;
   }
   
-  text += "\n\nhttps://marketle.replit.app";
+  text += "\n\nhttps://financle.replit.app";
   
   return text;
 }

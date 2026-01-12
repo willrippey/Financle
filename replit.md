@@ -1,8 +1,8 @@
-# Marketle
+# Financle
 
 ## Overview
 
-Marketle is a Wordle-style guessing game where players try to identify S&P 500 companies based on progressively revealed clues. The application features two game modes: a daily challenge (one puzzle per day for all users) and an endless mode for continuous play. Players guess companies by searching and selecting from an autocomplete list, with each wrong guess revealing more information about the target company.
+Financle is a Wordle-style guessing game where players try to identify S&P 500 companies based on progressively revealed clues. The application features two game modes: a daily challenge (one puzzle per day for all users) and an endless mode for continuous play. Players guess companies by searching and selecting from an autocomplete list, with each wrong guess revealing more information about the target company.
 
 ## User Preferences
 

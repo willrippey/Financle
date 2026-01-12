@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 
 const SYMBOLS = ["AAPL", "MSFT", "GOOGL", "AMZN"];
 
-export function MarketleHeader() {
+export function FinancleHeader() {
   const [directions, setDirections] = useState<Record<string, boolean>>(
     SYMBOLS.reduce((acc, symbol) => ({ ...acc, [symbol]: Math.random() > 0.5 }), {})
   );
@@ -58,7 +58,7 @@ export function MarketleHeader() {
   return (
     <div className="text-center w-full space-y-3 sm:space-y-4">
       <h1 className="text-4xl sm:text-5xl lg:text-8xl font-extrabold tracking-tight">
-        <span className="text-gradient-primary">Marketle</span>
+        <span className="text-gradient-primary">Financle</span>
       </h1>
 
       <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 lg:gap-6">

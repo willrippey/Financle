@@ -4,7 +4,7 @@ import { useCreateGame, useDailyGame } from "@/hooks/use-games";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Navbar } from "@/components/Navbar";
-import { MarketleHeader } from "@/components/MarketleHeader";
+import { FinancleHeader } from "@/components/FinancleHeader";
 import { CustomGameModal } from "@/components/CustomGameModal";
 import { useLocation } from "wouter";
 import { Calendar, Infinity as InfinityIcon, Trophy, Flame, Loader2, Settings2, Info } from "lucide-react";
@@ -64,7 +64,7 @@ export default function Home() {
           transition={{ duration: 0.5 }}
           className="w-full mb-4 sm:mb-8"
         >
-          <MarketleHeader />
+          <FinancleHeader />
           <p className="text-xs sm:text-sm lg:text-base text-muted-foreground max-w-2xl mx-auto text-balance text-center mt-3 sm:mt-4">
             Guess the S&P 500 company from 6 clues.
           </p>
@@ -267,7 +267,7 @@ export default function Home() {
       </main>
       
       <footer className="w-full py-2 sm:py-4 border-t border-white/5 text-center text-xs text-muted-foreground px-2">
-        <p>© 2024 Marketle</p>
+        <p>© 2024 Financle</p>
       </footer>
 
       <CustomGameModal

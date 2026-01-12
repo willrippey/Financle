@@ -24,7 +24,7 @@ export function Navbar() {
             <TrendingUp className="h-6 w-6 text-primary" />
           </div>
           <span className="text-xl font-bold tracking-tight text-gradient">
-            Marketle
+            Financle
           </span>
         </Link>
 
