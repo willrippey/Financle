@@ -159,7 +159,7 @@ export function CustomGameModal({ open, onOpenChange, onStartGame, isPending }: 
             Custom Game
           </DialogTitle>
           <DialogDescription>
-            Custom games let you filter by market cap and sector only. Leave all unchecked to include all companies.
+            Filter by market cap and sector. Leave all unchecked to include all companies.
           </DialogDescription>
         </DialogHeader>
 
