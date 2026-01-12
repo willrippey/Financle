@@ -22,6 +22,7 @@ export function CompanySearch({ onSelect, disabled, inputRef, guessedSymbols = [
   const debouncedQuery = useDebounce(searchQuery, 300);
   const internalRef = React.useRef<HTMLInputElement>(null);
   const ref = inputRef || internalRef;
+  const itemRefs = React.useRef<(HTMLDivElement | null)[]>([]);
   
   React.useImperativeHandle(searchRef, () => ({
     focusAndOpen: () => {
@@ -93,6 +94,14 @@ export function CompanySearch({ onSelect, disabled, inputRef, guessedSymbols = [
   React.useEffect(() => {
     setSelectedIndex(0);
   }, [debouncedQuery]);
+
+  // Scroll selected item into view
+  React.useEffect(() => {
+    const item = itemRefs.current[selectedIndex];
+    if (item) {
+      item.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+  }, [selectedIndex]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "ArrowDown") {
@@ -172,6 +181,7 @@ export function CompanySearch({ onSelect, disabled, inputRef, guessedSymbols = [
                 <CommandItem
                   key={company.symbol}
                   value={company.symbol}
+                  ref={(el) => { itemRefs.current[idx] = el; }}
                   onSelect={(currentValue) => {
                     setValue("");
                     onSelect(currentValue);
