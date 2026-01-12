@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Check, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useCompanySearch } from "@/hooks/use-games";
@@ -198,12 +198,6 @@ export function CompanySearch({ onSelect, disabled, inputRef, guessedSymbols = [
                       : "text-foreground"
                   )}
                 >
-                  <Check
-                    className={cn(
-                      "mr-2 h-4 w-4",
-                      value === company.symbol ? "opacity-100" : "opacity-0"
-                    )}
-                  />
                   <span className="font-mono font-bold w-16">{company.symbol}</span>
                   <span className="truncate">{company.name}</span>
                 </CommandItem>
