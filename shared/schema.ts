@@ -104,7 +104,36 @@ export type CustomGameFilters = {
 export type CreateGameRequest = {
   type: 'daily' | 'endless' | 'custom';
   filters?: CustomGameFilters;
+  difficulty?: 'easy' | 'hard'; // For endless mode only
 };
+
+// Easy mode includes ~100 recognizable, well-known companies
+export const EASY_MODE_SYMBOLS = new Set([
+  // Tech Giants
+  "AAPL", "MSFT", "GOOGL", "AMZN", "META", "NVDA", "TSLA", "NFLX", "ORCL", "CRM",
+  "ADBE", "CSCO", "INTC", "AMD", "IBM", "PYPL", "UBER", "ABNB", "SPOT", "SNAP",
+  // Finance & Banking
+  "JPM", "BAC", "WFC", "GS", "MS", "V", "MA", "AXP", "BLK", "C",
+  // Retail & Consumer
+  "WMT", "COST", "TGT", "HD", "LOW", "NKE", "SBUX", "MCD", "YUM", "CMG",
+  "DG", "DLTR", "TJX", "ROST", "BBY",
+  // Entertainment & Media
+  "DIS", "CMCSA", "T", "VZ", "PARA", "WBD", "EA", "TTWO", "RBLX",
+  // Healthcare & Pharma
+  "JNJ", "PFE", "MRK", "ABBV", "LLY", "UNH", "CVS", "WBA", "CI",
+  // Consumer Products
+  "PG", "KO", "PEP", "PM", "MO", "CL", "KHC", "MDLZ", "GIS", "K",
+  // Auto & Transport
+  "F", "GM", "DAL", "UAL", "AAL", "LUV", "FDX", "UPS",
+  // Energy
+  "XOM", "CVX", "COP", "OXY", "SLB", "HAL",
+  // Industrial & Manufacturing
+  "BA", "CAT", "DE", "GE", "HON", "MMM", "LMT", "RTX",
+  // Conglomerates
+  "BRK.B",
+  // Hotels & Travel
+  "MAR", "HLT", "H", "EXPE", "BKNG",
+]);
 
 export type SubmitGuessRequest = {
   companySymbol: string;

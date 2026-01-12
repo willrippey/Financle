@@ -2,9 +2,10 @@ import { db } from "./db";
 import {
   users, userStats, companies, games, guesses,
   type User, type UserStats, type Company, type Game, type Guess,
-  type CreateGameRequest, type GameStateResponse, type CustomGameFilters
+  type CreateGameRequest, type GameStateResponse, type CustomGameFilters,
+  EASY_MODE_SYMBOLS
 } from "@shared/schema";
-import { eq, and, desc, sql } from "drizzle-orm";
+import { eq, and, desc, sql, inArray } from "drizzle-orm";
 
 export interface IStorage {
   // User Stats
@@ -16,7 +17,7 @@ export interface IStorage {
   searchCompanies(query: string): Promise<Company[]>;
   getCompanyBySymbol(symbol: string): Promise<Company | undefined>;
   getCompany(id: number): Promise<Company | undefined>;
-  getRandomCompany(filters?: CustomGameFilters): Promise<Company | undefined>;
+  getRandomCompany(filters?: CustomGameFilters, difficulty?: 'easy' | 'hard'): Promise<Company | undefined>;
   getAvailableFilters(): Promise<{ marketCaps: string[]; sectors: string[]; subIndustries: string[] }>;
   
   // Games
@@ -83,7 +84,7 @@ export class DatabaseStorage implements IStorage {
     return company;
   }
 
-  async getRandomCompany(filters?: CustomGameFilters): Promise<Company | undefined> {
+  async getRandomCompany(filters?: CustomGameFilters, difficulty?: 'easy' | 'hard'): Promise<Company | undefined> {
     let conditions: any[] = [];
     const useOrLogic = filters?.filterMode === 'or';
     
@@ -97,11 +98,18 @@ export class DatabaseStorage implements IStorage {
       conditions.push(sql`${companies.subIndustry} IN ${filters.subIndustries}`);
     }
     
+    // For easy mode, only include well-known companies
+    if (difficulty === 'easy') {
+      const easySymbols = Array.from(EASY_MODE_SYMBOLS);
+      conditions.push(inArray(companies.symbol, easySymbols));
+    }
+    
     let query = db.select().from(companies);
     
     if (conditions.length > 0) {
+      // For easy mode with other filters, use AND logic to combine easy filter with other conditions
       const whereClause = conditions.reduce((acc, cond, idx) => 
-        idx === 0 ? cond : (useOrLogic ? sql`${acc} OR ${cond}` : sql`${acc} AND ${cond}`)
+        idx === 0 ? cond : (useOrLogic && !difficulty ? sql`${acc} OR ${cond}` : sql`${acc} AND ${cond}`)
       );
       query = query.where(whereClause) as any;
     }

@@ -72,13 +72,17 @@ export async function registerRoutes(
   app.post(api.games.create.path, async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
     const userId = (req.user as any).claims.sub;
-    const { type, filters } = req.body;
+    const { type, filters, difficulty } = req.body;
     
     if (type === 'daily') {
        return res.status(400).json({ message: "Use get daily endpoint" });
     }
 
-    const target = await storage.getRandomCompany(type === 'custom' ? filters : undefined);
+    // For endless mode, use difficulty; for custom mode, use filters
+    const target = await storage.getRandomCompany(
+      type === 'custom' ? filters : undefined,
+      type === 'endless' ? difficulty : undefined
+    );
     if (!target) {
       return res.status(400).json({ message: "No companies match your filters. Please adjust your criteria." });
     }

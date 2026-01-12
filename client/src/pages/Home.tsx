@@ -7,7 +7,8 @@ import { Navbar } from "@/components/Navbar";
 import { MarketleHeader } from "@/components/MarketleHeader";
 import { CustomGameModal } from "@/components/CustomGameModal";
 import { useLocation } from "wouter";
-import { Calendar, Infinity as InfinityIcon, Trophy, Flame, Loader2, Settings2 } from "lucide-react";
+import { Calendar, Infinity as InfinityIcon, Trophy, Flame, Loader2, Settings2, Info } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { motion } from "framer-motion";
 import type { CustomGameFilters } from "@shared/schema";
 
@@ -20,8 +21,8 @@ export default function Home() {
   // Prefetch daily game to check status
   const { data: dailyGame, isLoading: isDailyLoading } = useDailyGame();
 
-  const handlePlayEndless = () => {
-    createGameMutation.mutate({ type: 'endless' }, {
+  const handlePlayEndless = (difficulty: 'easy' | 'hard') => {
+    createGameMutation.mutate({ type: 'endless', difficulty }, {
       onSuccess: (game) => {
         setLocation(`/game/${game.id}`);
       }
@@ -154,6 +155,19 @@ export default function Home() {
                     <div className="p-1.5 sm:p-2 bg-purple-500/20 rounded-lg text-purple-400">
                       <InfinityIcon className="h-4 w-4 sm:h-6 sm:w-6" />
                     </div>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <button className="p-1 text-muted-foreground hover:text-foreground transition-colors" data-testid="button-endless-info">
+                          <Info className="h-4 w-4" />
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent side="top" className="max-w-[250px] text-xs">
+                        <p className="font-semibold mb-1">Easy Mode</p>
+                        <p className="text-muted-foreground mb-2">~100 well-known companies like Apple, Nike, and Coca-Cola.</p>
+                        <p className="font-semibold mb-1">Hard Mode</p>
+                        <p className="text-muted-foreground">All S&P 500 companies, including lesser-known ones.</p>
+                      </TooltipContent>
+                    </Tooltip>
                   </div>
                   <CardTitle className="text-base sm:text-xl text-purple-100">Endless Mode</CardTitle>
                   <CardDescription className="text-xs sm:text-sm">
@@ -161,18 +175,34 @@ export default function Home() {
                   </CardDescription>
                 </CardHeader>
                 <CardFooter className="pt-3 sm:pt-4 mt-auto pb-0">
-                  <Button 
-                    variant="outline" 
-                    className="w-full h-9 sm:h-10 text-xs sm:text-sm border-white/10 hover:bg-white/5 hover:text-white"
-                    onClick={handlePlayEndless}
-                    disabled={createGameMutation.isPending && createGameMutation.variables?.type === 'endless'}
-                  >
-                    {createGameMutation.isPending && createGameMutation.variables?.type === 'endless' ? (
-                      <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
-                    ) : (
-                      "Play"
-                    )}
-                  </Button>
+                  <div className="flex gap-2 w-full">
+                    <Button 
+                      variant="outline" 
+                      className="flex-1 h-9 sm:h-10 text-xs sm:text-sm border-white/10 hover:bg-white/5 hover:text-white"
+                      onClick={() => handlePlayEndless('easy')}
+                      disabled={createGameMutation.isPending && createGameMutation.variables?.type === 'endless'}
+                      data-testid="button-endless-easy"
+                    >
+                      {createGameMutation.isPending && createGameMutation.variables?.difficulty === 'easy' ? (
+                        <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
+                      ) : (
+                        "Easy"
+                      )}
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      className="flex-1 h-9 sm:h-10 text-xs sm:text-sm border-white/10 hover:bg-white/5 hover:text-white"
+                      onClick={() => handlePlayEndless('hard')}
+                      disabled={createGameMutation.isPending && createGameMutation.variables?.type === 'endless'}
+                      data-testid="button-endless-hard"
+                    >
+                      {createGameMutation.isPending && createGameMutation.variables?.difficulty === 'hard' ? (
+                        <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
+                      ) : (
+                        "Hard"
+                      )}
+                    </Button>
+                  </div>
                 </CardFooter>
               </Card>
             </motion.div>
