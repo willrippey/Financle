@@ -1,11 +1,11 @@
 import { db } from "./db";
 import {
-  users, userStats, companies, games, guesses,
-  type User, type UserStats, type Company, type Game, type Guess,
+  users, userStats, companies, games, guesses, dailyChallenges,
+  type User, type UserStats, type Company, type Game, type Guess, type DailyChallenge,
   type CreateGameRequest, type GameStateResponse, type CustomGameFilters,
   EASY_MODE_SYMBOLS
 } from "@shared/schema";
-import { eq, and, desc, sql, inArray } from "drizzle-orm";
+import { eq, and, desc, sql, inArray, notInArray } from "drizzle-orm";
 
 export interface IStorage {
   // User Stats
@@ -29,6 +29,9 @@ export interface IStorage {
   // Guesses
   addGuess(gameId: number, companyId: number, roundNumber: number): Promise<Guess>;
   getGuesses(gameId: number): Promise<(Guess & { company: Company })[]>;
+  
+  // Daily Challenges
+  getOrCreateDailyChallenge(date: string): Promise<Company>;
   
   // Helpers
   seedCompanies(companies: any[]): Promise<void>;
@@ -187,6 +190,49 @@ export class DatabaseStorage implements IStorage {
     .orderBy(guesses.roundNumber);
 
     return result.map(r => ({ ...r.guess, company: r.company || undefined }));
+  }
+
+  async getOrCreateDailyChallenge(date: string): Promise<Company> {
+    // Check if we already have a challenge for this date
+    const [existing] = await db.select()
+      .from(dailyChallenges)
+      .where(eq(dailyChallenges.date, date));
+    
+    if (existing) {
+      const company = await this.getCompany(existing.companyId);
+      if (company) return company;
+    }
+    
+    // Get all company IDs that have been used in recent challenges
+    // We want to avoid repeats for 500 days (full rotation through all companies)
+    const usedChallenges = await db.select({ companyId: dailyChallenges.companyId })
+      .from(dailyChallenges)
+      .orderBy(desc(dailyChallenges.date))
+      .limit(500);
+    
+    const usedCompanyIds = usedChallenges.map(c => c.companyId);
+    
+    // Select a random company that hasn't been used recently
+    let query = db.select().from(companies);
+    
+    if (usedCompanyIds.length > 0) {
+      query = query.where(notInArray(companies.id, usedCompanyIds)) as any;
+    }
+    
+    let [selectedCompany] = await query.orderBy(sql`RANDOM()`).limit(1);
+    
+    // If all companies have been used (full rotation), start fresh with any company
+    if (!selectedCompany) {
+      [selectedCompany] = await db.select().from(companies).orderBy(sql`RANDOM()`).limit(1);
+    }
+    
+    // Create the daily challenge record
+    await db.insert(dailyChallenges).values({
+      date,
+      companyId: selectedCompany.id
+    });
+    
+    return selectedCompany;
   }
 
   async seedCompanies(data: any[]): Promise<void> {
