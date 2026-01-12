@@ -226,11 +226,25 @@ export class DatabaseStorage implements IStorage {
       [selectedCompany] = await db.select().from(companies).orderBy(sql`RANDOM()`).limit(1);
     }
     
-    // Create the daily challenge record
-    await db.insert(dailyChallenges).values({
-      date,
-      companyId: selectedCompany.id
-    });
+    // Create the daily challenge record (handle race condition with unique constraint)
+    try {
+      await db.insert(dailyChallenges).values({
+        date,
+        companyId: selectedCompany.id
+      });
+    } catch (err: any) {
+      // If another request already created the challenge, fetch and use that one
+      if (err.code === '23505') { // Unique constraint violation
+        const [created] = await db.select()
+          .from(dailyChallenges)
+          .where(eq(dailyChallenges.date, date));
+        if (created) {
+          const company = await this.getCompany(created.companyId);
+          if (company) return company;
+        }
+      }
+      throw err;
+    }
     
     return selectedCompany;
   }
