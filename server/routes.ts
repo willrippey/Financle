@@ -51,12 +51,11 @@ export async function registerRoutes(
     const userId = (req.user as any).claims.sub;
     const today = new Date().toISOString().split('T')[0];
     
+    // Check if user already has a game for today
     let game = await storage.getDailyGame(userId, today);
     if (!game) {
-      const target = await storage.getRandomCompany();
-      if (!target) {
-        return res.status(500).json({ message: "No companies available" });
-      }
+      // Get or create today's daily challenge (same company for all players)
+      const target = await storage.getOrCreateDailyChallenge(today);
       game = await storage.createGame(userId, 'daily', target.id);
     }
     
