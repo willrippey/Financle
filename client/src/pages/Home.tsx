@@ -102,7 +102,7 @@ export default function Home() {
               transition={{ delay: 0.2 }}
             >
               <Card className="h-full border-primary/20 bg-gradient-to-b from-card to-card/50 hover:border-primary/40 transition-all duration-300 relative overflow-hidden group flex flex-col">
-                <div className="absolute inset-0 bg-primary/5 group-hover:bg-primary/10 transition-colors" />
+                <div className="absolute inset-0 bg-primary/5 group-hover:bg-primary/10 transition-colors pointer-events-none" />
                 <CardHeader className="pb-1 sm:pb-2">
                   <div className="flex justify-between items-start mb-1 sm:mb-2">
                     <div className="p-1.5 sm:p-2 bg-primary/20 rounded-lg text-primary">
