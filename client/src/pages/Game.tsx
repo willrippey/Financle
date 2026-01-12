@@ -55,6 +55,19 @@ export default function Game() {
     }
   }, [game?.id]);
 
+  // Tab key to skip round
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Tab' && game && game.status === 'playing' && !submitGuess.isPending && !skipRound.isPending) {
+        e.preventDefault();
+        handleSkip();
+      }
+    };
+    
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [game?.status, submitGuess.isPending, skipRound.isPending]);
+
   if (isLoading || !game) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -103,7 +116,10 @@ export default function Game() {
   };
 
   const handlePlayAgain = () => {
-    createGame.mutate({ type: 'endless' }, {
+    const gameType = game.type === 'custom' ? 'custom' : 'endless';
+    const gameFilters = game.type === 'custom' && (game as any).filters ? (game as any).filters : undefined;
+    
+    createGame.mutate({ type: gameType, filters: gameFilters }, {
       onSuccess: (newGame) => {
         setLocation(`/game/${newGame.id}`);
       }
@@ -156,7 +172,7 @@ export default function Game() {
           {/* Right: Game type and rounds */}
           <div className="text-right flex-shrink-0">
             <span className="text-xs font-medium text-muted-foreground uppercase tracking-widest block mb-0">
-              {game.type === 'daily' ? 'Daily' : 'Endless'}
+              {game.type === 'daily' ? 'Daily' : game.type === 'custom' ? 'Custom' : 'Endless'}
             </span>
             <div className="flex items-center gap-1">
               <span className="text-lg sm:text-xl font-mono font-bold">{game.round}/6</span>
@@ -234,11 +250,12 @@ export default function Game() {
                   onClick={handleSkip}
                   disabled={submitGuess.isPending || skipRound.isPending}
                   data-testid="button-skip"
-                  title="Skip this round to reveal the next clue"
+                  title="Skip this round to reveal the next clue (Tab)"
                   className="h-12 px-2 sm:px-4 text-xs sm:text-sm flex-shrink-0"
                 >
                   <SkipForward className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-1" />
                   <span className="hidden sm:inline">Skip</span>
+                  <span className="hidden sm:inline text-muted-foreground ml-1">(Tab)</span>
                 </Button>
               </div>
             </motion.div>

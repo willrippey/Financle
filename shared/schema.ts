@@ -31,11 +31,12 @@ export const companies = pgTable("companies", {
 export const games = pgTable("games", {
   id: serial("id").primaryKey(),
   userId: varchar("user_id").references(() => users.id).notNull(),
-  type: text("type").notNull(), // 'daily' | 'endless'
+  type: text("type").notNull(), // 'daily' | 'endless' | 'custom'
   targetCompanyId: integer("target_company_id").references(() => companies.id).notNull(),
   date: date("date"), // For daily games
   status: text("status").notNull().default("playing"), // 'playing' | 'won' | 'lost'
   score: integer("score").default(0),
+  filters: text("filters"), // JSON string of CustomGameFilters for custom games
   createdAt: timestamp("created_at").defaultNow(),
 });
 

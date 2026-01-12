@@ -122,14 +122,15 @@ export class DatabaseStorage implements IStorage {
     };
   }
 
-  async createGame(userId: string, type: 'daily' | 'endless' | 'custom', targetCompanyId: number): Promise<Game> {
+  async createGame(userId: string, type: 'daily' | 'endless' | 'custom', targetCompanyId: number, filters?: CustomGameFilters): Promise<Game> {
     const [game] = await db.insert(games).values({
       userId,
       type,
       targetCompanyId,
       date: type === 'daily' ? new Date().toISOString().split('T')[0] : null,
       status: 'playing',
-      score: 0
+      score: 0,
+      filters: filters ? JSON.stringify(filters) : null
     }).returning();
     return game;
   }

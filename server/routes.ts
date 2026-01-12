@@ -83,7 +83,7 @@ export async function registerRoutes(
       return res.status(400).json({ message: "No companies match your filters. Please adjust your criteria." });
     }
     
-    const game = await storage.createGame(userId, type, target.id);
+    const game = await storage.createGame(userId, type, target.id, type === 'custom' ? filters : undefined);
     const response = await buildGameState(game);
     res.status(201).json(response);
   });
@@ -255,7 +255,8 @@ export async function registerRoutes(
       })),
       skippedRounds: allGuesses.filter(g => g.companyId === null).map(g => g.roundNumber),
       score: game.score,
-      targetCompany: isOver ? target : undefined
+      targetCompany: isOver ? target : undefined,
+      filters: game.filters ? JSON.parse(game.filters) : undefined
     };
   }
 
