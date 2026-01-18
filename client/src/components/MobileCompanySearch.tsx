@@ -119,7 +119,7 @@ export function MobileCompanySearch({ onSelect, onSkip, disabled, guessedSymbols
             onClick={onSkip}
             disabled={disabled}
             data-testid="button-skip"
-            className="h-11 px-3 flex-shrink-0"
+            className="h-11 px-4 flex-shrink-0"
           >
             <SkipForward className="h-4 w-4 mr-1" />
             Skip
@@ -127,42 +127,44 @@ export function MobileCompanySearch({ onSelect, onSkip, disabled, guessedSymbols
         )}
       </div>
 
-      <div className="h-[100px] overflow-y-auto bg-card/50 rounded-md border border-white/10">
-        {isLoading && searchQuery.length > 0 && (
-          <div className="flex items-center justify-center h-full">
-            <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-          </div>
-        )}
+      {(searchQuery.length > 0 || filteredCompanies.length > 0) && (
+        <div className="max-h-[100px] overflow-y-auto bg-card/50 rounded-md border border-white/10">
+          {isLoading && (
+            <div className="flex items-center justify-center py-4">
+              <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+            </div>
+          )}
 
-        {!isLoading && searchQuery.length > 0 && filteredCompanies.length === 0 && (
-          <div className="flex items-center justify-center h-full text-xs text-muted-foreground">
-            No matching companies
-          </div>
-        )}
+          {!isLoading && searchQuery.length > 0 && filteredCompanies.length === 0 && (
+            <div className="flex items-center justify-center py-4 text-xs text-muted-foreground">
+              No matching companies
+            </div>
+          )}
 
-        {!isLoading && filteredCompanies.length > 0 && (
-          <div className="divide-y divide-white/5">
-            {filteredCompanies.map((company, idx) => (
-              <button
-                key={company.symbol}
-                type="button"
-                onClick={() => handleSelect(company.symbol)}
-                onTouchStart={() => setSelectedIndex(idx)}
-                disabled={disabled}
-                className={cn(
-                  "w-full px-3 py-2 text-left flex items-center gap-2 transition-colors",
-                  selectedIndex === idx ? "bg-primary/20" : "bg-transparent",
-                  "active:bg-primary/30"
-                )}
-                data-testid={`company-option-${company.symbol}`}
-              >
-                <span className="font-mono font-bold text-sm w-14 flex-shrink-0">{company.symbol}</span>
-                <span className="text-sm truncate">{company.name}</span>
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
+          {!isLoading && filteredCompanies.length > 0 && (
+            <div className="divide-y divide-white/5">
+              {filteredCompanies.map((company, idx) => (
+                <button
+                  key={company.symbol}
+                  type="button"
+                  onClick={() => handleSelect(company.symbol)}
+                  onTouchStart={() => setSelectedIndex(idx)}
+                  disabled={disabled}
+                  className={cn(
+                    "w-full px-3 py-2 text-left flex items-center gap-2 transition-colors",
+                    selectedIndex === idx ? "bg-primary/20" : "bg-transparent",
+                    "active:bg-primary/30"
+                  )}
+                  data-testid={`company-option-${company.symbol}`}
+                >
+                  <span className="font-mono font-bold text-sm w-14 flex-shrink-0">{company.symbol}</span>
+                  <span className="text-sm truncate">{company.name}</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       <MobileKeyboard 
         onKeyPress={handleKeyPress} 

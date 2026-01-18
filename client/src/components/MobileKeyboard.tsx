@@ -15,9 +15,9 @@ const KEYBOARD_ROWS = [
 
 export function MobileKeyboard({ onKeyPress, onBackspace, disabled }: MobileKeyboardProps) {
   return (
-    <div className="w-full flex flex-col gap-1.5" data-testid="mobile-keyboard">
+    <div className="w-full flex flex-col gap-1" data-testid="mobile-keyboard">
       {KEYBOARD_ROWS.map((row, rowIdx) => (
-        <div key={rowIdx} className="flex justify-center gap-1">
+        <div key={rowIdx} className="flex w-full gap-[2px]">
           {row.map((key) => (
             <button
               key={key}
@@ -25,7 +25,7 @@ export function MobileKeyboard({ onKeyPress, onBackspace, disabled }: MobileKeyb
               onClick={() => onKeyPress(key)}
               disabled={disabled}
               className={cn(
-                "flex-1 h-12 rounded-md font-semibold text-base",
+                "flex-1 h-11 rounded font-semibold text-base",
                 "bg-secondary/80 border border-white/10 text-foreground",
                 "active:bg-primary/30 active:scale-95 transition-all",
                 "disabled:opacity-50 disabled:cursor-not-allowed"
@@ -41,7 +41,7 @@ export function MobileKeyboard({ onKeyPress, onBackspace, disabled }: MobileKeyb
               onClick={onBackspace}
               disabled={disabled}
               className={cn(
-                "flex-[1.5] h-12 rounded-md font-semibold text-sm flex items-center justify-center",
+                "flex-[1.5] h-11 rounded font-semibold text-sm flex items-center justify-center",
                 "bg-secondary/80 border border-white/10 text-foreground",
                 "active:bg-destructive/30 active:scale-95 transition-all",
                 "disabled:opacity-50 disabled:cursor-not-allowed"

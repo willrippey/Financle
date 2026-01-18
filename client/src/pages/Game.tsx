@@ -170,7 +170,7 @@ export default function Game() {
       {!isMobile && <Navbar />}
       
       <main className={isMobile 
-        ? "flex-1 container mx-auto px-2 py-2 max-w-4xl flex flex-col" 
+        ? "flex-1 w-full px-1 py-1 flex flex-col" 
         : "flex-1 container mx-auto px-2 sm:px-4 py-3 sm:py-4 max-w-4xl overflow-y-auto"
       }>
         {/* Header */}
@@ -241,7 +241,7 @@ export default function Game() {
         )}
 
         {/* Input Area */}
-        <div className="max-w-xl mx-auto space-y-2 sm:space-y-3 mb-4 sm:mb-6">
+        <div className={isMobile ? "w-full space-y-2 mb-2" : "max-w-xl mx-auto space-y-2 sm:space-y-3 mb-4 sm:mb-6"}>
           {!isGameOver ? (
             <motion.div 
               initial={{ y: 20, opacity: 0 }}
