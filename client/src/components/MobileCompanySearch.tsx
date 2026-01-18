@@ -200,13 +200,11 @@ export function MobileCompanySearch({ onSelect, onSkip, disabled, guessedSymbols
         )}
       </div>
 
-      <div className="mt-1">
-        <MobileKeyboard 
-          onKeyPress={handleKeyPress} 
-          onBackspace={handleBackspace}
-          disabled={disabled}
-        />
-      </div>
+      <MobileKeyboard 
+        onKeyPress={handleKeyPress} 
+        onBackspace={handleBackspace}
+        disabled={disabled}
+      />
     </div>
   );
 }
