@@ -177,7 +177,7 @@ export function MobileCompanySearch({ onSelect, onSkip, disabled, guessedSymbols
           {displayQuery.length > 0 && (
             <span 
               className={cn(
-                "ml-0.5 text-primary font-light",
+                "-ml-0.5 text-primary font-light",
                 cursorVisible ? "opacity-100" : "opacity-0"
               )}
             >
@@ -200,11 +200,13 @@ export function MobileCompanySearch({ onSelect, onSkip, disabled, guessedSymbols
         )}
       </div>
 
-      <MobileKeyboard 
-        onKeyPress={handleKeyPress} 
-        onBackspace={handleBackspace}
-        disabled={disabled}
-      />
+      <div className="mt-1">
+        <MobileKeyboard 
+          onKeyPress={handleKeyPress} 
+          onBackspace={handleBackspace}
+          disabled={disabled}
+        />
+      </div>
     </div>
   );
 }
