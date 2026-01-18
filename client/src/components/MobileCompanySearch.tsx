@@ -163,9 +163,9 @@ export function MobileCompanySearch({ onSelect, onSkip, disabled, guessedSymbols
         </div>
       )}
 
-      <div className="flex gap-2 w-full mb-2">
+      <div className="flex gap-2 w-full mb-1">
         <div className={cn(
-          "h-11 flex-1 px-3 bg-secondary/50 border rounded-md flex items-center",
+          "h-10 flex-1 px-3 bg-secondary/50 border rounded-md flex items-center",
           searchQuery.length > 0 ? "border-primary/30" : "border-white/10"
         )}>
           <span className={cn(
@@ -192,7 +192,7 @@ export function MobileCompanySearch({ onSelect, onSkip, disabled, guessedSymbols
             onClick={onSkip}
             disabled={disabled}
             data-testid="button-skip"
-            className="h-11 px-4 flex-shrink-0"
+            className="h-10 px-3 flex-shrink-0"
           >
             <SkipForward className="h-4 w-4 mr-1" />
             Skip

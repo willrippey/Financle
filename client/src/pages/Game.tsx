@@ -169,9 +169,9 @@ export default function Game() {
   ];
 
   return (
-    <div className={isMobile ? "h-screen bg-background flex flex-col overflow-hidden" : "min-h-screen bg-background flex flex-col"}>
+    <div className={isMobile ? "bg-background flex flex-col overflow-hidden" : "min-h-screen bg-background flex flex-col"} style={isMobile ? { height: '100dvh' } : undefined}>
       {isMobile ? (
-        <header className="flex-shrink-0 w-full border-b border-white/5 bg-background/80 px-2 py-1.5">
+        <header className="flex-shrink-0 w-full border-b border-white/5 bg-background/80 px-2 py-1">
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center gap-1.5">
               <div className="bg-primary/20 p-1 rounded">
@@ -216,7 +216,7 @@ export default function Game() {
           {/* Current Streak */}
           <div className={isMobile ? "text-center flex-1" : "text-center flex-1"}>
             <span className="text-xs font-medium text-muted-foreground uppercase tracking-widest block mb-0">Streak</span>
-            <span className={isMobile ? "text-base font-mono font-bold text-primary" : "text-lg sm:text-2xl font-mono font-bold text-primary"}>{user?.currentStreak || 0}</span>
+            <span className={isMobile ? "text-base font-mono font-bold text-primary" : "text-lg sm:text-2xl font-mono font-bold text-primary"}>{(user as any)?.currentStreak || 0}</span>
           </div>
 
           {/* Game type and rounds */}

@@ -15,7 +15,7 @@ const KEYBOARD_ROWS = [
 
 export function MobileKeyboard({ onKeyPress, onBackspace, disabled }: MobileKeyboardProps) {
   return (
-    <div className="w-full flex flex-col gap-1.5 pb-2" data-testid="mobile-keyboard">
+    <div className="w-full flex flex-col gap-1 pb-1" data-testid="mobile-keyboard">
       {KEYBOARD_ROWS.map((row, rowIdx) => (
         <div 
           key={rowIdx} 
@@ -32,12 +32,12 @@ export function MobileKeyboard({ onKeyPress, onBackspace, disabled }: MobileKeyb
               onClick={() => onKeyPress(key)}
               disabled={disabled}
               className={cn(
-                "flex-1 rounded-md font-semibold text-lg",
+                "flex-1 rounded-md font-semibold text-base",
                 "bg-secondary/80 border border-white/10 text-foreground",
                 "active:bg-primary/30 active:scale-95 transition-all",
-                "disabled:opacity-50 disabled:cursor-not-allowed"
+                "disabled:opacity-50 disabled:cursor-not-allowed",
+                "h-[44px]"
               )}
-              style={{ height: '54px' }}
               data-testid={`key-${key}`}
             >
               {key}
@@ -54,12 +54,12 @@ export function MobileKeyboard({ onKeyPress, onBackspace, disabled }: MobileKeyb
                   "flex-[1.5] rounded-md font-semibold text-sm flex items-center justify-center",
                   "bg-secondary/80 border border-white/10 text-foreground",
                   "active:bg-destructive/30 active:scale-95 transition-all",
-                  "disabled:opacity-50 disabled:cursor-not-allowed"
+                  "disabled:opacity-50 disabled:cursor-not-allowed",
+                  "h-[44px]"
                 )}
-                style={{ height: '54px' }}
                 data-testid="key-backspace"
               >
-                <Delete className="h-7 w-7" />
+                <Delete className="h-6 w-6" />
               </button>
             </>
           )}
