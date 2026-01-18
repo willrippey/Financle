@@ -21,7 +21,7 @@ export function MobileKeyboard({ onKeyPress, onBackspace, disabled }: MobileKeyb
           key={rowIdx} 
           className="flex w-full gap-[3px]"
           style={{
-            paddingLeft: rowIdx === 1 ? '5%' : rowIdx === 2 ? '8%' : '0',
+            paddingLeft: rowIdx === 1 ? '5%' : rowIdx === 2 ? '12%' : '0',
             paddingRight: rowIdx === 1 ? '5%' : rowIdx === 2 ? '0' : '0',
           }}
         >
@@ -32,11 +32,12 @@ export function MobileKeyboard({ onKeyPress, onBackspace, disabled }: MobileKeyb
               onClick={() => onKeyPress(key)}
               disabled={disabled}
               className={cn(
-                "flex-1 h-12 rounded-md font-semibold text-lg",
+                "flex-1 rounded-md font-semibold text-lg",
                 "bg-secondary/80 border border-white/10 text-foreground",
                 "active:bg-primary/30 active:scale-95 transition-all",
                 "disabled:opacity-50 disabled:cursor-not-allowed"
               )}
+              style={{ height: '54px' }}
               data-testid={`key-${key}`}
             >
               {key}
@@ -48,11 +49,12 @@ export function MobileKeyboard({ onKeyPress, onBackspace, disabled }: MobileKeyb
               onClick={onBackspace}
               disabled={disabled}
               className={cn(
-                "flex-[1.5] h-12 rounded-md font-semibold text-sm flex items-center justify-center",
+                "flex-[1.5] rounded-md font-semibold text-sm flex items-center justify-center",
                 "bg-secondary/80 border border-white/10 text-foreground",
                 "active:bg-destructive/30 active:scale-95 transition-all",
                 "disabled:opacity-50 disabled:cursor-not-allowed"
               )}
+              style={{ height: '54px' }}
               data-testid="key-backspace"
             >
               <Delete className="h-5 w-5" />

@@ -123,9 +123,9 @@ export function MobileCompanySearch({ onSelect, onSkip, disabled, guessedSymbols
   const displayQuery = searchQuery || "";
 
   return (
-    <div className="flex flex-col w-full" data-testid="mobile-company-search">
+    <div className="flex flex-col w-full relative" data-testid="mobile-company-search">
       {(searchQuery.length > 0 || filteredCompanies.length > 0) && (
-        <div className="max-h-[120px] overflow-y-auto bg-card/50 rounded-md border border-white/10 mb-2">
+        <div className="absolute bottom-full left-0 right-0 mb-1 max-h-[200px] overflow-y-auto bg-card/95 backdrop-blur-sm rounded-md border border-white/10 shadow-lg z-10">
           {isLoading && (
             <div className="flex items-center justify-center py-4">
               <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
@@ -148,7 +148,7 @@ export function MobileCompanySearch({ onSelect, onSkip, disabled, guessedSymbols
                   onTouchStart={() => setSelectedIndex(idx)}
                   disabled={disabled}
                   className={cn(
-                    "w-full px-3 py-2 text-left flex items-center gap-2 transition-colors",
+                    "w-full px-3 py-2.5 text-left flex items-center gap-2 transition-colors",
                     selectedIndex === idx ? "bg-primary/20" : "bg-transparent",
                     "active:bg-primary/30"
                   )}
