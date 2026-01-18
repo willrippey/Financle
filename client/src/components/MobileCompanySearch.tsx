@@ -13,9 +13,19 @@ interface MobileCompanySearchProps {
   searchRef?: React.RefObject<{ focusAndOpen: () => void; clearSearch: () => void }>;
 }
 
+function toTitleCase(str: string): string {
+  if (!str) return str;
+  return str
+    .toLowerCase()
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}
+
 export function MobileCompanySearch({ onSelect, onSkip, disabled, guessedSymbols = [], searchRef }: MobileCompanySearchProps) {
   const [searchQuery, setSearchQuery] = React.useState("");
   const [selectedIndex, setSelectedIndex] = React.useState(0);
+  const [cursorVisible, setCursorVisible] = React.useState(true);
   
   const { data: companies, isLoading } = useCompanySearch(searchQuery);
 
@@ -23,6 +33,13 @@ export function MobileCompanySearch({ onSelect, onSkip, disabled, guessedSymbols
     focusAndOpen: () => {},
     clearSearch: () => setSearchQuery("")
   }));
+
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      setCursorVisible(prev => !prev);
+    }, 530);
+    return () => clearInterval(interval);
+  }, []);
 
   const normalizeCompanyName = (name: string) => {
     return name.replace(/\s+(Inc\.?|PLC|Plc)$/i, "").trim().toLowerCase();
@@ -81,13 +98,19 @@ export function MobileCompanySearch({ onSelect, onSkip, disabled, guessedSymbols
 
   const handleKeyPress = (key: string) => {
     if (!disabled) {
-      setSearchQuery(prev => prev + key);
+      setSearchQuery(prev => {
+        const newQuery = prev + key.toLowerCase();
+        return toTitleCase(newQuery);
+      });
     }
   };
 
   const handleBackspace = () => {
     if (!disabled) {
-      setSearchQuery(prev => prev.slice(0, -1));
+      setSearchQuery(prev => {
+        const shortened = prev.slice(0, -1);
+        return toTitleCase(shortened);
+      });
     }
   };
 
@@ -97,38 +120,12 @@ export function MobileCompanySearch({ onSelect, onSkip, disabled, guessedSymbols
     setSelectedIndex(0);
   };
 
-  return (
-    <div className="flex flex-col gap-2 w-full" data-testid="mobile-company-search">
-      <div className="flex gap-2 w-full">
-        <div className={cn(
-          "h-11 flex-1 px-3 bg-secondary/50 border rounded-md flex items-center",
-          searchQuery.length > 0 ? "border-primary/30" : "border-white/10"
-        )}>
-          <span className={cn(
-            "text-base",
-            searchQuery.length === 0 ? "text-muted-foreground/50" : "text-foreground"
-          )}>
-            {searchQuery || "\u00A0"}
-          </span>
-          {searchQuery.length > 0 && <span className="animate-pulse ml-0.5 text-primary">|</span>}
-        </div>
-        {onSkip && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onSkip}
-            disabled={disabled}
-            data-testid="button-skip"
-            className="h-11 px-4 flex-shrink-0"
-          >
-            <SkipForward className="h-4 w-4 mr-1" />
-            Skip
-          </Button>
-        )}
-      </div>
+  const displayQuery = searchQuery || "";
 
+  return (
+    <div className="flex flex-col w-full" data-testid="mobile-company-search">
       {(searchQuery.length > 0 || filteredCompanies.length > 0) && (
-        <div className="max-h-[100px] overflow-y-auto bg-card/50 rounded-md border border-white/10">
+        <div className="max-h-[120px] overflow-y-auto bg-card/50 rounded-md border border-white/10 mb-2">
           {isLoading && (
             <div className="flex items-center justify-center py-4">
               <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
@@ -165,6 +162,41 @@ export function MobileCompanySearch({ onSelect, onSkip, disabled, guessedSymbols
           )}
         </div>
       )}
+
+      <div className="flex gap-2 w-full mb-2">
+        <div className={cn(
+          "h-11 flex-1 px-3 bg-secondary/50 border rounded-md flex items-center",
+          searchQuery.length > 0 ? "border-primary/30" : "border-white/10"
+        )}>
+          <span className={cn(
+            "text-base",
+            displayQuery.length === 0 ? "text-muted-foreground/50" : "text-foreground"
+          )}>
+            {displayQuery || "Search companies..."}
+          </span>
+          <span 
+            className={cn(
+              "ml-0.5 text-primary font-light",
+              cursorVisible ? "opacity-100" : "opacity-0"
+            )}
+          >
+            |
+          </span>
+        </div>
+        {onSkip && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onSkip}
+            disabled={disabled}
+            data-testid="button-skip"
+            className="h-11 px-4 flex-shrink-0"
+          >
+            <SkipForward className="h-4 w-4 mr-1" />
+            Skip
+          </Button>
+        )}
+      </div>
 
       <MobileKeyboard 
         onKeyPress={handleKeyPress} 
