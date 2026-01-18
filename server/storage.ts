@@ -333,11 +333,9 @@ export class DatabaseStorage implements IStorage {
   }
 
   async seedCompanies(data: any[]): Promise<void> {
-    // Only seed if database is empty (preserves existing data)
     const existing = await db.select({ count: sql`count(*)` }).from(companies);
     if (Number(existing[0].count) === 0) {
       await db.insert(companies).values(data);
-      console.log(`Seeded ${data.length} companies`);
     }
   }
 }
