@@ -172,7 +172,7 @@ export function GameOverModal({ open, game, onPlayAgain, isDaily, onClose }: Gam
             )}
             <DialogDescription className="text-center text-[0.65rem] sm:text-sm mt-0.5">
               {isWin 
-                ? `You identified ${target?.name || "the company"} in ${Math.max(1, (game?.round || 1) - 1)} rounds`
+                ? `You identified ${target?.name || "the company"} in ${Math.max(1, (game?.round || 1) - 1)} ${Math.max(1, (game?.round || 1) - 1) === 1 ? 'round' : 'rounds'}`
                 : "Better luck next time. The market is unpredictable."}
             </DialogDescription>
           </DialogHeader>

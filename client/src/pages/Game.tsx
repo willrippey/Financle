@@ -213,13 +213,11 @@ export default function Game() {
             </Button>
           )}
           
-          {/* Center: Current Streak for endless mode */}
-          {game.type === 'endless' && (
-            <div className={isMobile ? "text-center" : "text-center flex-1"}>
-              <span className="text-xs font-medium text-muted-foreground uppercase tracking-widest block mb-0">Streak</span>
-              <span className={isMobile ? "text-base font-mono font-bold text-primary" : "text-lg sm:text-2xl font-mono font-bold text-primary"}>{game.endlessStreak || 0}</span>
-            </div>
-          )}
+          {/* Current Streak */}
+          <div className={isMobile ? "text-center flex-1" : "text-center flex-1"}>
+            <span className="text-xs font-medium text-muted-foreground uppercase tracking-widest block mb-0">Streak</span>
+            <span className={isMobile ? "text-base font-mono font-bold text-primary" : "text-lg sm:text-2xl font-mono font-bold text-primary"}>{user?.currentStreak || 0}</span>
+          </div>
 
           {/* Game type and rounds */}
           <div className={isMobile ? "text-center flex-1" : "text-right flex-shrink-0"}>
