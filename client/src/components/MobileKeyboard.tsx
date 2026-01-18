@@ -36,7 +36,7 @@ export function MobileKeyboard({ onKeyPress, onBackspace, disabled }: MobileKeyb
                 "bg-secondary/80 border border-white/10 text-foreground",
                 "active:bg-primary/30 active:scale-95 transition-all",
                 "disabled:opacity-50 disabled:cursor-not-allowed",
-                "h-[44px]"
+                "h-[52px]"
               )}
               data-testid={`key-${key}`}
             >
@@ -55,7 +55,7 @@ export function MobileKeyboard({ onKeyPress, onBackspace, disabled }: MobileKeyb
                   "bg-secondary/80 border border-white/10 text-foreground",
                   "active:bg-destructive/30 active:scale-95 transition-all",
                   "disabled:opacity-50 disabled:cursor-not-allowed",
-                  "h-[44px]"
+                  "h-[52px]"
                 )}
                 data-testid="key-backspace"
               >
