@@ -9,6 +9,7 @@ export function registerAuthRoutes(app: Express): void {
   app.get("/api/auth/user", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
+      const isGuest = req.user.isGuest || false;
       const user = await authStorage.getUser(userId);
       
       if (!user) {
@@ -19,7 +20,8 @@ export function registerAuthRoutes(app: Express): void {
 
       const enrichedUser = {
         ...user,
-        username: user.email?.split('@')[0] || user.firstName || 'User',
+        username: isGuest ? 'Guest' : (user.email?.split('@')[0] || user.firstName || 'User'),
+        isGuest,
         currentStreak: stats?.currentStreak || 0,
         maxStreak: stats?.maxStreak || 0,
         totalWins: stats?.totalWins || 0,

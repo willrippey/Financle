@@ -128,12 +128,84 @@ export async function setupAuth(app: Express) {
       );
     });
   });
+
+  // Guest login - creates or reuses a guest session based on device cookie
+  app.post("/api/guest", async (req, res) => {
+    // CSRF protection via Origin/Referer check
+    const origin = req.get('Origin') || req.get('Referer');
+    const host = req.get('Host');
+    if (origin && host && !origin.includes(host)) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+    
+    // Check for existing guest device cookie
+    let guestId = req.cookies?.guest_device_id;
+    
+    if (!guestId) {
+      // Create new guest ID for this device
+      guestId = `guest_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
+    }
+    
+    // Create or update guest user in database
+    await authStorage.upsertUser({
+      id: guestId,
+      email: null,
+      firstName: "Guest",
+      lastName: null,
+      profileImageUrl: null,
+    });
+
+    const sessionTtl = 7 * 24 * 60 * 60 * 1000; // 1 week in ms
+
+    // Set up user session like a regular authenticated user
+    const guestUser = {
+      claims: {
+        sub: guestId,
+        email: null,
+        first_name: "Guest",
+        last_name: null,
+        profile_image_url: null,
+        exp: Math.floor(Date.now() / 1000) + (7 * 24 * 60 * 60), // 1 week
+      },
+      isGuest: true,
+    };
+
+    // Set device cookie to persist guest ID across sessions (1 year)
+    res.cookie('guest_device_id', guestId, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+      maxAge: 365 * 24 * 60 * 60 * 1000, // 1 year
+    });
+
+    req.login(guestUser, (err) => {
+      if (err) {
+        console.error("Guest login error:", err);
+        return res.status(500).json({ message: "Failed to create guest session" });
+      }
+      res.json({ success: true, redirect: "/" });
+    });
+  });
 }
 
 export const isAuthenticated: RequestHandler = async (req, res, next) => {
   const user = req.user as any;
 
-  if (!req.isAuthenticated() || !user.expires_at) {
+  if (!req.isAuthenticated()) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  // Guest users don't need token refresh - just check expiration
+  if (user.isGuest) {
+    const now = Math.floor(Date.now() / 1000);
+    if (user.claims?.exp && now <= user.claims.exp) {
+      return next();
+    }
+    return res.status(401).json({ message: "Guest session expired" });
+  }
+
+  // Regular OAuth users
+  if (!user.expires_at) {
     return res.status(401).json({ message: "Unauthorized" });
   }
 

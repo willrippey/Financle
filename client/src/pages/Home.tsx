@@ -7,7 +7,7 @@ import { Navbar } from "@/components/Navbar";
 import { FinancleHeader } from "@/components/FinancleHeader";
 import { CustomGameModal } from "@/components/CustomGameModal";
 import { useLocation } from "wouter";
-import { Calendar, Infinity as InfinityIcon, Trophy, Flame, Loader2, Settings2, Info } from "lucide-react";
+import { Calendar, Infinity as InfinityIcon, Trophy, Flame, Loader2, Settings2, Info, User } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { motion } from "framer-motion";
 import type { CustomGameFilters } from "@shared/schema";
@@ -82,19 +82,54 @@ export default function Home() {
                 <CardTitle className="text-lg sm:text-2xl">Ready to Invest?</CardTitle>
                 <CardDescription className="text-xs sm:text-sm">Login to track your streak and compete.</CardDescription>
               </CardHeader>
-              <CardContent className="flex justify-center pt-3 sm:pt-4 pb-3 sm:pb-4">
+              <CardContent className="flex flex-col gap-3 pt-3 sm:pt-4 pb-3 sm:pb-4">
                 <Button 
                   size="lg" 
                   onClick={() => window.location.href = "/api/login"}
                   className="w-full h-10 sm:h-12 text-sm sm:text-base font-semibold bg-primary hover:bg-primary/90 shadow-lg shadow-primary/25"
+                  data-testid="button-login"
                 >
                   Login to Play
                 </Button>
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t border-white/10" />
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-card px-2 text-muted-foreground">or</span>
+                  </div>
+                </div>
+                <Button 
+                  size="lg" 
+                  variant="outline"
+                  onClick={async () => {
+                    try {
+                      const response = await fetch("/api/guest", { 
+                        method: "POST",
+                        credentials: "same-origin"
+                      });
+                      const data = await response.json();
+                      if (data.success) {
+                        window.location.href = data.redirect;
+                      }
+                    } catch (error) {
+                      console.error("Guest login failed:", error);
+                    }
+                  }}
+                  className="w-full h-10 sm:h-12 text-sm sm:text-base font-semibold border-white/10"
+                  data-testid="button-guest"
+                >
+                  <User className="h-4 w-4 mr-2" />
+                  Play as Guest
+                </Button>
+                <p className="text-xs text-muted-foreground text-center">
+                  Guest progress is saved to this device only.
+                </p>
               </CardContent>
             </Card>
           </motion.div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 w-full max-w-4xl px-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 w-full max-w-2xl px-2">
             {/* Daily Challenge Card */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
@@ -161,7 +196,9 @@ export default function Home() {
                         <p className="font-semibold mb-1">Easy Mode</p>
                         <p className="text-muted-foreground mb-2">~100 well-known companies like Apple, Nike, and Coca-Cola.</p>
                         <p className="font-semibold mb-1">Hard Mode</p>
-                        <p className="text-muted-foreground">All S&P 500 companies, including lesser-known ones.</p>
+                        <p className="text-muted-foreground mb-2">All S&P 500 companies, including lesser-known ones.</p>
+                        <p className="font-semibold mb-1">Custom</p>
+                        <p className="text-muted-foreground">Filter by market cap and sector.</p>
                       </TooltipContent>
                     </Tooltip>
                   </div>
@@ -198,39 +235,20 @@ export default function Home() {
                         "Hard"
                       )}
                     </Button>
+                    <Button 
+                      variant="outline" 
+                      className="flex-1 h-9 sm:h-10 text-xs sm:text-sm border-white/10 hover:bg-white/5 hover:text-white"
+                      onClick={() => setCustomGameModalOpen(true)}
+                      disabled={createGameMutation.isPending && createGameMutation.variables?.type === 'custom'}
+                      data-testid="button-custom-game"
+                    >
+                      {createGameMutation.isPending && createGameMutation.variables?.type === 'custom' ? (
+                        <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
+                      ) : (
+                        <><Settings2 className="h-3 w-3 mr-1" />Custom</>
+                      )}
+                    </Button>
                   </div>
-                </CardFooter>
-              </Card>
-            </motion.div>
-
-            {/* Custom Game Card */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-              className="sm:col-span-2 lg:col-span-1"
-            >
-              <Card className="h-full border-white/10 bg-card/50 hover:border-white/20 transition-all duration-300 group flex flex-col">
-                <CardHeader className="pb-1 sm:pb-2">
-                  <div className="flex justify-between items-start mb-1 sm:mb-2">
-                    <div className="p-1.5 sm:p-2 bg-cyan-500/20 rounded-lg text-cyan-400">
-                      <Settings2 className="h-4 w-4 sm:h-6 sm:w-6" />
-                    </div>
-                  </div>
-                  <CardTitle className="text-base sm:text-xl text-cyan-100">Custom Game</CardTitle>
-                  <CardDescription className="text-xs sm:text-sm">
-                    Filter by market cap and sector.
-                  </CardDescription>
-                </CardHeader>
-                <CardFooter className="pt-3 sm:pt-4 mt-auto pb-0">
-                  <Button 
-                    variant="outline" 
-                    className="w-full h-9 sm:h-10 text-xs sm:text-sm border-white/10 hover:bg-white/5 hover:text-white"
-                    onClick={() => setCustomGameModalOpen(true)}
-                    data-testid="button-custom-game"
-                  >
-                    Customize
-                  </Button>
                 </CardFooter>
               </Card>
             </motion.div>
