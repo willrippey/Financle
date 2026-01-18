@@ -54,8 +54,6 @@ export interface IStorage {
   // Daily Challenges
   getOrCreateDailyChallenge(date: string): Promise<Company>;
   
-  // Helpers
-  seedCompanies(companies: any[]): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -332,12 +330,6 @@ export class DatabaseStorage implements IStorage {
     return selectedCompany;
   }
 
-  async seedCompanies(data: any[]): Promise<void> {
-    const existing = await db.select({ count: sql`count(*)` }).from(companies);
-    if (Number(existing[0].count) === 0) {
-      await db.insert(companies).values(data);
-    }
-  }
 }
 
 export const storage = new DatabaseStorage();
