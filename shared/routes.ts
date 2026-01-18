@@ -133,7 +133,19 @@ export const api = {
         }),
       },
     },
-  }
+  },
+  leaderboard: {
+    list: {
+      method: 'GET' as const,
+      path: '/api/leaderboard',
+      responses: {
+        200: z.array(z.object({
+          username: z.string(),
+          score: z.number(),
+        })),
+      },
+    },
+  },
 };
 
 export function buildUrl(path: string, params?: Record<string, string | number>): string {
