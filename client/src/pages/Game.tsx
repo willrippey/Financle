@@ -217,9 +217,8 @@ export default function Game() {
                 value={clue.value} 
                 revealed={clue.revealed}
                 delay={idx}
-                className={isMobile ? "h-[60px]" : "h-24 sm:h-28 md:h-32"}
+                className={isMobile ? "h-[72px]" : "h-24 sm:h-28 md:h-32"}
                 isMultiLine={clue.isMultiLine}
-                compact={isMobile}
               />
             </div>
           ))}
@@ -249,26 +248,10 @@ export default function Game() {
               animate={{ y: 0, opacity: 1 }}
               className="space-y-2"
             >
-              {/* Skip button - shown above search on mobile for clarity */}
-              {isMobile && (
-                <div className="flex justify-center mb-2">
-                  <Button 
-                    variant="outline"
-                    size="sm"
-                    onClick={handleSkip}
-                    disabled={submitGuess.isPending || skipRound.isPending}
-                    data-testid="button-skip"
-                    className="text-xs px-4"
-                  >
-                    <SkipForward className="h-3 w-3 mr-1.5" />
-                    Skip Round ({attemptsLeft} left)
-                  </Button>
-                </div>
-              )}
-
               {isMobile ? (
                 <MobileCompanySearch 
-                  onSelect={handleGuess} 
+                  onSelect={handleGuess}
+                  onSkip={handleSkip}
                   disabled={submitGuess.isPending || skipRound.isPending} 
                   guessedSymbols={game.guesses.map((g: any) => g.symbol)}
                   searchRef={searchCompRef as any}

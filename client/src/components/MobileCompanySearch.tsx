@@ -2,16 +2,18 @@ import * as React from "react";
 import { useCompanySearch } from "@/hooks/use-games";
 import { cn } from "@/lib/utils";
 import { MobileKeyboard } from "./MobileKeyboard";
-import { Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Loader2, SkipForward } from "lucide-react";
 
 interface MobileCompanySearchProps {
   onSelect: (symbol: string) => void;
+  onSkip?: () => void;
   disabled?: boolean;
   guessedSymbols?: string[];
   searchRef?: React.RefObject<{ focusAndOpen: () => void; clearSearch: () => void }>;
 }
 
-export function MobileCompanySearch({ onSelect, disabled, guessedSymbols = [], searchRef }: MobileCompanySearchProps) {
+export function MobileCompanySearch({ onSelect, onSkip, disabled, guessedSymbols = [], searchRef }: MobileCompanySearchProps) {
   const [searchQuery, setSearchQuery] = React.useState("");
   const [selectedIndex, setSelectedIndex] = React.useState(0);
   
@@ -97,31 +99,38 @@ export function MobileCompanySearch({ onSelect, disabled, guessedSymbols = [], s
 
   return (
     <div className="flex flex-col gap-2 w-full" data-testid="mobile-company-search">
-      <div className="relative w-full">
+      <div className="flex gap-2 w-full">
         <div className={cn(
-          "h-10 w-full px-3 bg-secondary/50 border rounded-md flex items-center",
+          "h-11 flex-1 px-3 bg-secondary/50 border rounded-md flex items-center",
           searchQuery.length > 0 ? "border-primary/30" : "border-white/10"
         )}>
           <span className={cn(
-            "text-sm",
-            searchQuery.length === 0 ? "text-muted-foreground" : "text-foreground"
+            "text-base",
+            searchQuery.length === 0 ? "text-muted-foreground/50" : "text-foreground"
           )}>
-            {searchQuery.length === 0 ? "Type to search..." : searchQuery}
+            {searchQuery || "\u00A0"}
           </span>
           {searchQuery.length > 0 && <span className="animate-pulse ml-0.5 text-primary">|</span>}
         </div>
+        {onSkip && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onSkip}
+            disabled={disabled}
+            data-testid="button-skip"
+            className="h-11 px-3 flex-shrink-0"
+          >
+            <SkipForward className="h-4 w-4 mr-1" />
+            Skip
+          </Button>
+        )}
       </div>
 
-      <div className="h-[120px] overflow-y-auto bg-card/50 rounded-md border border-white/10">
+      <div className="h-[100px] overflow-y-auto bg-card/50 rounded-md border border-white/10">
         {isLoading && searchQuery.length > 0 && (
           <div className="flex items-center justify-center h-full">
             <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-          </div>
-        )}
-        
-        {!isLoading && searchQuery.length === 0 && (
-          <div className="flex items-center justify-center h-full text-xs text-muted-foreground">
-            Start typing to find companies
           </div>
         )}
 
@@ -147,8 +156,8 @@ export function MobileCompanySearch({ onSelect, disabled, guessedSymbols = [], s
                 )}
                 data-testid={`company-option-${company.symbol}`}
               >
-                <span className="font-mono font-bold text-xs w-12 flex-shrink-0">{company.symbol}</span>
-                <span className="text-xs truncate">{company.name}</span>
+                <span className="font-mono font-bold text-sm w-14 flex-shrink-0">{company.symbol}</span>
+                <span className="text-sm truncate">{company.name}</span>
               </button>
             ))}
           </div>
