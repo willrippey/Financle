@@ -4,18 +4,21 @@ import { useGame, useSubmitGuess, useCreateGame, useSkipRound } from "@/hooks/us
 import { Navbar } from "@/components/Navbar";
 import { GameCard } from "@/components/GameCard";
 import { CompanySearch } from "@/components/CompanySearch";
+import { MobileCompanySearch } from "@/components/MobileCompanySearch";
 import { GameOverModal } from "@/components/GameOverModal";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Loader2, ArrowLeft, History, RefreshCw, SkipForward } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export default function Game() {
   const [, params] = useRoute("/game/:id");
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const isMobile = useIsMobile();
   
   const gameId = params ? parseInt(params.id) : undefined;
   const { data: game, isLoading, error } = useGame(gameId);
@@ -25,7 +28,7 @@ export default function Game() {
 
   const [lastGuess, setLastGuess] = useState<string | null>(null);
   const [showGameOverModal, setShowGameOverModal] = useState(false);
-  const searchCompRef = useRef<{ focusAndOpen: () => void }>(null);
+  const searchCompRef = useRef<{ focusAndOpen: () => void; clearSearch?: () => void }>(null);
 
   // Update modal visibility when game status changes
   useEffect(() => {
@@ -46,14 +49,14 @@ export default function Game() {
     }
   }, [error, setLocation, toast]);
 
-  // Focus search input when game loads
+  // Focus search input when game loads (desktop only)
   useEffect(() => {
-    if (game && game.status === 'playing') {
+    if (game && game.status === 'playing' && !isMobile) {
       setTimeout(() => {
         searchCompRef.current?.focusAndOpen();
       }, 100);
     }
-  }, [game?.id]);
+  }, [game?.id, isMobile]);
 
   // Tab key to skip round
   useEffect(() => {
@@ -88,12 +91,16 @@ export default function Game() {
           description: err.message,
           variant: "destructive"
         });
-        // Auto-focus input after incorrect guess
-        searchCompRef.current?.focusAndOpen();
+        if (!isMobile) {
+          searchCompRef.current?.focusAndOpen();
+        }
+        searchCompRef.current?.clearSearch?.();
       },
       onSuccess: () => {
-        // Auto-focus input after guess
-        searchCompRef.current?.focusAndOpen();
+        if (!isMobile) {
+          searchCompRef.current?.focusAndOpen();
+        }
+        searchCompRef.current?.clearSearch?.();
       }
     });
   };
@@ -110,7 +117,10 @@ export default function Game() {
         });
       },
       onSuccess: () => {
-        searchCompRef.current?.focusAndOpen();
+        if (!isMobile) {
+          searchCompRef.current?.focusAndOpen();
+        }
+        searchCompRef.current?.clearSearch?.();
       }
     });
   };
@@ -156,10 +166,13 @@ export default function Game() {
   ];
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <Navbar />
+    <div className={isMobile ? "h-screen bg-background flex flex-col overflow-hidden" : "min-h-screen bg-background flex flex-col"}>
+      {!isMobile && <Navbar />}
       
-      <main className="flex-1 container mx-auto px-2 sm:px-4 py-3 sm:py-4 max-w-4xl overflow-y-auto">
+      <main className={isMobile 
+        ? "flex-1 container mx-auto px-2 py-2 max-w-4xl flex flex-col" 
+        : "flex-1 container mx-auto px-2 sm:px-4 py-3 sm:py-4 max-w-4xl overflow-y-auto"
+      }>
         {/* Header */}
         <div className="flex items-center justify-between mb-3 sm:mb-4 gap-2">
           <Button variant="ghost" onClick={() => setLocation("/")} className="text-muted-foreground hover:text-foreground pl-0 h-8 text-xs sm:text-sm flex-shrink-0">
@@ -196,7 +209,7 @@ export default function Game() {
         </div>
 
         {/* Game Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-3 mb-3 sm:mb-4">
+        <div className={`grid grid-cols-2 md:grid-cols-3 gap-1.5 sm:gap-3 ${isMobile ? 'mb-2' : 'mb-3 sm:mb-4'}`}>
           {clues.map((clue, idx) => (
             <div key={clue.title} className="col-span-1">
               <GameCard 
@@ -204,8 +217,9 @@ export default function Game() {
                 value={clue.value} 
                 revealed={clue.revealed}
                 delay={idx}
-                className="h-24 sm:h-28 md:h-32"
+                className={isMobile ? "h-[60px]" : "h-24 sm:h-28 md:h-32"}
                 isMultiLine={clue.isMultiLine}
+                compact={isMobile}
               />
             </div>
           ))}
@@ -235,34 +249,62 @@ export default function Game() {
               animate={{ y: 0, opacity: 1 }}
               className="space-y-2"
             >
-              <div className="text-center mb-1 sm:mb-2">
-                <h3 className="text-sm sm:text-base font-medium text-foreground mb-0">Make your guess</h3>
-                <p className="text-xs text-muted-foreground">{attemptsLeft} remaining</p>
-              </div>
-              
-              <div className="flex gap-1 sm:gap-2 w-full overflow-hidden">
-                <div className="flex-1 min-w-0">
-                  <CompanySearch 
-                    onSelect={handleGuess} 
-                    disabled={submitGuess.isPending || skipRound.isPending} 
-                    inputRef={searchInputRef}
-                    guessedSymbols={game.guesses.map((g: any) => g.symbol)}
-                    searchRef={searchCompRef}
-                  />
+              {/* Skip button - shown above search on mobile for clarity */}
+              {isMobile && (
+                <div className="flex justify-center mb-2">
+                  <Button 
+                    variant="outline"
+                    size="sm"
+                    onClick={handleSkip}
+                    disabled={submitGuess.isPending || skipRound.isPending}
+                    data-testid="button-skip"
+                    className="text-xs px-4"
+                  >
+                    <SkipForward className="h-3 w-3 mr-1.5" />
+                    Skip Round ({attemptsLeft} left)
+                  </Button>
                 </div>
-                <Button 
-                  variant="outline"
-                  onClick={handleSkip}
-                  disabled={submitGuess.isPending || skipRound.isPending}
-                  data-testid="button-skip"
-                  title="Skip this round to reveal the next clue (Tab)"
-                  className="h-12 px-2 sm:px-4 text-xs sm:text-sm flex-shrink-0"
-                >
-                  <SkipForward className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-1" />
-                  <span className="hidden sm:inline">Skip</span>
-                  <span className="hidden sm:inline text-muted-foreground ml-1">(Tab)</span>
-                </Button>
-              </div>
+              )}
+
+              {isMobile ? (
+                <MobileCompanySearch 
+                  onSelect={handleGuess} 
+                  disabled={submitGuess.isPending || skipRound.isPending} 
+                  guessedSymbols={game.guesses.map((g: any) => g.symbol)}
+                  searchRef={searchCompRef as any}
+                />
+              ) : (
+                <>
+                  <div className="text-center mb-1 sm:mb-2">
+                    <h3 className="text-sm sm:text-base font-medium text-foreground mb-0">Make your guess</h3>
+                    <p className="text-xs text-muted-foreground">{attemptsLeft} remaining</p>
+                  </div>
+                  
+                  <div className="flex gap-1 sm:gap-2 w-full overflow-hidden">
+                    <div className="flex-1 min-w-0">
+                      <CompanySearch 
+                        onSelect={handleGuess} 
+                        disabled={submitGuess.isPending || skipRound.isPending} 
+                        inputRef={searchInputRef}
+                        guessedSymbols={game.guesses.map((g: any) => g.symbol)}
+                        searchRef={searchCompRef}
+                      />
+                    </div>
+                    <Button 
+                      variant="outline"
+                      onClick={handleSkip}
+                      disabled={submitGuess.isPending || skipRound.isPending}
+                      data-testid="button-skip-desktop"
+                      title="Skip this round to reveal the next clue (Tab)"
+                      className="h-12 px-2 sm:px-4 text-xs sm:text-sm flex-shrink-0"
+                    >
+                      <SkipForward className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-1" />
+                      <span className="hidden sm:inline">Skip</span>
+                      <span className="hidden sm:inline text-muted-foreground ml-1">(Tab)</span>
+                    </Button>
+                  </div>
+                </>
+              )}
             </motion.div>
           ) : (
             <div className="text-center p-2 sm:p-4 bg-secondary/20 rounded-lg border border-white/5">
@@ -275,8 +317,8 @@ export default function Game() {
           )}
         </div>
 
-        {/* Previous Guesses Section and Play Again Button */}
-        {(game.guesses.length > 0 || (game as any).skippedRounds?.length > 0) && (
+        {/* Previous Guesses Section and Play Again Button - hidden on mobile */}
+        {!isMobile && (game.guesses.length > 0 || (game as any).skippedRounds?.length > 0) && (
           <div className="max-w-xl mx-auto pt-2 sm:pt-4">
             <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground uppercase tracking-widest font-semibold mb-2 sm:mb-3">
               <History className="h-4 w-4" /> Previous Guesses
