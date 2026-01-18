@@ -44,21 +44,24 @@ export function MobileKeyboard({ onKeyPress, onBackspace, disabled }: MobileKeyb
             </button>
           ))}
           {rowIdx === 2 && (
-            <button
-              type="button"
-              onClick={onBackspace}
-              disabled={disabled}
-              className={cn(
-                "flex-[1.5] rounded-md font-semibold text-sm flex items-center justify-center",
-                "bg-secondary/80 border border-white/10 text-foreground",
-                "active:bg-destructive/30 active:scale-95 transition-all",
-                "disabled:opacity-50 disabled:cursor-not-allowed"
-              )}
-              style={{ height: '54px' }}
-              data-testid="key-backspace"
-            >
-              <Delete className="h-5 w-5" />
-            </button>
+            <>
+              <div className="w-2 flex-shrink-0" />
+              <button
+                type="button"
+                onClick={onBackspace}
+                disabled={disabled}
+                className={cn(
+                  "flex-[1.5] rounded-md font-semibold text-sm flex items-center justify-center",
+                  "bg-secondary/80 border border-white/10 text-foreground",
+                  "active:bg-destructive/30 active:scale-95 transition-all",
+                  "disabled:opacity-50 disabled:cursor-not-allowed"
+                )}
+                style={{ height: '54px' }}
+                data-testid="key-backspace"
+              >
+                <Delete className="h-7 w-7" />
+              </button>
+            </>
           )}
         </div>
       ))}

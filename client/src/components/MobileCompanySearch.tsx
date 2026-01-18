@@ -125,7 +125,7 @@ export function MobileCompanySearch({ onSelect, onSkip, disabled, guessedSymbols
   return (
     <div className="flex flex-col w-full relative" data-testid="mobile-company-search">
       {(searchQuery.length > 0 || filteredCompanies.length > 0) && (
-        <div className="absolute bottom-full left-0 right-0 mb-1 max-h-[200px] overflow-y-auto bg-card/95 backdrop-blur-sm rounded-md border border-white/10 shadow-lg z-10">
+        <div className="absolute bottom-full left-0 right-0 mb-1 overflow-y-auto bg-card/95 backdrop-blur-sm rounded-md border border-white/10 shadow-lg z-10" style={{ maxHeight: '132px' }}>
           {isLoading && (
             <div className="flex items-center justify-center py-4">
               <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
@@ -174,14 +174,16 @@ export function MobileCompanySearch({ onSelect, onSkip, disabled, guessedSymbols
           )}>
             {displayQuery || "Search companies..."}
           </span>
-          <span 
-            className={cn(
-              "ml-0.5 text-primary font-light",
-              cursorVisible ? "opacity-100" : "opacity-0"
-            )}
-          >
-            |
-          </span>
+          {displayQuery.length > 0 && (
+            <span 
+              className={cn(
+                "ml-0.5 text-primary font-light",
+                cursorVisible ? "opacity-100" : "opacity-0"
+              )}
+            >
+              |
+            </span>
+          )}
         </div>
         {onSkip && (
           <Button
