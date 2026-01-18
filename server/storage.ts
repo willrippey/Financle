@@ -152,9 +152,23 @@ export class DatabaseStorage implements IStorage {
   }
 
   async searchCompanies(query: string): Promise<Company[]> {
+    const q = query.toLowerCase().trim();
+    // Also create a version without periods for matching initials like "J.M." with "jm"
+    const qNoPeriods = q.replace(/\./g, '');
+    
+    // Search for:
+    // 1. Name starts with query
+    // 2. Symbol starts with query
+    // 3. Any word in name starts with query (for subsequent word matching like "Smucker" in "J.M. Smucker")
+    // 4. Name without periods contains query without periods (for initials like "jm" matching "J.M.")
     return await db.select()
       .from(companies)
-      .where(sql`lower(${companies.name}) LIKE ${`${query.toLowerCase()}%`} OR lower(${companies.symbol}) LIKE ${`${query.toLowerCase()}%`}`)
+      .where(sql`
+        lower(${companies.name}) LIKE ${`${q}%`} 
+        OR lower(${companies.symbol}) LIKE ${`${q}%`}
+        OR lower(${companies.name}) LIKE ${`% ${q}%`}
+        OR REPLACE(lower(${companies.name}), '.', '') LIKE ${`%${qNoPeriods}%`}
+      `)
       .limit(500);
   }
 

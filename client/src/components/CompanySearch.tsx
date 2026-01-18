@@ -44,12 +44,14 @@ export function CompanySearch({ onSelect, disabled, inputRef, guessedSymbols = [
     if (!companies || !debouncedQuery) return [];
 
     const query = debouncedQuery.toLowerCase().trim();
+    const queryNoPeriods = query.replace(/\./g, '');
 
     return companies
       .filter((company) => !guessedSymbols.includes(company.symbol))
       .map((company) => {
         const symbol = company.symbol.toLowerCase();
         const normalizedName = normalizeCompanyName(company.name);
+        const nameNoPeriods = normalizedName.replace(/\./g, '');
 
         // Exact ticker match (only for 4+ chars)
         const isTickerMatch = symbol === query && query.length >= 4;
@@ -57,10 +59,19 @@ export function CompanySearch({ onSelect, disabled, inputRef, guessedSymbols = [
         // Name starts with query
         const startsWith = normalizedName.startsWith(query);
 
-        // Query exists as a word in the name
+        // Query exists as a word in the name (or word starts with query)
         const words = normalizedName.split(/\s+/);
-        const wordIndex = words.indexOf(query);
-        const isWordMatch = wordIndex !== -1;
+        let wordMatchIndex = -1;
+        for (let i = 0; i < words.length; i++) {
+          if (words[i] === query || words[i].startsWith(query)) {
+            wordMatchIndex = i;
+            break;
+          }
+        }
+        const isWordMatch = wordMatchIndex !== -1;
+
+        // Initials match (e.g., "jm" matches "j.m." in "J.M. Smucker")
+        const initialsMatch = queryNoPeriods.length >= 2 && nameNoPeriods.includes(queryNoPeriods);
 
         // General inclusion
         const includes = normalizedName.includes(query);
@@ -69,7 +80,9 @@ export function CompanySearch({ onSelect, disabled, inputRef, guessedSymbols = [
         let score = 0;
         if (isTickerMatch) score = 100;
         else if (startsWith) score = 90;
-        else if (isWordMatch) score = 80 - wordIndex; // Earlier words are better
+        else if (isWordMatch && wordMatchIndex === 0) score = 85; // First word match
+        else if (isWordMatch) score = 70 - wordMatchIndex; // Later words are lower priority
+        else if (initialsMatch && queryNoPeriods.length >= 2) score = 60; // Initials match
         else if (includes) score = 50;
 
         return { ...company, score };
@@ -165,7 +178,15 @@ export function CompanySearch({ onSelect, disabled, inputRef, guessedSymbols = [
           )}
         </div>
       </PopoverTrigger>
-      <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0 bg-card border-white/10 shadow-2xl" align="start">
+      <PopoverContent 
+        className="w-[var(--radix-popover-trigger-width)] p-0 bg-card border-white/10 shadow-2xl z-[100]" 
+        align="start"
+        side="bottom"
+        sideOffset={4}
+        avoidCollisions={true}
+        collisionPadding={16}
+        onOpenAutoFocus={(e) => e.preventDefault()}
+      >
         <Command shouldFilter={false} className="bg-transparent">
           <CommandList className="max-h-[300px]">
             {isLoading && (
