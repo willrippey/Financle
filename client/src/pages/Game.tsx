@@ -165,7 +165,7 @@ export default function Game() {
     { title: "Headquarters", value: game.clues.headquarters, revealed: !!game.clues.headquarters },
     { title: "Founded", value: game.clues.founded, revealed: !!game.clues.founded },
     { title: "First Letter", value: game.clues.firstLetter, revealed: !!game.clues.firstLetter },
-    { title: "Known For", value: game.clues.description, revealed: !!game.clues.description },
+    { title: "Known For", value: game.clues.description, revealed: !!game.clues.description, scaleText: true },
   ];
 
   return (
@@ -253,6 +253,7 @@ export default function Game() {
                 delay={idx}
                 className={isMobile ? "h-[72px]" : "h-24 sm:h-28 md:h-32"}
                 isMultiLine={clue.isMultiLine}
+                scaleText={(clue as any).scaleText}
               />
             </div>
           ))}

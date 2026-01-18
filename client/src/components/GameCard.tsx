@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { Lock } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
 interface GameCardProps {
   title: string;
@@ -11,9 +12,57 @@ interface GameCardProps {
   isMultiLine?: boolean;
   dynamicHeight?: boolean;
   compact?: boolean;
+  scaleText?: boolean;
 }
 
-export function GameCard({ title, value, revealed, delay = 0, className, isMultiLine, dynamicHeight, compact }: GameCardProps) {
+function ScaledText({ text, className }: { text: string; className?: string }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const textRef = useRef<HTMLSpanElement>(null);
+  const [fontSize, setFontSize] = useState(14);
+
+  useEffect(() => {
+    if (!containerRef.current || !textRef.current || !text) return;
+
+    const container = containerRef.current;
+    const textEl = textRef.current;
+    
+    const calculateFontSize = () => {
+      const containerWidth = container.clientWidth - 8;
+      const containerHeight = container.clientHeight - 4;
+      
+      let size = 16;
+      textEl.style.fontSize = `${size}px`;
+      
+      while (size > 8 && (textEl.scrollWidth > containerWidth || textEl.scrollHeight > containerHeight)) {
+        size -= 0.5;
+        textEl.style.fontSize = `${size}px`;
+      }
+      
+      setFontSize(size);
+    };
+
+    calculateFontSize();
+    
+    const resizeObserver = new ResizeObserver(calculateFontSize);
+    resizeObserver.observe(container);
+    
+    return () => resizeObserver.disconnect();
+  }, [text]);
+
+  return (
+    <div ref={containerRef} className={cn("flex-1 flex items-center justify-center w-full overflow-hidden px-1", className)}>
+      <span 
+        ref={textRef}
+        className="font-semibold text-foreground text-center leading-tight"
+        style={{ fontSize: `${fontSize}px` }}
+      >
+        {text}
+      </span>
+    </div>
+  );
+}
+
+export function GameCard({ title, value, revealed, delay = 0, className, isMultiLine, dynamicHeight, compact, scaleText }: GameCardProps) {
   const displayValue = isMultiLine ? value?.split('\n') : undefined;
   
   return (
@@ -59,7 +108,9 @@ export function GameCard({ title, value, revealed, delay = 0, className, isMulti
             )}>
               {title}
             </span>
-            {isMultiLine && displayValue ? (
+            {scaleText && value ? (
+              <ScaledText text={value} />
+            ) : isMultiLine && displayValue ? (
               <div className={cn(
                 "text-center w-full px-0.5 flex-1 flex flex-col justify-center",
                 compact ? "space-y-0" : "space-y-0.5"
