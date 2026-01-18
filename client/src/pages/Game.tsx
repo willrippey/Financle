@@ -216,7 +216,7 @@ export default function Game() {
           {/* Current Streak */}
           <div className={isMobile ? "text-center flex-1" : "text-center flex-1"}>
             <span className="text-xs font-medium text-muted-foreground uppercase tracking-widest block mb-0">Streak</span>
-            <span className={isMobile ? "text-base font-mono font-bold text-primary" : "text-lg sm:text-2xl font-mono font-bold text-primary"}>{(user as any)?.currentStreak || 0}</span>
+            <span className={isMobile ? "text-base font-mono font-bold text-primary" : "text-lg sm:text-2xl font-mono font-bold text-primary"}>{user?.currentStreak || 0}</span>
           </div>
 
           {/* Game type and rounds */}
@@ -274,7 +274,7 @@ export default function Game() {
         )}
 
         {/* Input Area */}
-        <div className={isMobile ? "w-full mt-auto" : "max-w-xl mx-auto space-y-2 sm:space-y-3 mb-4 sm:mb-6"}>
+        <div className={isMobile ? "w-full space-y-2 mb-2" : "max-w-xl mx-auto space-y-2 sm:space-y-3 mb-4 sm:mb-6"}>
           {!isGameOver ? (
             <motion.div 
               initial={{ y: 20, opacity: 0 }}

@@ -15,7 +15,7 @@ const KEYBOARD_ROWS = [
 
 export function MobileKeyboard({ onKeyPress, onBackspace, disabled }: MobileKeyboardProps) {
   return (
-    <div className="w-full flex flex-col gap-1.5" data-testid="mobile-keyboard">
+    <div className="w-full flex flex-col gap-1.5 pb-2" data-testid="mobile-keyboard">
       {KEYBOARD_ROWS.map((row, rowIdx) => (
         <div 
           key={rowIdx} 
