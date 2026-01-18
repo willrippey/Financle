@@ -1,14 +1,16 @@
 import { useEffect, useRef, useState } from "react";
-import { useLocation, useRoute } from "wouter";
+import { Link, useLocation, useRoute } from "wouter";
 import { useGame, useSubmitGuess, useCreateGame, useSkipRound } from "@/hooks/use-games";
+import { useAuth } from "@/hooks/use-auth";
 import { Navbar } from "@/components/Navbar";
 import { GameCard } from "@/components/GameCard";
 import { CompanySearch } from "@/components/CompanySearch";
 import { MobileCompanySearch } from "@/components/MobileCompanySearch";
 import { GameOverModal } from "@/components/GameOverModal";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
-import { Loader2, ArrowLeft, History, RefreshCw, SkipForward } from "lucide-react";
+import { Loader2, ArrowLeft, History, RefreshCw, SkipForward, TrendingUp, BarChart2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -17,6 +19,7 @@ export default function Game() {
   const [, params] = useRoute("/game/:id");
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+  const { user } = useAuth();
   const searchInputRef = useRef<HTMLInputElement>(null);
   const isMobile = useIsMobile();
   
@@ -167,33 +170,64 @@ export default function Game() {
 
   return (
     <div className={isMobile ? "h-screen bg-background flex flex-col overflow-hidden" : "min-h-screen bg-background flex flex-col"}>
-      {!isMobile && <Navbar />}
+      {isMobile ? (
+        <header className="flex-shrink-0 w-full border-b border-white/5 bg-background/80 px-2 py-1.5">
+          <div className="flex items-center justify-between">
+            <Link href="/" className="flex items-center gap-1.5">
+              <div className="bg-primary/20 p-1 rounded">
+                <TrendingUp className="h-4 w-4 text-primary" />
+              </div>
+              <span className="text-sm font-bold tracking-tight text-gradient">Financle</span>
+            </Link>
+            <div className="flex items-center gap-2">
+              <Link href="/stats">
+                <Button variant="ghost" size="sm" className="h-7 px-2 text-xs text-muted-foreground">
+                  <BarChart2 className="h-3 w-3 mr-1" />
+                  Stats
+                </Button>
+              </Link>
+              {user && (
+                <Avatar className="h-7 w-7 border border-white/10">
+                  <AvatarImage src={user.profileImageUrl || undefined} alt={user.firstName || "User"} />
+                  <AvatarFallback className="bg-primary/20 text-primary text-xs">
+                    {(user.firstName || "U").slice(0, 2).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+              )}
+            </div>
+          </div>
+        </header>
+      ) : (
+        <Navbar />
+      )}
       
       <main className={isMobile 
         ? "flex-1 w-full px-1 py-1 flex flex-col" 
         : "flex-1 container mx-auto px-2 sm:px-4 py-3 sm:py-4 max-w-4xl overflow-y-auto"
       }>
-        {/* Header */}
-        <div className="flex items-center justify-between mb-3 sm:mb-4 gap-2">
-          <Button variant="ghost" onClick={() => setLocation("/")} className="text-muted-foreground hover:text-foreground pl-0 h-8 text-xs sm:text-sm flex-shrink-0">
-            <ArrowLeft className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
-          </Button>
+        {/* Game Info Header */}
+        <div className={isMobile ? "flex items-center justify-between mb-1.5 gap-2" : "flex items-center justify-between mb-3 sm:mb-4 gap-2"}>
+          {!isMobile && (
+            <Button variant="ghost" onClick={() => setLocation("/")} className="text-muted-foreground hover:text-foreground pl-0 h-8 text-xs sm:text-sm flex-shrink-0">
+              <ArrowLeft className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
+            </Button>
+          )}
           
           {/* Center: Current Streak for endless mode */}
           {game.type === 'endless' && (
-            <div className="text-center flex-1">
+            <div className={isMobile ? "text-center" : "text-center flex-1"}>
               <span className="text-xs font-medium text-muted-foreground uppercase tracking-widest block mb-0">Streak</span>
-              <span className="text-lg sm:text-2xl font-mono font-bold text-primary">{game.endlessStreak || 0}</span>
+              <span className={isMobile ? "text-base font-mono font-bold text-primary" : "text-lg sm:text-2xl font-mono font-bold text-primary"}>{game.endlessStreak || 0}</span>
             </div>
           )}
 
-          {/* Right: Game type and rounds */}
-          <div className="text-right flex-shrink-0">
+          {/* Game type and rounds */}
+          <div className={isMobile ? "text-center flex-1" : "text-right flex-shrink-0"}>
             <span className="text-xs font-medium text-muted-foreground uppercase tracking-widest block mb-0">
               {game.type === 'daily' ? 'Daily' : game.type === 'custom' ? 'Custom' : 'Endless'}
             </span>
-            <div className="flex items-center gap-1">
-              <span className="text-lg sm:text-xl font-mono font-bold">{game.round}/6</span>
+            <div className="flex items-center justify-center gap-1">
+              <span className={isMobile ? "text-base font-mono font-bold" : "text-lg sm:text-xl font-mono font-bold"}>{game.round}/6</span>
             </div>
           </div>
         </div>

@@ -45,9 +45,9 @@ export function Navbar() {
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-9 w-9 rounded-full">
                   <Avatar className="h-9 w-9 border border-white/10">
-                    <AvatarImage src={user.profileImageUrl || undefined} alt={user.username} />
+                    <AvatarImage src={user.profileImageUrl || undefined} alt={user.firstName || "User"} />
                     <AvatarFallback className="bg-primary/20 text-primary">
-                      {user.username.slice(0, 2).toUpperCase()}
+                      {(user.firstName || "U").slice(0, 2).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                 </Button>
@@ -55,9 +55,9 @@ export function Navbar() {
               <DropdownMenuContent className="w-56 bg-card border-white/10" align="end" forceMount>
                 <DropdownMenuLabel className="font-normal">
                   <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">{user.username}</p>
+                    <p className="text-sm font-medium leading-none">{user.firstName || "User"}</p>
                     <p className="text-xs leading-none text-muted-foreground">
-                      Streak: {user.currentStreak} 🔥
+                      {user.email || "Playing as guest"}
                     </p>
                   </div>
                 </DropdownMenuLabel>
