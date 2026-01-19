@@ -241,7 +241,7 @@ export default function Game() {
         </div>
 
         {/* Game Grid */}
-        <div className={`grid grid-cols-2 md:grid-cols-3 gap-1.5 sm:gap-3 ${isMobile ? 'mb-2' : 'mb-3 sm:mb-4'}`}>
+        <div className={`grid grid-cols-2 md:grid-cols-3 gap-1.5 sm:gap-3 ${isMobile ? 'mb-[14px]' : 'mb-3 sm:mb-4'}`}>
           {clues.map((clue, idx) => (
             <div key={clue.title} className="col-span-1">
               <GameCard 
