@@ -163,7 +163,7 @@ export function MobileCompanySearch({ onSelect, onSkip, disabled, guessedSymbols
         </div>
       )}
 
-      <div className="flex gap-2 w-full mb-1">
+      <div className="flex gap-2 w-full mb-[7px]">
         <div className={cn(
           "h-10 flex-1 px-3 bg-secondary/50 border rounded-md flex items-center",
           searchQuery.length > 0 ? "border-primary/30" : "border-white/10"
@@ -200,7 +200,7 @@ export function MobileCompanySearch({ onSelect, onSkip, disabled, guessedSymbols
         )}
       </div>
 
-      <div className="mt-1">
+      <div className="mt-[7px]">
         <MobileKeyboard 
           onKeyPress={handleKeyPress} 
           onBackspace={handleBackspace}
