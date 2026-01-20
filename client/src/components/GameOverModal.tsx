@@ -224,17 +224,16 @@ export function GameOverModal({ open, game, onPlayAgain, isDaily, onClose }: Gam
             {isDaily ? (
               <div className="w-full space-y-1.5">
                 <div className="flex gap-1.5 w-full">
+                  <Button variant="outline" className="flex-1 h-8 sm:h-9 text-xs sm:text-sm" asChild>
+                    <a href="/">Home</a>
+                  </Button>
                   <Button 
-                    variant="outline" 
                     className="flex-1 h-8 sm:h-9 text-xs sm:text-sm" 
                     onClick={handleShare}
                     data-testid="button-share"
                   >
                     {copied ? <Check className="mr-1.5 h-3.5 w-3.5" /> : <Share2 className="mr-1.5 h-3.5 w-3.5" />}
                     {copied ? "Copied!" : "Share"}
-                  </Button>
-                  <Button className="flex-1 h-8 sm:h-9 text-xs sm:text-sm" asChild>
-                    <a href="/leaderboard">Leaderboard <ArrowRight className="ml-1.5 h-3.5 w-3.5" /></a>
                   </Button>
                 </div>
                 <p className="text-[0.65rem] sm:text-sm text-muted-foreground text-center">New challenge tomorrow!</p>
