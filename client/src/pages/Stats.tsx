@@ -215,6 +215,10 @@ export default function Stats() {
           </Button>
         </div>
       </main>
+      
+      <footer className="w-full py-2 sm:py-4 border-t border-white/5 text-center text-xs text-muted-foreground px-2">
+        <p>© 2026 Financle</p>
+      </footer>
     </div>
   );
 }
