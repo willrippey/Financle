@@ -215,7 +215,7 @@ export default function Home() {
                     Unlimited random companies. Build your streak.
                   </CardDescription>
                 </CardHeader>
-                <CardFooter className="pt-3 sm:pt-4 mt-auto pb-0">
+                <CardFooter className="pt-3 sm:pt-4 mt-auto pb-0 flex-col gap-2">
                   <div className="flex gap-2 w-full">
                     <Button 
                       variant="outline" 
@@ -243,20 +243,20 @@ export default function Home() {
                         "Hard"
                       )}
                     </Button>
-                    <Button 
-                      variant="outline" 
-                      className="flex-1 h-9 sm:h-10 text-xs sm:text-sm border-white/10 hover:bg-white/5 hover:text-white"
-                      onClick={() => setCustomGameModalOpen(true)}
-                      disabled={createGameMutation.isPending && createGameMutation.variables?.type === 'custom'}
-                      data-testid="button-custom-game"
-                    >
-                      {createGameMutation.isPending && createGameMutation.variables?.type === 'custom' ? (
-                        <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
-                      ) : (
-                        <><Settings2 className="h-3 w-3 mr-1" />Custom</>
-                      )}
-                    </Button>
                   </div>
+                  <Button 
+                    variant="outline" 
+                    className="w-full h-9 sm:h-10 text-xs sm:text-sm border-white/10 hover:bg-white/5 hover:text-white"
+                    onClick={() => setCustomGameModalOpen(true)}
+                    disabled={createGameMutation.isPending && createGameMutation.variables?.type === 'custom'}
+                    data-testid="button-custom-game"
+                  >
+                    {createGameMutation.isPending && createGameMutation.variables?.type === 'custom' ? (
+                      <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
+                    ) : (
+                      <><Settings2 className="h-3 w-3 mr-1" />Custom</>
+                    )}
+                  </Button>
                 </CardFooter>
               </Card>
             </motion.div>
