@@ -167,7 +167,7 @@ export default function Home() {
                     ) : dailyCompleted ? (
                       "Results"
                     ) : (
-                      "Play"
+                      "Play Today"
                     )}
                   </Button>
                   <Button 
