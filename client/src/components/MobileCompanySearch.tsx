@@ -83,14 +83,12 @@ export function MobileCompanySearch({ onSelect, onSkip, disabled, guessedSymbols
         }
 
         const initialsMatch = queryNoPeriods.length >= 2 && nameNoPeriods.includes(queryNoPeriods);
-        const includes = normalizedName.includes(query);
 
         let score = 0;
         if (isTickerMatch) score = 100;
         else if (firstWordStartsWithQuery) score = 90;
         else if (secondaryWordMatchIndex !== -1) score = 70 - secondaryWordMatchIndex;
         else if (initialsMatch && queryNoPeriods.length >= 2) score = 60;
-        else if (includes) score = 50;
 
         return { ...company, score };
       })
