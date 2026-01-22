@@ -249,7 +249,7 @@ export default function Game() {
                 value={clue.value} 
                 revealed={clue.revealed}
                 delay={idx}
-                className={isMobile ? "h-[75px]" : "h-24 sm:h-28 md:h-32"}
+                className={isMobile ? "h-[78px]" : "h-24 sm:h-28 md:h-32"}
                 isMultiLine={clue.isMultiLine}
                 scaleText={(clue as any).scaleText}
               />

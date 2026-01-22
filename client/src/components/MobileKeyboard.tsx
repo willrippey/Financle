@@ -89,15 +89,18 @@ export function MobileKeyboard({ onKeyPress, onBackspace, disabled }: MobileKeyb
           }}
         >
           {rowIdx === 2 && (
-            <button
-              type="button"
-              onClick={() => setShowNumbers(true)}
-              disabled={disabled}
-              className={cn(toggleButtonClass, "w-[42px] flex-shrink-0")}
-              data-testid="key-123"
-            >
-              123
-            </button>
+            <>
+              <button
+                type="button"
+                onClick={() => setShowNumbers(true)}
+                disabled={disabled}
+                className={cn(toggleButtonClass, "w-[42px] flex-shrink-0")}
+                data-testid="key-123"
+              >
+                123
+              </button>
+              <div className="w-1 flex-shrink-0" />
+            </>
           )}
           {row.map((key) => (
             <button
