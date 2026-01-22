@@ -170,7 +170,7 @@ export function MobileCompanySearch({ onSelect, onSkip, disabled, guessedSymbols
         </div>
       )}
 
-      <div className="flex gap-2 w-full mb-[7px]">
+      <div className="flex gap-2 w-full">
         <div className={cn(
           "h-10 flex-1 px-3 bg-secondary/50 border rounded-md flex items-center",
           searchQuery.length > 0 ? "border-primary/30" : "border-white/10"
