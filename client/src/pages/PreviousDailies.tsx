@@ -108,7 +108,7 @@ export default function PreviousDailies() {
                   {daily.status === 'completed' ? (
                     <>
                       {daily.companyName && (
-                        <span className="text-sm font-bold text-foreground max-w-[120px] truncate">
+                        <span className="text-xs sm:text-sm font-bold text-foreground text-right">
                           {daily.companyName}
                         </span>
                       )}
