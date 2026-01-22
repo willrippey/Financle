@@ -97,7 +97,7 @@ function generateShareText(game: any, isDaily: boolean): string {
     text += `\n\nStreak: ${game.endlessStreak}`;
   }
   
-  text += "\n\nhttps://financle.replit.app";
+  text += "\n\nhttps://financlegame.com";
   
   return text;
 }

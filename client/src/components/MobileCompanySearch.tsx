@@ -88,8 +88,7 @@ export function MobileCompanySearch({ onSelect, onSkip, disabled, guessedSymbols
       .sort((a, b) => {
         if (b.score !== a.score) return b.score - a.score;
         return a.name.localeCompare(b.name);
-      })
-      .slice(0, 5);
+      });
   }, [companies, searchQuery, guessedSymbols]);
 
   React.useEffect(() => {
