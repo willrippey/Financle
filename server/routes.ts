@@ -266,6 +266,7 @@ export async function registerRoutes(
       status: game.status,
       round: Math.min(allGuesses.length + 1, 6),
       endlessStreak,
+      dailyDate: game.date, // For daily games, the date of the challenge
       clues: isOver ? {
         category: target.sector,
         subIndustry: target.subIndustry,

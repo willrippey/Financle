@@ -8,7 +8,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Trophy, XCircle, ArrowRight, RefreshCw, Flame, Share2, Check } from "lucide-react";
+import { Trophy, XCircle, ArrowRight, RefreshCw, Flame, Share2, Check, CalendarDays, Home } from "lucide-react";
 import type { GameStateResponse } from "@shared/schema";
 import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
@@ -107,6 +107,12 @@ export function GameOverModal({ open, game, onPlayAgain, isDaily, onClose }: Gam
   const { toast } = useToast();
   const isWin = game?.status === "won";
   const target = game?.targetCompany;
+  
+  // Check if this is a previous daily (date is before today)
+  const isPreviousDaily = isDaily && game?.dailyDate && (() => {
+    const today = new Date().toISOString().split('T')[0];
+    return game.dailyDate < today;
+  })();
 
   const handleShare = async () => {
     const shareText = generateShareText(game, isDaily || false);
@@ -221,7 +227,24 @@ export function GameOverModal({ open, game, onPlayAgain, isDaily, onClose }: Gam
           </div>
 
           <DialogFooter className="sm:justify-center gap-2 pt-2 sm:pt-5 shrink-0">
-            {isDaily ? (
+            {isPreviousDaily ? (
+              <div className="w-full space-y-2">
+                <div className="flex gap-2 w-full">
+                  <Button variant="outline" className="flex-1 h-10 sm:h-11 text-sm sm:text-base" asChild>
+                    <a href="/">
+                      <Home className="mr-1.5 h-4 w-4" />
+                      Home
+                    </a>
+                  </Button>
+                  <Button className="flex-1 h-10 sm:h-11 text-sm sm:text-base" asChild>
+                    <a href="/previous-dailies">
+                      <CalendarDays className="mr-1.5 h-4 w-4" />
+                      More Dailies
+                    </a>
+                  </Button>
+                </div>
+              </div>
+            ) : isDaily ? (
               <div className="w-full space-y-2">
                 <div className="flex gap-2 w-full">
                   <Button variant="outline" className="flex-1 h-10 sm:h-11 text-sm sm:text-base" asChild>
