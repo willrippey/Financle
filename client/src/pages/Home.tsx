@@ -7,7 +7,7 @@ import { Navbar } from "@/components/Navbar";
 import { FinancleHeader } from "@/components/FinancleHeader";
 import { CustomGameModal } from "@/components/CustomGameModal";
 import { useLocation } from "wouter";
-import { Calendar, Infinity as InfinityIcon, Trophy, Flame, Loader2, Settings2, Info, User } from "lucide-react";
+import { Calendar, Infinity as InfinityIcon, Loader2, Settings2, Info, User } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { motion } from "framer-motion";
 import type { CustomGameFilters } from "@shared/schema";
@@ -263,37 +263,10 @@ export default function Home() {
           </div>
         )}
 
-        {/* Stats Section */}
-        {user && (
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3 w-full max-w-4xl mt-4 sm:mt-6 lg:mt-8 px-2"
-          >
-            <Card className="bg-secondary/20 border-white/5 text-center p-2 sm:p-4 flex flex-col items-center justify-center">
-              <Flame className="h-4 w-4 sm:h-6 sm:w-6 text-orange-500 mx-auto mb-0.5 sm:mb-1" />
-              <div className="text-xl sm:text-2xl font-bold font-mono">{user.currentStreak}</div>
-              <div className="text-xs text-muted-foreground uppercase tracking-tight mt-0.5">Streak</div>
-            </Card>
-            <Card className="bg-secondary/20 border-white/5 text-center p-2 sm:p-4 flex flex-col items-center justify-center">
-              <Trophy className="h-4 w-4 sm:h-6 sm:w-6 text-yellow-500 mx-auto mb-0.5 sm:mb-1" />
-              <div className="text-xl sm:text-2xl font-bold font-mono">{user.totalWins}</div>
-              <div className="text-xs text-muted-foreground uppercase tracking-tight mt-0.5">Wins</div>
-            </Card>
-            <Card className="bg-secondary/20 border-white/5 text-center p-2 sm:p-4 flex flex-col items-center justify-center col-span-2 sm:col-span-1">
-              <div className="text-sm sm:text-xl text-blue-500 mx-auto mb-0.5 sm:mb-1 font-bold">%</div>
-              <div className="text-xl sm:text-2xl font-bold font-mono">
-                {user.totalPlayed > 0 ? Math.round((user.totalWins / user.totalPlayed) * 100) : 0}%
-              </div>
-              <div className="text-xs text-muted-foreground uppercase tracking-tight mt-0.5">Win Rate</div>
-            </Card>
-          </motion.div>
-        )}
-      </main>
+              </main>
       
       <footer className="w-full py-2 sm:py-4 border-t border-white/5 text-center text-xs text-muted-foreground px-2">
-        <p>© 2024 Financle</p>
+        <p>© 2026 Financle</p>
       </footer>
 
       <CustomGameModal
