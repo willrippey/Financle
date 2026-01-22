@@ -12,6 +12,7 @@ type PreviousDaily = {
   status: 'completed' | 'available' | 'locked';
   won?: boolean;
   guesses?: number;
+  companyName?: string;
 };
 
 export default function PreviousDailies() {
@@ -20,6 +21,8 @@ export default function PreviousDailies() {
   
   const { data: previousDailies, isLoading } = useQuery<PreviousDaily[]>({
     queryKey: ['/api/previous-dailies'],
+    refetchOnMount: 'always', // Always refetch when navigating to this page
+    staleTime: 0, // Consider data always stale to ensure fresh results
   });
 
   const playPreviousMutation = useMutation({
@@ -101,15 +104,22 @@ export default function PreviousDailies() {
                   </div>
                 </div>
                 
-                <div>
+                <div className="flex items-center gap-2">
                   {daily.status === 'completed' ? (
-                    <div className={`p-2 rounded-full ${daily.won ? 'bg-green-500/20' : 'bg-red-500/20'}`}>
-                      {daily.won ? (
-                        <Check className="h-4 w-4 text-green-500" />
-                      ) : (
-                        <X className="h-4 w-4 text-red-500" />
+                    <>
+                      {daily.companyName && (
+                        <span className="text-sm font-bold text-foreground max-w-[120px] truncate">
+                          {daily.companyName}
+                        </span>
                       )}
-                    </div>
+                      <div className={`p-2 rounded-full ${daily.won ? 'bg-green-500/20' : 'bg-red-500/20'}`}>
+                        {daily.won ? (
+                          <Check className="h-4 w-4 text-green-500" />
+                        ) : (
+                          <X className="h-4 w-4 text-red-500" />
+                        )}
+                      </div>
+                    </>
                   ) : daily.status === 'available' ? (
                     <Button 
                       size="sm"

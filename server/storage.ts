@@ -66,7 +66,7 @@ export interface IStorage {
   
   // Daily Challenges
   getOrCreateDailyChallenge(date: string): Promise<Company>;
-  getPreviousDailies(userId: string | null): Promise<{ date: string; status: 'completed' | 'available' | 'locked'; won?: boolean; guesses?: number }[]>;
+  getPreviousDailies(userId: string | null): Promise<{ date: string; status: 'completed' | 'available' | 'locked'; won?: boolean; guesses?: number; companyName?: string }[]>;
   getDailyChallengeByDate(date: string): Promise<Company | undefined>;
   createDailyGameForDate(userId: string, targetCompanyId: number, date: string): Promise<Game>;
   
@@ -376,7 +376,7 @@ export class DatabaseStorage implements IStorage {
     return selectedCompany;
   }
 
-  async getPreviousDailies(userId: string | null): Promise<{ date: string; status: 'completed' | 'available' | 'locked'; won?: boolean; guesses?: number }[]> {
+  async getPreviousDailies(userId: string | null): Promise<{ date: string; status: 'completed' | 'available' | 'locked'; won?: boolean; guesses?: number; companyName?: string }[]> {
     const today = new Date();
     const todayStr = today.toISOString().split('T')[0];
     
@@ -386,18 +386,21 @@ export class DatabaseStorage implements IStorage {
       .orderBy(desc(dailyChallenges.date))
       .limit(30);
     
-    const results: { date: string; status: 'completed' | 'available' | 'locked'; won?: boolean; guesses?: number }[] = [];
+    const results: { date: string; status: 'completed' | 'available' | 'locked'; won?: boolean; guesses?: number; companyName?: string }[] = [];
     
     for (const challenge of allChallenges) {
       if (userId) {
         const userGame = await this.getDailyGame(userId, challenge.date);
         if (userGame && (userGame.status === 'won' || userGame.status === 'lost')) {
           const gameGuesses = await db.select().from(guesses).where(eq(guesses.gameId, userGame.id));
+          // Get the company name for completed games
+          const company = await this.getCompany(challenge.companyId);
           results.push({
             date: challenge.date,
             status: 'completed',
             won: userGame.status === 'won',
             guesses: gameGuesses.length,
+            companyName: company?.name,
           });
         } else {
           results.push({
