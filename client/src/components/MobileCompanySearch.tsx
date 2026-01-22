@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useCompanySearch } from "@/hooks/use-games";
+import { useAllCompanies } from "@/hooks/use-games";
 import { cn } from "@/lib/utils";
 import { MobileKeyboard } from "./MobileKeyboard";
 import { Button } from "@/components/ui/button";
@@ -27,7 +27,7 @@ export function MobileCompanySearch({ onSelect, onSkip, disabled, guessedSymbols
   const [selectedIndex, setSelectedIndex] = React.useState(0);
   const [cursorVisible, setCursorVisible] = React.useState(true);
   
-  const { data: companies, isLoading } = useCompanySearch(searchQuery);
+  const { data: companies, isLoading } = useAllCompanies();
 
   React.useImperativeHandle(searchRef, () => ({
     focusAndOpen: () => {},

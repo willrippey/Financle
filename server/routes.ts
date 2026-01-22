@@ -19,6 +19,11 @@ export async function registerRoutes(
 
   app.get(api.companies.search.path, async (req, res) => {
     const q = req.query.q as string;
+    // Return all companies when q is "*" for client-side caching
+    if (q === '*') {
+      const all = await storage.getAllCompanies();
+      return res.json(all.map(c => ({ symbol: c.symbol, name: c.name })));
+    }
     if (!q) return res.json([]);
     const results = await storage.searchCompanies(q);
     res.json(results.map(c => ({ symbol: c.symbol, name: c.name })));

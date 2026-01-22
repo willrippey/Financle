@@ -35,6 +35,7 @@ export interface IStorage {
   getDetailedStats(userId: string): Promise<DetailedStats>;
 
   // Companies
+  getAllCompanies(): Promise<Company[]>;
   searchCompanies(query: string): Promise<Company[]>;
   getCompanyBySymbol(symbol: string): Promise<Company | undefined>;
   getCompany(id: number): Promise<Company | undefined>;
@@ -149,6 +150,10 @@ export class DatabaseStorage implements IStorage {
         maxStreak: baseStats?.maxStreak || 0
       }
     };
+  }
+
+  async getAllCompanies(): Promise<Company[]> {
+    return await db.select().from(companies).orderBy(companies.name);
   }
 
   async searchCompanies(query: string): Promise<Company[]> {

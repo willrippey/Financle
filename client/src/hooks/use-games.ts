@@ -116,6 +116,20 @@ export function useCompanySearch(query: string) {
   });
 }
 
+// Fetch all companies once for instant client-side filtering
+export function useAllCompanies() {
+  return useQuery({
+    queryKey: [api.companies.search.path, '__all__'],
+    staleTime: 1000 * 60 * 60, // Cache for 1 hour
+    queryFn: async () => {
+      const url = `${api.companies.search.path}?q=*`;
+      const res = await fetch(url, { credentials: "include" });
+      if (!res.ok) throw new Error("Failed to fetch companies");
+      return api.companies.search.responses[200].parse(await res.json());
+    },
+  });
+}
+
 // POST /api/games/:id/skip
 export function useSkipRound() {
   const queryClient = useQueryClient();
