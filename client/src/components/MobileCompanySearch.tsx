@@ -50,6 +50,9 @@ export function MobileCompanySearch({ onSelect, onSkip, disabled, guessedSymbols
 
     const query = searchQuery.toLowerCase().trim();
     const queryNoPeriods = query.replace(/\./g, '');
+    
+    // Common corporate terms to exclude from word matching
+    const corporateTerms = new Set(['inc', 'inc.', 'plc', 'plc.', 'corp', 'corp.', 'co', 'co.', 'ltd', 'ltd.', 'llc', 'llc.', 'corporation', 'incorporated', 'company', 'companies', 'group', 'holdings', 'the', 'of', 'and', '&']);
 
     return companies
       .filter((company) => !guessedSymbols.includes(company.symbol))
@@ -59,26 +62,33 @@ export function MobileCompanySearch({ onSelect, onSkip, disabled, guessedSymbols
         const nameNoPeriods = normalizedName.replace(/\./g, '');
 
         const isTickerMatch = symbol === query && query.length >= 4;
-        const startsWith = normalizedName.startsWith(query);
-
-        const words = normalizedName.split(/\s+/);
-        let wordMatchIndex = -1;
+        
+        // Get meaningful words (exclude corporate terms)
+        const words = normalizedName.split(/\s+/).filter(w => !corporateTerms.has(w));
+        
+        // Check first letter matching for each word
+        let firstWordStartsWithQuery = false;
+        let secondaryWordMatchIndex = -1;
+        
         for (let i = 0; i < words.length; i++) {
-          if (words[i] === query || words[i].startsWith(query)) {
-            wordMatchIndex = i;
-            break;
+          const word = words[i];
+          if (word.startsWith(query)) {
+            if (i === 0) {
+              firstWordStartsWithQuery = true;
+              break;
+            } else if (secondaryWordMatchIndex === -1) {
+              secondaryWordMatchIndex = i;
+            }
           }
         }
-        const isWordMatch = wordMatchIndex !== -1;
 
         const initialsMatch = queryNoPeriods.length >= 2 && nameNoPeriods.includes(queryNoPeriods);
         const includes = normalizedName.includes(query);
 
         let score = 0;
         if (isTickerMatch) score = 100;
-        else if (startsWith) score = 90;
-        else if (isWordMatch && wordMatchIndex === 0) score = 85;
-        else if (isWordMatch) score = 70 - wordMatchIndex;
+        else if (firstWordStartsWithQuery) score = 90;
+        else if (secondaryWordMatchIndex !== -1) score = 70 - secondaryWordMatchIndex;
         else if (initialsMatch && queryNoPeriods.length >= 2) score = 60;
         else if (includes) score = 50;
 
