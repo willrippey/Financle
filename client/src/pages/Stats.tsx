@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Navbar } from "@/components/Navbar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Trophy, Target, TrendingUp, TrendingDown, Flame, Calendar, Infinity as InfinityIcon } from "lucide-react";
+import { Loader2, Trophy, Target, TrendingUp, TrendingDown, Flame, Calendar } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
@@ -52,21 +52,22 @@ function StatCard({ label, value, icon: Icon }: { label: string; value: string |
 function GuessDistributionChart({ distribution }: { distribution: GuessDistribution }) {
   const maxCount = Math.max(...Object.values(distribution), 1);
   const labels = ['1', '2', '3', '4', '5', '6', 'X'];
+  const barMaxHeight = 64;
   
   return (
     <div className="p-3 bg-secondary/30 rounded-lg border border-white/5">
       <p className="text-xs text-muted-foreground uppercase tracking-wide mb-3 text-center font-semibold">Guess Distribution</p>
-      <div className="flex items-end justify-center gap-2 h-20">
+      <div className="flex items-end justify-center gap-2">
         {labels.map((label) => {
           const count = distribution[label as keyof GuessDistribution];
-          const heightPercent = maxCount > 0 ? (count / maxCount) * 100 : 0;
+          const barHeight = maxCount > 0 ? Math.round((count / maxCount) * barMaxHeight) : 0;
           const isLoss = label === 'X';
           return (
             <div key={label} className="flex flex-col items-center gap-1 flex-1 max-w-10">
               <span className="text-xs text-muted-foreground">{count}</span>
               <div 
                 className={`w-full rounded-t transition-all duration-300 ${isLoss ? 'bg-destructive/80' : 'bg-primary/80'}`}
-                style={{ height: `${heightPercent}%`, minHeight: count > 0 ? '4px' : '2px' }}
+                style={{ height: `${Math.max(barHeight, count > 0 ? 4 : 2)}px` }}
               />
               <span className={`text-xs font-medium ${isLoss ? 'text-destructive' : 'text-foreground'}`}>{label}</span>
             </div>
@@ -206,13 +207,6 @@ export default function Stats() {
           title="Daily Challenge" 
           icon={Calendar} 
           stats={stats.daily} 
-        />
-        
-        <StatsSection 
-          title="Endless Mode" 
-          icon={InfinityIcon} 
-          stats={stats.endless} 
-          showStreak 
         />
         
         <div className="text-center pt-4">
