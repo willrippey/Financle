@@ -39,10 +39,10 @@ type StatsData = {
   };
 };
 
-function StatCard({ label, value, icon: Icon }: { label: string; value: string | number; icon?: any }) {
+function StatCard({ label, value, icon: Icon, iconColor }: { label: string; value: string | number; icon?: any; iconColor?: string }) {
   return (
-    <div className="text-center p-3 bg-secondary/30 rounded-lg border border-white/5">
-      {Icon && <Icon className="h-4 w-4 mx-auto mb-1 text-primary" />}
+    <div className="text-center p-3 bg-secondary/30 rounded-lg border border-white/5 flex flex-col items-center justify-center">
+      {Icon && <Icon className={`h-4 w-4 mx-auto mb-1 ${iconColor || 'text-primary'}`} />}
       <p className="text-2xl font-bold text-foreground">{value}</p>
       <p className="text-xs text-muted-foreground uppercase tracking-wide">{label}</p>
     </div>
@@ -99,8 +99,8 @@ function StatsSection({ title, icon: Icon, stats, showStreak = false }: {
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <StatCard label="Wins" value={stats.totalWins} icon={Trophy} iconColor="text-yellow-500" />
           <StatCard label="Played" value={stats.totalPlayed} icon={Target} />
-          <StatCard label="Wins" value={stats.totalWins} icon={Trophy} />
           <StatCard label="Win %" value={`${stats.winPercentage}%`} />
           <StatCard label="Avg Guesses" value={formattedAvgGuesses} />
         </div>
