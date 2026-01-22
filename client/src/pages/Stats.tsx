@@ -13,6 +13,7 @@ type GuessDistribution = {
   4: number;
   5: number;
   6: number;
+  X: number;
 };
 
 type StatsData = {
@@ -50,22 +51,24 @@ function StatCard({ label, value, icon: Icon }: { label: string; value: string |
 
 function GuessDistributionChart({ distribution }: { distribution: GuessDistribution }) {
   const maxCount = Math.max(...Object.values(distribution), 1);
-  const entries = Object.entries(distribution) as [string, number][];
+  const labels = ['1', '2', '3', '4', '5', '6', 'X'];
   
   return (
     <div className="p-3 bg-secondary/30 rounded-lg border border-white/5">
       <p className="text-xs text-muted-foreground uppercase tracking-wide mb-3 text-center font-semibold">Guess Distribution</p>
-      <div className="flex items-end justify-center gap-2 h-24">
-        {entries.map(([guessNum, count]) => {
+      <div className="flex items-end justify-center gap-2 h-20">
+        {labels.map((label) => {
+          const count = distribution[label as keyof GuessDistribution];
           const heightPercent = maxCount > 0 ? (count / maxCount) * 100 : 0;
+          const isLoss = label === 'X';
           return (
-            <div key={guessNum} className="flex flex-col items-center gap-1 flex-1 max-w-12">
+            <div key={label} className="flex flex-col items-center gap-1 flex-1 max-w-10">
               <span className="text-xs text-muted-foreground">{count}</span>
               <div 
-                className="w-full bg-primary/80 rounded-t transition-all duration-300"
-                style={{ height: `${Math.max(heightPercent, 4)}%`, minHeight: count > 0 ? '4px' : '2px' }}
+                className={`w-full rounded-t transition-all duration-300 ${isLoss ? 'bg-destructive/80' : 'bg-primary/80'}`}
+                style={{ height: `${heightPercent}%`, minHeight: count > 0 ? '4px' : '2px' }}
               />
-              <span className="text-xs font-medium text-foreground">{guessNum}</span>
+              <span className={`text-xs font-medium ${isLoss ? 'text-destructive' : 'text-foreground'}`}>{label}</span>
             </div>
           );
         })}

@@ -14,6 +14,7 @@ export type GuessDistribution = {
   4: number;
   5: number;
   6: number;
+  X: number;
 };
 
 export type DetailedStats = {
@@ -111,7 +112,11 @@ export class DatabaseStorage implements IStorage {
       
       // Calculate average guesses for wins and guess distribution
       let totalGuesses = 0;
-      const guessDistribution: GuessDistribution = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 };
+      const guessDistribution: GuessDistribution = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, X: 0 };
+      
+      // Count losses
+      const losses = userGames.filter(g => g.game.status === 'lost');
+      guessDistribution.X = losses.length;
       
       for (const g of wins) {
         const gameGuesses = await db.select().from(guesses).where(eq(guesses.gameId, g.game.id));
@@ -120,7 +125,7 @@ export class DatabaseStorage implements IStorage {
         
         // Track guess distribution (1-6 guesses to win)
         if (numGuesses >= 1 && numGuesses <= 6) {
-          guessDistribution[numGuesses as keyof GuessDistribution]++;
+          guessDistribution[numGuesses as 1 | 2 | 3 | 4 | 5 | 6]++;
         }
       }
       const avgGuesses = totalWins > 0 ? Math.round((totalGuesses / totalWins) * 100) / 100 : 0;
