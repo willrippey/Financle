@@ -104,6 +104,29 @@ export const api = {
       responses: {
         200: z.custom<any>(), // GameStateResponse
       }
+    },
+    previousDailies: {
+      method: 'GET' as const,
+      path: '/api/previous-dailies',
+      responses: {
+        200: z.array(z.object({
+          date: z.string(),
+          status: z.enum(['completed', 'available', 'locked']),
+          won: z.boolean().optional(),
+          guesses: z.number().optional(),
+        })),
+      }
+    },
+    createPreviousDaily: {
+      method: 'POST' as const,
+      path: '/api/games/previous-daily',
+      input: z.object({
+        date: z.string(),
+      }),
+      responses: {
+        201: z.custom<any>(), // GameStateResponse
+        400: errorSchemas.validation,
+      }
     }
   },
   stats: {

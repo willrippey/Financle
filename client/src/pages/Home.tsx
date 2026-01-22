@@ -154,7 +154,7 @@ export default function Home() {
                     One company, everyone plays. Beat the market.
                   </CardDescription>
                 </CardHeader>
-                <CardFooter className="pt-3 sm:pt-4 mt-auto pb-0">
+                <CardFooter className="pt-3 sm:pt-4 mt-auto pb-0 flex-col gap-2">
                   <Button 
                     className="w-full h-9 sm:h-10 text-xs sm:text-sm font-semibold" 
                     variant={dailyCompleted ? "secondary" : "default"}
@@ -169,6 +169,14 @@ export default function Home() {
                     ) : (
                       "Play"
                     )}
+                  </Button>
+                  <Button 
+                    className="w-full h-9 sm:h-10 text-xs sm:text-sm font-semibold" 
+                    variant="outline"
+                    onClick={() => setLocation("/previous-dailies")}
+                    data-testid="button-play-previous"
+                  >
+                    Play Previous
                   </Button>
                 </CardFooter>
               </Card>

@@ -195,6 +195,42 @@ export async function registerRoutes(
     res.json(stats);
   });
 
+  app.get(api.games.previousDailies.path, async (req, res) => {
+    const userId = req.isAuthenticated() ? (req.user as any).claims.sub : null;
+    const previousDailies = await storage.getPreviousDailies(userId);
+    res.json(previousDailies);
+  });
+
+  app.post(api.games.createPreviousDaily.path, async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    const userId = (req.user as any).claims.sub;
+    const { date } = req.body;
+    
+    if (!date || typeof date !== 'string') {
+      return res.status(400).json({ message: "Date is required" });
+    }
+    
+    const today = new Date().toISOString().split('T')[0];
+    if (date >= today) {
+      return res.status(400).json({ message: "Cannot play future or current daily challenges" });
+    }
+    
+    const existingGame = await storage.getDailyGame(userId, date);
+    if (existingGame) {
+      const response = await buildGameState(existingGame);
+      return res.status(200).json(response);
+    }
+    
+    const targetCompany = await storage.getDailyChallengeByDate(date);
+    if (!targetCompany) {
+      return res.status(400).json({ message: "No daily challenge found for this date" });
+    }
+    
+    const game = await storage.createDailyGameForDate(userId, targetCompany.id, date);
+    const response = await buildGameState(game);
+    res.status(201).json(response);
+  });
+
   async function buildGameState(game: any) {
     if (!game) throw new Error("Game not found");
     const allGuesses = await storage.getGuesses(game.id);

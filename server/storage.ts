@@ -66,6 +66,9 @@ export interface IStorage {
   
   // Daily Challenges
   getOrCreateDailyChallenge(date: string): Promise<Company>;
+  getPreviousDailies(userId: string | null): Promise<{ date: string; status: 'completed' | 'available' | 'locked'; won?: boolean; guesses?: number }[]>;
+  getDailyChallengeByDate(date: string): Promise<Company | undefined>;
+  createDailyGameForDate(userId: string, targetCompanyId: number, date: string): Promise<Game>;
   
 }
 
@@ -371,6 +374,70 @@ export class DatabaseStorage implements IStorage {
     }
     
     return selectedCompany;
+  }
+
+  async getPreviousDailies(userId: string | null): Promise<{ date: string; status: 'completed' | 'available' | 'locked'; won?: boolean; guesses?: number }[]> {
+    const today = new Date();
+    const todayStr = today.toISOString().split('T')[0];
+    
+    const allChallenges = await db.select()
+      .from(dailyChallenges)
+      .where(sql`${dailyChallenges.date} < ${todayStr}`)
+      .orderBy(desc(dailyChallenges.date))
+      .limit(30);
+    
+    const results: { date: string; status: 'completed' | 'available' | 'locked'; won?: boolean; guesses?: number }[] = [];
+    
+    for (const challenge of allChallenges) {
+      if (userId) {
+        const userGame = await this.getDailyGame(userId, challenge.date);
+        if (userGame && (userGame.status === 'won' || userGame.status === 'lost')) {
+          const gameGuesses = await db.select().from(guesses).where(eq(guesses.gameId, userGame.id));
+          results.push({
+            date: challenge.date,
+            status: 'completed',
+            won: userGame.status === 'won',
+            guesses: gameGuesses.length,
+          });
+        } else {
+          results.push({
+            date: challenge.date,
+            status: 'available',
+          });
+        }
+      } else {
+        results.push({
+          date: challenge.date,
+          status: 'available',
+        });
+      }
+    }
+    
+    return results;
+  }
+
+  async getDailyChallengeByDate(date: string): Promise<Company | undefined> {
+    const [challenge] = await db.select()
+      .from(dailyChallenges)
+      .where(eq(dailyChallenges.date, date));
+    
+    if (!challenge) return undefined;
+    
+    return await this.getCompany(challenge.companyId);
+  }
+
+  async createDailyGameForDate(userId: string, targetCompanyId: number, date: string): Promise<Game> {
+    const [game] = await db.insert(games)
+      .values({
+        userId,
+        type: 'daily',
+        targetCompanyId,
+        date,
+        status: 'playing',
+        score: 0,
+      })
+      .returning();
+    return game;
   }
 
 }

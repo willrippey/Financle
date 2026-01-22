@@ -213,11 +213,13 @@ export default function Game() {
             </Button>
           )}
           
-          {/* Current Streak */}
-          <div className={isMobile ? "text-center flex-1" : "text-center flex-1"}>
-            <span className="text-xs font-medium text-muted-foreground uppercase tracking-widest block mb-0">Streak</span>
-            <span className={isMobile ? "text-base font-mono font-bold text-primary" : "text-lg sm:text-2xl font-mono font-bold text-primary"}>{(user as any)?.currentStreak || 0}</span>
-          </div>
+          {/* Current Streak - only show for non-daily games */}
+          {game.type !== 'daily' && (
+            <div className={isMobile ? "text-center flex-1" : "text-center flex-1"}>
+              <span className="text-xs font-medium text-muted-foreground uppercase tracking-widest block mb-0">Streak</span>
+              <span className={isMobile ? "text-base font-mono font-bold text-primary" : "text-lg sm:text-2xl font-mono font-bold text-primary"}>{(user as any)?.currentStreak || 0}</span>
+            </div>
+          )}
 
           {/* Game type and rounds */}
           <div className={isMobile ? "text-center flex-1" : "text-right flex-shrink-0"}>

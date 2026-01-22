@@ -8,6 +8,7 @@ import Home from "@/pages/Home";
 import Game from "@/pages/Game";
 import Daily from "@/pages/Daily";
 import Stats from "@/pages/Stats";
+import PreviousDailies from "@/pages/PreviousDailies";
 
 function Router() {
   return (
@@ -16,6 +17,7 @@ function Router() {
       <Route path="/daily" component={Daily} />
       <Route path="/game/:id" component={Game} />
       <Route path="/stats" component={Stats} />
+      <Route path="/previous-dailies" component={PreviousDailies} />
       <Route component={NotFound} />
     </Switch>
   );
