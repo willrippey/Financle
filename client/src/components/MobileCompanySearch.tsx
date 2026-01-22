@@ -207,7 +207,7 @@ export function MobileCompanySearch({ onSelect, onSkip, disabled, guessedSymbols
         )}
       </div>
 
-      <div className="mt-[7px]">
+      <div className="mt-[14px]">
         <MobileKeyboard 
           onKeyPress={handleKeyPress} 
           onBackspace={handleBackspace}
