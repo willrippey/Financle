@@ -1,5 +1,6 @@
 import { Delete } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
 
 interface MobileKeyboardProps {
   onKeyPress: (key: string) => void;
@@ -7,37 +8,104 @@ interface MobileKeyboardProps {
   disabled?: boolean;
 }
 
-const KEYBOARD_ROWS = [
+const LETTER_ROWS = [
   ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
   ["A", "S", "D", "F", "G", "H", "J", "K", "L"],
   ["Z", "X", "C", "V", "B", "N", "M"],
 ];
 
+const NUMBER_ROW = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
+
 export function MobileKeyboard({ onKeyPress, onBackspace, disabled }: MobileKeyboardProps) {
+  const [showNumbers, setShowNumbers] = useState(false);
+
+  const keyButtonClass = cn(
+    "flex-1 rounded-md font-semibold text-base",
+    "bg-secondary/80 border border-white/10 text-foreground",
+    "active:bg-primary/30 active:scale-95 transition-all",
+    "disabled:opacity-50 disabled:cursor-not-allowed",
+    "h-[54px]"
+  );
+
+  const toggleButtonClass = cn(
+    "rounded-md font-semibold text-xs flex items-center justify-center",
+    "bg-secondary/80 border border-white/10 text-foreground",
+    "active:bg-primary/30 active:scale-95 transition-all",
+    "disabled:opacity-50 disabled:cursor-not-allowed",
+    "h-[54px]"
+  );
+
+  if (showNumbers) {
+    return (
+      <div className="w-full flex flex-col gap-1 pb-4" data-testid="mobile-keyboard">
+        <div className="flex w-full gap-[3px]">
+          {NUMBER_ROW.map((key) => (
+            <button
+              key={key}
+              type="button"
+              onClick={() => onKeyPress(key)}
+              disabled={disabled}
+              className={keyButtonClass}
+              data-testid={`key-${key}`}
+            >
+              {key}
+            </button>
+          ))}
+        </div>
+        <div className="flex w-full gap-[3px] mt-1">
+          <button
+            type="button"
+            onClick={() => setShowNumbers(false)}
+            disabled={disabled}
+            className={cn(toggleButtonClass, "flex-[2]")}
+            data-testid="key-abc"
+          >
+            ABC
+          </button>
+          <div className="flex-[5]" />
+          <button
+            type="button"
+            onClick={onBackspace}
+            disabled={disabled}
+            className={cn(toggleButtonClass, "flex-[2]")}
+            data-testid="key-backspace"
+          >
+            <Delete className="h-6 w-6" />
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full flex flex-col gap-1 pb-4" data-testid="mobile-keyboard">
-      {KEYBOARD_ROWS.map((row, rowIdx) => (
+      {LETTER_ROWS.map((row, rowIdx) => (
         <div 
           key={rowIdx} 
           className="flex w-full gap-[3px]"
           style={{
-            paddingLeft: rowIdx === 1 ? '5%' : rowIdx === 2 ? '12%' : '0',
+            paddingLeft: rowIdx === 1 ? '5%' : rowIdx === 2 ? '0' : '0',
             paddingRight: rowIdx === 1 ? '5%' : rowIdx === 2 ? '0' : '0',
           }}
         >
+          {rowIdx === 2 && (
+            <button
+              type="button"
+              onClick={() => setShowNumbers(true)}
+              disabled={disabled}
+              className={cn(toggleButtonClass, "w-[42px] flex-shrink-0")}
+              data-testid="key-123"
+            >
+              123
+            </button>
+          )}
           {row.map((key) => (
             <button
               key={key}
               type="button"
               onClick={() => onKeyPress(key)}
               disabled={disabled}
-              className={cn(
-                "flex-1 rounded-md font-semibold text-base",
-                "bg-secondary/80 border border-white/10 text-foreground",
-                "active:bg-primary/30 active:scale-95 transition-all",
-                "disabled:opacity-50 disabled:cursor-not-allowed",
-                "h-[54px]"
-              )}
+              className={keyButtonClass}
               data-testid={`key-${key}`}
             >
               {key}
@@ -45,18 +113,12 @@ export function MobileKeyboard({ onKeyPress, onBackspace, disabled }: MobileKeyb
           ))}
           {rowIdx === 2 && (
             <>
-              <div className="w-2 flex-shrink-0" />
+              <div className="w-1 flex-shrink-0" />
               <button
                 type="button"
                 onClick={onBackspace}
                 disabled={disabled}
-                className={cn(
-                  "flex-[1.5] rounded-md font-semibold text-sm flex items-center justify-center",
-                  "bg-secondary/80 border border-white/10 text-foreground",
-                  "active:bg-destructive/30 active:scale-95 transition-all",
-                  "disabled:opacity-50 disabled:cursor-not-allowed",
-                  "h-[54px]"
-                )}
+                className={cn(toggleButtonClass, "w-[52px] flex-shrink-0")}
                 data-testid="key-backspace"
               >
                 <Delete className="h-6 w-6" />
