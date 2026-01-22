@@ -6,6 +6,15 @@ import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
 
+type GuessDistribution = {
+  1: number;
+  2: number;
+  3: number;
+  4: number;
+  5: number;
+  6: number;
+};
+
 type StatsData = {
   daily: {
     totalPlayed: number;
@@ -14,6 +23,7 @@ type StatsData = {
     avgGuesses: number;
     bestSector: string | null;
     worstSector: string | null;
+    guessDistribution: GuessDistribution;
   };
   endless: {
     totalPlayed: number;
@@ -24,6 +34,7 @@ type StatsData = {
     worstSector: string | null;
     currentStreak: number;
     maxStreak: number;
+    guessDistribution: GuessDistribution;
   };
 };
 
@@ -37,6 +48,32 @@ function StatCard({ label, value, icon: Icon }: { label: string; value: string |
   );
 }
 
+function GuessDistributionChart({ distribution }: { distribution: GuessDistribution }) {
+  const maxCount = Math.max(...Object.values(distribution), 1);
+  const entries = Object.entries(distribution) as [string, number][];
+  
+  return (
+    <div className="p-3 bg-secondary/30 rounded-lg border border-white/5">
+      <p className="text-xs text-muted-foreground uppercase tracking-wide mb-3 text-center font-semibold">Guess Distribution</p>
+      <div className="flex items-end justify-center gap-2 h-24">
+        {entries.map(([guessNum, count]) => {
+          const heightPercent = maxCount > 0 ? (count / maxCount) * 100 : 0;
+          return (
+            <div key={guessNum} className="flex flex-col items-center gap-1 flex-1 max-w-12">
+              <span className="text-xs text-muted-foreground">{count}</span>
+              <div 
+                className="w-full bg-primary/80 rounded-t transition-all duration-300"
+                style={{ height: `${Math.max(heightPercent, 4)}%`, minHeight: count > 0 ? '4px' : '2px' }}
+              />
+              <span className="text-xs font-medium text-foreground">{guessNum}</span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function StatsSection({ title, icon: Icon, stats, showStreak = false }: { 
   title: string; 
   icon: any; 
@@ -44,6 +81,7 @@ function StatsSection({ title, icon: Icon, stats, showStreak = false }: {
   showStreak?: boolean 
 }) {
   const endlessStats = stats as StatsData['endless'];
+  const formattedAvgGuesses = stats.avgGuesses > 0 ? stats.avgGuesses.toFixed(2) : "—";
   
   return (
     <Card className="border-white/10 bg-card/50">
@@ -60,7 +98,7 @@ function StatsSection({ title, icon: Icon, stats, showStreak = false }: {
           <StatCard label="Played" value={stats.totalPlayed} icon={Target} />
           <StatCard label="Wins" value={stats.totalWins} icon={Trophy} />
           <StatCard label="Win %" value={`${stats.winPercentage}%`} />
-          <StatCard label="Avg Guesses" value={stats.avgGuesses || "—"} />
+          <StatCard label="Avg Guesses" value={formattedAvgGuesses} />
         </div>
         
         {showStreak && (
@@ -69,6 +107,8 @@ function StatsSection({ title, icon: Icon, stats, showStreak = false }: {
             <StatCard label="Best Streak" value={endlessStats.maxStreak} icon={Flame} />
           </div>
         )}
+        
+        <GuessDistributionChart distribution={stats.guessDistribution} />
         
         <div className="grid grid-cols-2 gap-3">
           <div className="p-3 bg-green-500/10 rounded-lg border border-green-500/20">

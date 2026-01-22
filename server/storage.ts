@@ -7,6 +7,15 @@ import {
 } from "@shared/schema";
 import { eq, and, desc, sql, inArray, notInArray } from "drizzle-orm";
 
+export type GuessDistribution = {
+  1: number;
+  2: number;
+  3: number;
+  4: number;
+  5: number;
+  6: number;
+};
+
 export type DetailedStats = {
   daily: {
     totalPlayed: number;
@@ -15,6 +24,7 @@ export type DetailedStats = {
     avgGuesses: number;
     bestSector: string | null;
     worstSector: string | null;
+    guessDistribution: GuessDistribution;
   };
   endless: {
     totalPlayed: number;
@@ -25,6 +35,7 @@ export type DetailedStats = {
     worstSector: string | null;
     currentStreak: number;
     maxStreak: number;
+    guessDistribution: GuessDistribution;
   };
 };
 
@@ -98,13 +109,21 @@ export class DatabaseStorage implements IStorage {
       const totalWins = wins.length;
       const winPercentage = totalPlayed > 0 ? Math.round((totalWins / totalPlayed) * 100) : 0;
       
-      // Calculate average guesses for wins
+      // Calculate average guesses for wins and guess distribution
       let totalGuesses = 0;
+      const guessDistribution: GuessDistribution = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 };
+      
       for (const g of wins) {
         const gameGuesses = await db.select().from(guesses).where(eq(guesses.gameId, g.game.id));
-        totalGuesses += gameGuesses.length;
+        const numGuesses = gameGuesses.length;
+        totalGuesses += numGuesses;
+        
+        // Track guess distribution (1-6 guesses to win)
+        if (numGuesses >= 1 && numGuesses <= 6) {
+          guessDistribution[numGuesses as keyof GuessDistribution]++;
+        }
       }
-      const avgGuesses = totalWins > 0 ? Math.round((totalGuesses / totalWins) * 10) / 10 : 0;
+      const avgGuesses = totalWins > 0 ? Math.round((totalGuesses / totalWins) * 100) / 100 : 0;
       
       // Calculate sector performance (wins and losses per sector)
       const sectorStats: Record<string, { wins: number; losses: number }> = {};
@@ -136,7 +155,7 @@ export class DatabaseStorage implements IStorage {
         }
       }
       
-      return { totalPlayed, totalWins, winPercentage, avgGuesses, bestSector, worstSector };
+      return { totalPlayed, totalWins, winPercentage, avgGuesses, bestSector, worstSector, guessDistribution };
     };
     
     const dailyStats = await computeTypeStats('daily');
