@@ -185,18 +185,6 @@ export default function Game() {
               <span className="text-sm font-bold tracking-tight text-gradient">Financle</span>
             </Link>
             <div className="flex items-center gap-2">
-              {hasGuessHistory && (
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="h-7 px-2 text-xs text-muted-foreground"
-                  onClick={() => setShowPreviousGuesses(true)}
-                  data-testid="button-previous-guesses"
-                >
-                  <History className="h-3 w-3 mr-1" />
-                  Guesses
-                </Button>
-              )}
               <Link href="/stats">
                 <Button variant="ghost" size="sm" className="h-7 px-2 text-xs text-muted-foreground">
                   <BarChart2 className="h-3 w-3 mr-1" />
@@ -236,6 +224,20 @@ export default function Game() {
               <span className="text-xs font-medium text-muted-foreground uppercase tracking-widest block mb-0">Streak</span>
               <span className={isMobile ? "text-base font-mono font-bold text-primary" : "text-lg sm:text-2xl font-mono font-bold text-primary"}>{(user as any)?.currentStreak || 0}</span>
             </div>
+          )}
+
+          {/* Previous Guesses button - mobile only, between streak and round */}
+          {isMobile && hasGuessHistory && (
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="h-8 px-2 text-xs"
+              onClick={() => setShowPreviousGuesses(true)}
+              data-testid="button-previous-guesses"
+            >
+              <History className="h-3 w-3 mr-1" />
+              See Prev. Guesses
+            </Button>
           )}
 
           {/* Game type and rounds */}
