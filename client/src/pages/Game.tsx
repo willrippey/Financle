@@ -232,7 +232,7 @@ export default function Game() {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ duration: 0.75 }}
+                transition={{ duration: 1 }}
               >
                 <Button 
                   variant="outline" 
