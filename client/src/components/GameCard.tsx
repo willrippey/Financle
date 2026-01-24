@@ -17,8 +17,12 @@ interface GameCardProps {
 
 function ScaledText({ text, className }: { text: string; className?: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const textRef = useRef<HTMLSpanElement>(null);
+  const textRef = useRef<HTMLDivElement>(null);
   const [fontSize, setFontSize] = useState(14);
+
+  // Check if text has multiple lines
+  const lines = text.split('\n');
+  const isMultiLine = lines.length > 1;
 
   useEffect(() => {
     if (!containerRef.current || !textRef.current || !text) return;
@@ -30,10 +34,10 @@ function ScaledText({ text, className }: { text: string; className?: string }) {
       const containerWidth = container.clientWidth - 8;
       const containerHeight = container.clientHeight - 4;
       
-      let size = 16;
+      let size = 14;
       textEl.style.fontSize = `${size}px`;
       
-      while (size > 8 && (textEl.scrollWidth > containerWidth || textEl.scrollHeight > containerHeight)) {
+      while (size > 7 && (textEl.scrollWidth > containerWidth || textEl.scrollHeight > containerHeight)) {
         size -= 0.5;
         textEl.style.fontSize = `${size}px`;
       }
@@ -51,13 +55,19 @@ function ScaledText({ text, className }: { text: string; className?: string }) {
 
   return (
     <div ref={containerRef} className={cn("flex-1 flex items-center justify-center w-full overflow-hidden px-1", className)}>
-      <span 
+      <div 
         ref={textRef}
         className="font-semibold text-foreground text-center leading-tight"
         style={{ fontSize: `${fontSize}px` }}
       >
-        {text}
-      </span>
+        {isMultiLine ? (
+          lines.map((line, idx) => (
+            <div key={idx}>{line}</div>
+          ))
+        ) : (
+          text
+        )}
+      </div>
     </div>
   );
 }

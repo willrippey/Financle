@@ -10,6 +10,7 @@ import { GameOverModal } from "@/components/GameOverModal";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Loader2, ArrowLeft, History, RefreshCw, SkipForward, TrendingUp, BarChart2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
@@ -31,6 +32,7 @@ export default function Game() {
 
   const [lastGuess, setLastGuess] = useState<string | null>(null);
   const [showGameOverModal, setShowGameOverModal] = useState(false);
+  const [showPreviousGuesses, setShowPreviousGuesses] = useState(false);
   const searchCompRef = useRef<{ focusAndOpen: () => void; clearSearch?: () => void }>(null);
 
   // Update modal visibility when game status changes
@@ -159,7 +161,7 @@ export default function Game() {
       title: "Sector & Industry", 
       value: (game.clues.category && game.clues.subIndustry) ? `${game.clues.category}\n${game.clues.subIndustry}` : undefined,
       revealed: !!(game.clues.category && game.clues.subIndustry),
-      isMultiLine: true
+      scaleText: true
     },
     { title: "Market Cap", value: game.clues.marketCap, revealed: !!game.clues.marketCap },
     { title: "Headquarters", value: game.clues.headquarters, revealed: !!game.clues.headquarters },
@@ -167,6 +169,9 @@ export default function Game() {
     { title: "First Letter", value: game.clues.firstLetter, revealed: !!game.clues.firstLetter },
     { title: "Known For", value: game.clues.description, revealed: !!game.clues.description, scaleText: true },
   ];
+  
+  // Check if we have any guess history to show
+  const hasGuessHistory = game.guesses.length > 0 || (game as any).skippedRounds?.length > 0;
 
   return (
     <div className={isMobile ? "bg-background flex flex-col overflow-hidden" : "min-h-screen bg-background flex flex-col"} style={isMobile ? { height: '100dvh' } : undefined}>
@@ -180,6 +185,18 @@ export default function Game() {
               <span className="text-sm font-bold tracking-tight text-gradient">Financle</span>
             </Link>
             <div className="flex items-center gap-2">
+              {hasGuessHistory && (
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="h-7 px-2 text-xs text-muted-foreground"
+                  onClick={() => setShowPreviousGuesses(true)}
+                  data-testid="button-previous-guesses"
+                >
+                  <History className="h-3 w-3 mr-1" />
+                  Guesses
+                </Button>
+              )}
               <Link href="/stats">
                 <Button variant="ghost" size="sm" className="h-7 px-2 text-xs text-muted-foreground">
                   <BarChart2 className="h-3 w-3 mr-1" />
@@ -252,8 +269,7 @@ export default function Game() {
                 revealed={clue.revealed}
                 delay={idx}
                 className={isMobile ? "h-[78px]" : "h-24 sm:h-28 md:h-32"}
-                isMultiLine={clue.isMultiLine}
-                scaleText={(clue as any).scaleText}
+                scaleText={clue.scaleText}
               />
             </div>
           ))}
@@ -403,6 +419,72 @@ export default function Game() {
         isDaily={game.type === 'daily'}
         onClose={handleModalClose}
       />
+
+      {/* Mobile Previous Guesses Sheet */}
+      {isMobile && (
+        <Sheet open={showPreviousGuesses} onOpenChange={setShowPreviousGuesses}>
+          <SheetContent side="bottom" className="h-[50vh] rounded-t-xl">
+            <SheetHeader className="pb-2">
+              <SheetTitle className="flex items-center gap-2 text-sm">
+                <History className="h-4 w-4 text-primary" />
+                Previous Guesses
+              </SheetTitle>
+            </SheetHeader>
+            <div className="overflow-y-auto h-[calc(100%-3rem)] space-y-2 pr-1">
+              {(() => {
+                const skippedRounds = (game as any).skippedRounds || [];
+                const totalRoundsPlayed = game.round - 1;
+                
+                if (totalRoundsPlayed === 0) {
+                  return (
+                    <p className="text-center text-muted-foreground text-sm py-4">
+                      No guesses yet
+                    </p>
+                  );
+                }
+                
+                const attempts = [];
+                let guessIdx = 0;
+                
+                for (let round = 1; round <= totalRoundsPlayed; round++) {
+                  if (skippedRounds.includes(round)) {
+                    attempts.push({ round, isSkipped: true, guess: undefined });
+                  } else {
+                    attempts.push({ round, isSkipped: false, guess: game.guesses[guessIdx] });
+                    guessIdx++;
+                  }
+                }
+                
+                return attempts.sort((a, b) => b.round - a.round).map((attempt) => {
+                  const isCorrectGuess = game.status === 'won' && attempt.guess && !attempt.isSkipped && attempt.round === totalRoundsPlayed;
+                  return (
+                    <div
+                      key={`mobile-attempt-${attempt.round}`}
+                      className="flex items-center justify-between p-3 rounded-lg bg-secondary/30 border border-white/5"
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="font-mono font-bold text-muted-foreground w-8 text-sm">#{attempt.round}</span>
+                        {attempt.isSkipped ? (
+                          <span className="font-medium text-muted-foreground italic text-sm">Skipped</span>
+                        ) : (
+                          <span className="font-medium text-sm">{attempt.guess?.name}</span>
+                        )}
+                      </div>
+                      {attempt.isSkipped ? (
+                        <span className="text-xs font-mono text-muted-foreground">—</span>
+                      ) : isCorrectGuess ? (
+                        <span className="text-xs font-mono text-green-500 font-semibold">Correct!</span>
+                      ) : (
+                        <span className="text-xs font-mono text-destructive">MISS</span>
+                      )}
+                    </div>
+                  );
+                });
+              })()}
+            </div>
+          </SheetContent>
+        </Sheet>
+      )}
     </div>
   );
 }
