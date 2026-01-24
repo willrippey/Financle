@@ -227,18 +227,26 @@ export default function Game() {
           )}
 
           {/* Previous Guesses button - mobile only, between streak and round */}
-          {isMobile && hasGuessHistory && (
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="h-8 px-2 text-xs"
-              onClick={() => setShowPreviousGuesses(true)}
-              data-testid="button-previous-guesses"
-            >
-              <History className="h-3 w-3 mr-1" />
-              See Prev. Guesses
-            </Button>
-          )}
+          <AnimatePresence>
+            {isMobile && hasGuessHistory && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.3 }}
+              >
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="h-8 px-2 text-xs"
+                  onClick={() => setShowPreviousGuesses(true)}
+                  data-testid="button-previous-guesses"
+                >
+                  <History className="h-3 w-3 mr-1" />
+                  Previous Guesses
+                </Button>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Game type and rounds */}
           <div className={isMobile ? "text-center flex-1" : "text-right flex-shrink-0"}>
