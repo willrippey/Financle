@@ -24,7 +24,9 @@ interface GameOverModalProps {
 function generateShareText(game: any, isDaily: boolean): string {
   const isWin = game?.status === "won";
   const totalRounds = 6;
-  const roundsUsed = Math.max(1, (game?.round || 1) - 1);
+  // When game is won, game.round is the winning round itself
+  // When game is lost, game.round would be 7 (past the last round), so we use 6
+  const roundsUsed = isWin ? (game?.round || 1) : Math.min(game?.round || 6, 6);
   const skippedRounds = game?.skippedRounds || [];
   const guesses = game?.guesses || [];
   const target = game?.targetCompany;
