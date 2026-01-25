@@ -226,7 +226,17 @@ export default function Game() {
             </div>
           )}
 
-          {/* Previous Guesses button - mobile only, between streak and round */}
+          {/* Game type and rounds */}
+          <div className={isMobile ? "text-center flex-1" : "text-right flex-shrink-0"}>
+            <span className="text-xs font-medium text-muted-foreground uppercase tracking-widest block mb-0">
+              {game.type === 'daily' ? 'Daily' : game.type === 'custom' ? 'Custom' : 'Endless'}
+            </span>
+            <div className="flex items-center justify-center gap-1">
+              <span className={isMobile ? "text-base font-mono font-bold" : "text-lg sm:text-xl font-mono font-bold"}>{game.round}/6</span>
+            </div>
+          </div>
+
+          {/* Previous Guesses button - mobile only, on the right */}
           <AnimatePresence>
             {isMobile && hasGuessHistory && (
               <motion.div
@@ -247,16 +257,6 @@ export default function Game() {
               </motion.div>
             )}
           </AnimatePresence>
-
-          {/* Game type and rounds */}
-          <div className={isMobile ? "text-center flex-1" : "text-right flex-shrink-0"}>
-            <span className="text-xs font-medium text-muted-foreground uppercase tracking-widest block mb-0">
-              {game.type === 'daily' ? 'Daily' : game.type === 'custom' ? 'Custom' : 'Endless'}
-            </span>
-            <div className="flex items-center justify-center gap-1">
-              <span className={isMobile ? "text-base font-mono font-bold" : "text-lg sm:text-xl font-mono font-bold"}>{game.round}/6</span>
-            </div>
-          </div>
         </div>
 
         {/* Progress Bar */}

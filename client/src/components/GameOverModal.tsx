@@ -24,11 +24,12 @@ interface GameOverModalProps {
 function generateShareText(game: any, isDaily: boolean): string {
   const isWin = game?.status === "won";
   const totalRounds = 6;
-  // When game is won, game.round is the winning round itself
-  // When game is lost, game.round would be 7 (past the last round), so we use 6
-  const roundsUsed = isWin ? (game?.round || 1) : Math.min(game?.round || 6, 6);
   const skippedRounds = game?.skippedRounds || [];
   const guesses = game?.guesses || [];
+  // Calculate actual rounds used from guesses + skips (more reliable than game.round which may be incremented)
+  const roundsUsed = isWin 
+    ? guesses.length + skippedRounds.length 
+    : Math.min(game?.round || 6, 6);
   const target = game?.targetCompany;
   
   // Check if a guess matches the specific clue for that round
