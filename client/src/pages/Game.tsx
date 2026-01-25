@@ -211,7 +211,7 @@ export default function Game() {
         : "flex-1 container mx-auto px-2 sm:px-4 py-3 sm:py-4 max-w-4xl overflow-y-auto"
       }>
         {/* Game Info Header */}
-        <div className={isMobile ? "flex items-center justify-center mb-1.5 gap-6" : "flex items-center justify-between mb-3 sm:mb-4 gap-2"}>
+        <div className={isMobile ? "flex items-center justify-center mb-1.5 gap-12" : "flex items-center justify-between mb-3 sm:mb-4 gap-2"}>
           {!isMobile && (
             <Button variant="ghost" onClick={() => setLocation("/")} className="text-muted-foreground hover:text-foreground pl-0 h-8 text-xs sm:text-sm flex-shrink-0">
               <ArrowLeft className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
