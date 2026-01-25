@@ -211,7 +211,7 @@ export default function Game() {
         : "flex-1 container mx-auto px-2 sm:px-4 py-3 sm:py-4 max-w-4xl overflow-y-auto"
       }>
         {/* Game Info Header */}
-        <div className={isMobile ? "flex items-center justify-between mb-1.5 gap-2" : "flex items-center justify-between mb-3 sm:mb-4 gap-2"}>
+        <div className={isMobile ? "flex items-center justify-center mb-1.5 gap-6" : "flex items-center justify-between mb-3 sm:mb-4 gap-2"}>
           {!isMobile && (
             <Button variant="ghost" onClick={() => setLocation("/")} className="text-muted-foreground hover:text-foreground pl-0 h-8 text-xs sm:text-sm flex-shrink-0">
               <ArrowLeft className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
@@ -227,7 +227,7 @@ export default function Game() {
           )}
 
           {/* Game type and rounds */}
-          <div className={isMobile ? "text-center flex-1" : "text-right flex-shrink-0"}>
+          <div className={isMobile ? "text-center" : "text-right flex-shrink-0"}>
             <span className="text-xs font-medium text-muted-foreground uppercase tracking-widest block mb-0">
               {game.type === 'daily' ? 'Daily' : game.type === 'custom' ? 'Custom' : 'Endless'}
             </span>
@@ -243,7 +243,6 @@ export default function Game() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 1 }}
-                className="flex-1 flex justify-center"
               >
                 <Button 
                   variant="outline" 
