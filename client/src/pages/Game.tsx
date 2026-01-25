@@ -243,6 +243,7 @@ export default function Game() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 1 }}
+                className="flex-1 flex justify-center"
               >
                 <Button 
                   variant="outline" 
