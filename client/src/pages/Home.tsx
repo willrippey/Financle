@@ -136,7 +136,7 @@ export default function Home() {
               </CardContent>
             </Card>
             
-            <div className="relative mt-4 flex justify-center">
+            <div className="relative mt-4 w-full flex justify-center">
               <HowToPlayModal 
                 open={showHowToPlay} 
                 onOpenChange={setShowHowToPlay}
