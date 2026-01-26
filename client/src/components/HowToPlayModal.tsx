@@ -12,7 +12,7 @@ export function HowToPlayModal({ open, onOpenChange, trigger }: HowToPlayModalPr
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
-      <DialogContent className="sm:max-w-md bg-card border-white/10 max-h-[85vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-md bg-card border-white/10 max-h-[85vh] overflow-y-auto top-[40%]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl">
             <HelpCircle className="h-5 w-5 text-primary" />
@@ -23,7 +23,7 @@ export function HowToPlayModal({ open, onOpenChange, trigger }: HowToPlayModalPr
           </DialogDescription>
         </DialogHeader>
         
-        <div className="space-y-4 py-2">
+        <div className="space-y-3 py-1">
           <p className="text-sm text-muted-foreground">
             Financle (pronounced "Financial") is a Wordle-inspired game to test your market knowledge. Here's how it works:
           </p>
@@ -83,7 +83,7 @@ export function HowToPlayModal({ open, onOpenChange, trigger }: HowToPlayModalPr
             <div>
               <h4 className="font-medium text-foreground">Different Game Modes</h4>
               <p className="text-sm text-muted-foreground">
-                Play the Daily Challenge for a new puzzle every day. Practice anytime with Endless Mode featuring Easy and Hard difficulties. Or create a Custom Game to focus on specific sectors or market caps!
+                Play the Daily Challenge for a new puzzle every day. Practice anytime with Endless Mode featuring Easy and Hard difficulty, or create a Custom Game to focus on specific sectors or market caps!
               </p>
             </div>
           </div>
