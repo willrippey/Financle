@@ -26,18 +26,18 @@ export function Navbar() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-white/5 bg-background/80 backdrop-blur-md">
-      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 group">
-          <div className="bg-primary/20 p-2 rounded-lg group-hover:bg-primary/30 transition-colors">
-            <TrendingUp className="h-6 w-6 text-primary" />
+    <header className="sticky top-0 z-50 w-full border-b border-white/5 bg-background/80 backdrop-blur-md flex-shrink-0">
+      <div className="container mx-auto px-2 sm:px-4 h-12 sm:h-16 flex items-center justify-between">
+        <Link href="/" className="flex items-center gap-1.5 sm:gap-2 group">
+          <div className="bg-primary/20 p-1.5 sm:p-2 rounded-lg group-hover:bg-primary/30 transition-colors">
+            <TrendingUp className="h-4 w-4 sm:h-6 sm:w-6 text-primary" />
           </div>
-          <span className="text-xl font-bold tracking-tight text-gradient">
+          <span className="text-base sm:text-xl font-bold tracking-tight text-gradient">
             Financle
           </span>
         </Link>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center">
           <div className="relative">
             <HowToPlayModal 
               open={showHowToPlay} 
@@ -46,12 +46,12 @@ export function Navbar() {
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="text-muted-foreground hover:text-primary"
+                  className="text-muted-foreground hover:text-primary h-8 px-2 sm:px-3"
                   data-testid="button-how-to-play"
                   onClick={handleHowToPlayClick}
                 >
-                  <HelpCircle className="mr-1 h-4 w-4" />
-                  How to Play
+                  <HelpCircle className="h-4 w-4 sm:mr-1" />
+                  <span className="hidden sm:inline">How to Play</span>
                 </Button>
               }
             />
@@ -62,20 +62,20 @@ export function Navbar() {
             <Button 
               variant="ghost" 
               size="sm" 
-              className={location === "/stats" ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-primary"}
+              className={`h-8 px-2 sm:px-3 ${location === "/stats" ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-primary"}`}
             >
-              <BarChart2 className="mr-2 h-4 w-4" />
-              My Stats
+              <BarChart2 className="h-4 w-4 sm:mr-1" />
+              <span className="hidden sm:inline">My Stats</span>
             </Button>
           </Link>
 
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-9 w-9 rounded-full">
-                  <Avatar className="h-9 w-9 border border-white/10">
+                <Button variant="ghost" className="relative h-7 w-7 sm:h-9 sm:w-9 rounded-full p-0 ml-1">
+                  <Avatar className="h-7 w-7 sm:h-9 sm:w-9 border border-white/10">
                     <AvatarImage src={user.profileImageUrl || undefined} alt={user.firstName || "User"} />
-                    <AvatarFallback className="bg-primary/20 text-primary">
+                    <AvatarFallback className="bg-primary/20 text-primary text-xs sm:text-sm">
                       {(user.firstName || "U").slice(0, 2).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
@@ -98,9 +98,9 @@ export function Navbar() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Button onClick={() => window.location.href = "/api/login"} size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-lg shadow-primary/20">
-              <User className="mr-2 h-4 w-4" />
-              Login
+            <Button onClick={() => window.location.href = "/api/login"} size="sm" className="h-8 px-2 sm:px-3 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-lg shadow-primary/20 ml-1">
+              <User className="h-4 w-4 sm:mr-1" />
+              <span className="hidden sm:inline">Login</span>
             </Button>
           )}
         </div>
