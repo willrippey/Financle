@@ -33,6 +33,7 @@ export default function Game() {
   const [lastGuess, setLastGuess] = useState<string | null>(null);
   const [showGameOverModal, setShowGameOverModal] = useState(false);
   const [showPreviousGuesses, setShowPreviousGuesses] = useState(false);
+  const [shake, setShake] = useState(false);
   const searchCompRef = useRef<{ focusAndOpen: () => void; clearSearch?: () => void }>(null);
 
   // Update modal visibility when game status changes
@@ -101,7 +102,12 @@ export default function Game() {
         }
         searchCompRef.current?.clearSearch?.();
       },
-      onSuccess: () => {
+      onSuccess: (data: any) => {
+        // Shake on incorrect guess (game still playing)
+        if (data?.status === 'playing') {
+          setShake(true);
+          setTimeout(() => setShake(false), 500);
+        }
         if (!isMobile) {
           searchCompRef.current?.focusAndOpen();
         }
@@ -307,7 +313,14 @@ export default function Game() {
           {!isGameOver ? (
             <motion.div 
               initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
+              animate={{ 
+                y: 0, 
+                opacity: 1,
+                x: shake ? [0, -10, 10, -10, 10, 0] : 0
+              }}
+              transition={{ 
+                x: { duration: 0.4 }
+              }}
               className="space-y-2"
             >
               {isMobile ? (
