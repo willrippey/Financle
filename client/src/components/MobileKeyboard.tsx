@@ -130,8 +130,8 @@ export function MobileKeyboard({ onKeyPress, onBackspace, disabled }: MobileKeyb
           )}
         </div>
       ))}
-      {/* Space bar row */}
-      <div className="flex w-full gap-[3px] px-[18%]">
+      {/* Space bar row - aligned with Z to M */}
+      <div className="flex w-full gap-[3px]" style={{ paddingLeft: '46px', paddingRight: '56px' }}>
         <button
           type="button"
           onClick={() => onKeyPress(" ")}
