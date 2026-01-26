@@ -198,7 +198,7 @@ export default function Game() {
               </div>
               <span className="text-sm font-bold tracking-tight text-gradient">Financle</span>
             </Link>
-            <div className="flex items-center gap-1 ml-auto">
+            <div className="flex items-center gap-0.5 ml-auto">
               <div className="relative">
                 <HowToPlayModal 
                   open={showHowToPlay} 
