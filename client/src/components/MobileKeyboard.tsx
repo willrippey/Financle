@@ -131,12 +131,12 @@ export function MobileKeyboard({ onKeyPress, onBackspace, disabled }: MobileKeyb
         </div>
       ))}
       {/* Space bar row */}
-      <div className="flex w-full gap-[3px] px-[15%]">
+      <div className="flex w-full gap-[3px] px-[22%]">
         <button
           type="button"
           onClick={() => onKeyPress(" ")}
           disabled={disabled}
-          className={cn(keyButtonClass, "flex-1")}
+          className={cn(keyButtonClass, "flex-1 !h-[36px]")}
           data-testid="key-space"
         >
           space
