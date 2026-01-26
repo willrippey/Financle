@@ -60,15 +60,14 @@ function generateShareText(game: any, isDaily: boolean): string {
     }
   };
   
-  // Build emoji grid
+  // Build emoji grid - only show squares up to the winning/final round
   let emojiGrid = "";
   let guessIndex = 0;
+  const roundsToShow = isWin ? roundsUsed : totalRounds;
   
-  for (let round = 1; round <= totalRounds; round++) {
-    if (round > roundsUsed) {
-      emojiGrid += "\u2B1C"; // white square - unused
-    } else if (isWin && round === roundsUsed) {
-      emojiGrid += "\uD83D\uDFE9"; // green square - correct
+  for (let round = 1; round <= roundsToShow; round++) {
+    if (isWin && round === roundsUsed) {
+      emojiGrid += "\u2705"; // check mark - correct
     } else if (skippedRounds.includes(round)) {
       emojiGrid += "\u27A1\uFE0F"; // arrow - skipped
     } else {
