@@ -13,6 +13,7 @@ import { Progress } from "@/components/ui/progress";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Loader2, ArrowLeft, History, RefreshCw, SkipForward, TrendingUp, BarChart2, HelpCircle } from "lucide-react";
 import { HowToPlayModal } from "@/components/HowToPlayModal";
+import { NewPlayerTooltip } from "@/components/NewPlayerTooltip";
 import { motion, AnimatePresence } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -38,13 +39,10 @@ export default function Game() {
   const [showHowToPlay, setShowHowToPlay] = useState(false);
   const searchCompRef = useRef<{ focusAndOpen: () => void; clearSearch?: () => void }>(null);
 
-  useEffect(() => {
-    const hasSeenHowToPlay = localStorage.getItem('financle_seen_how_to_play');
-    if (!hasSeenHowToPlay) {
-      setShowHowToPlay(true);
-      localStorage.setItem('financle_seen_how_to_play', 'true');
-    }
-  }, []);
+  const handleHowToPlayClick = () => {
+    localStorage.setItem('financle_seen_how_to_play', 'true');
+    setShowHowToPlay(true);
+  };
 
   // Update modal visibility when game status changes
   useEffect(() => {
@@ -201,15 +199,6 @@ export default function Game() {
               <span className="text-sm font-bold tracking-tight text-gradient">Financle</span>
             </Link>
             <div className="flex items-center gap-1">
-              <HowToPlayModal 
-                open={showHowToPlay} 
-                onOpenChange={setShowHowToPlay}
-                trigger={
-                  <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-muted-foreground" data-testid="button-how-to-play-mobile">
-                    <HelpCircle className="h-3.5 w-3.5" />
-                  </Button>
-                }
-              />
               <Link href="/stats">
                 <Button variant="ghost" size="sm" className="h-7 px-2 text-xs text-muted-foreground">
                   <BarChart2 className="h-3 w-3 mr-1" />
@@ -224,6 +213,24 @@ export default function Game() {
                   </AvatarFallback>
                 </Avatar>
               )}
+              <div className="relative">
+                <HowToPlayModal 
+                  open={showHowToPlay} 
+                  onOpenChange={setShowHowToPlay}
+                  trigger={
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="h-7 w-7 p-0 text-muted-foreground" 
+                      data-testid="button-how-to-play-mobile"
+                      onClick={handleHowToPlayClick}
+                    >
+                      <HelpCircle className="h-3.5 w-3.5" />
+                    </Button>
+                  }
+                />
+                <NewPlayerTooltip />
+              </div>
             </div>
           </div>
         </header>
