@@ -1,7 +1,9 @@
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
-import { BarChart2, LogOut, TrendingUp, User } from "lucide-react";
+import { BarChart2, LogOut, TrendingUp, User, HelpCircle } from "lucide-react";
+import { HowToPlayModal } from "@/components/HowToPlayModal";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,6 +17,15 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 export function Navbar() {
   const { user, logout } = useAuth();
   const [location] = useLocation();
+  const [showHowToPlay, setShowHowToPlay] = useState(false);
+
+  useEffect(() => {
+    const hasSeenHowToPlay = localStorage.getItem('financle_seen_how_to_play');
+    if (!hasSeenHowToPlay) {
+      setShowHowToPlay(true);
+      localStorage.setItem('financle_seen_how_to_play', 'true');
+    }
+  }, []);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-white/5 bg-background/80 backdrop-blur-md">
@@ -29,6 +40,21 @@ export function Navbar() {
         </Link>
 
         <div className="flex items-center gap-4">
+          <HowToPlayModal 
+            open={showHowToPlay} 
+            onOpenChange={setShowHowToPlay}
+            trigger={
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="text-muted-foreground hover:text-primary"
+                data-testid="button-how-to-play"
+              >
+                <HelpCircle className="mr-2 h-4 w-4" />
+                How to Play
+              </Button>
+            }
+          />
           <Link href="/stats">
             <Button 
               variant="ghost" 
