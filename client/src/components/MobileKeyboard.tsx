@@ -137,7 +137,7 @@ export function MobileKeyboard({ onKeyPress, onBackspace, disabled }: MobileKeyb
           onClick={() => onKeyPress(" ")}
           disabled={disabled}
           className={cn(keyButtonClass, "!h-[46px]")}
-          style={{ width: '64%' }}
+          style={{ width: '45%' }}
           data-testid="key-space"
         >
           space
