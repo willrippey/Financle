@@ -1,6 +1,6 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { HelpCircle, Target, Lightbulb, Trophy, SkipForward } from "lucide-react";
+import { HelpCircle, Target, Lightbulb, Trophy, SkipForward, Gamepad2 } from "lucide-react";
 
 interface HowToPlayModalProps {
   open?: boolean;
@@ -12,7 +12,7 @@ export function HowToPlayModal({ open, onOpenChange, trigger }: HowToPlayModalPr
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
-      <DialogContent className="sm:max-w-md bg-card border-white/10">
+      <DialogContent className="sm:max-w-md bg-card border-white/10 max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl">
             <HelpCircle className="h-5 w-5 text-primary" />
@@ -24,6 +24,10 @@ export function HowToPlayModal({ open, onOpenChange, trigger }: HowToPlayModalPr
         </DialogHeader>
         
         <div className="space-y-4 py-2">
+          <p className="text-sm text-muted-foreground">
+            Financle (pronounced "Financial") is a Wordle-inspired game to test your market knowledge. Here's how it works:
+          </p>
+
           <div className="flex gap-3">
             <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
               <Target className="h-4 w-4 text-primary" />
@@ -43,7 +47,7 @@ export function HowToPlayModal({ open, onOpenChange, trigger }: HowToPlayModalPr
             <div>
               <h4 className="font-medium text-foreground">Clues Revealed Each Round</h4>
               <p className="text-sm text-muted-foreground">
-                Each wrong guess or skip reveals a new clue: Sector, Market Cap, HQ, Founded Year, First Letter, and Description.
+                Each wrong guess or skip reveals a new clue in the following order: Sector, Market Cap, HQ, Founded Year, First Letter, and Description.
               </p>
             </div>
           </div>
@@ -67,15 +71,21 @@ export function HowToPlayModal({ open, onOpenChange, trigger }: HowToPlayModalPr
             <div>
               <h4 className="font-medium text-foreground">Win in 6 Rounds</h4>
               <p className="text-sm text-muted-foreground">
-                You have 6 rounds to guess correctly. The fewer clues you need, the better your score!
+                You have 6 rounds to guess correctly. Show off your market knowledge by guessing correctly with fewer clues!
               </p>
             </div>
           </div>
 
-          <div className="pt-2 border-t border-white/10">
-            <p className="text-xs text-muted-foreground text-center">
-              Play the Daily Challenge or try Endless Mode for unlimited practice!
-            </p>
+          <div className="flex gap-3">
+            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+              <Gamepad2 className="h-4 w-4 text-primary" />
+            </div>
+            <div>
+              <h4 className="font-medium text-foreground">Different Game Modes</h4>
+              <p className="text-sm text-muted-foreground">
+                Play the Daily Challenge for a new puzzle every day. Practice anytime with Endless Mode featuring Easy and Hard difficulties. Or create a Custom Game to focus on specific sectors or market caps!
+              </p>
+            </div>
           </div>
         </div>
       </DialogContent>
