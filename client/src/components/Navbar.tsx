@@ -4,7 +4,6 @@ import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { BarChart2, LogOut, TrendingUp, User, HelpCircle } from "lucide-react";
 import { HowToPlayModal } from "@/components/HowToPlayModal";
-import { NewPlayerTooltip } from "@/components/NewPlayerTooltip";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -38,7 +37,7 @@ export function Navbar() {
         </Link>
 
         <div className="flex items-center">
-          <div className="relative">
+          {user && (
             <HowToPlayModal 
               open={showHowToPlay} 
               onOpenChange={setShowHowToPlay}
@@ -55,8 +54,7 @@ export function Navbar() {
                 </Button>
               }
             />
-            <NewPlayerTooltip />
-          </div>
+          )}
 
           <Link href="/stats">
             <Button 
