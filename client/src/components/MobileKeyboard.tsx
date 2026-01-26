@@ -141,7 +141,7 @@ export function MobileKeyboard({ onKeyPress, onBackspace, disabled }: MobileKeyb
             "bg-secondary/80 border border-white/10 text-foreground",
             "active:bg-primary/30 active:scale-95 transition-all",
             "disabled:opacity-50 disabled:cursor-not-allowed",
-            "h-[46px] w-[50%]"
+            "h-[46px] w-[85%]"
           )}
           data-testid="key-space"
         >
