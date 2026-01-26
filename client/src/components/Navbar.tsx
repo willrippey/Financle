@@ -37,18 +37,7 @@ export function Navbar() {
           </span>
         </Link>
 
-        <div className="flex items-center gap-4">
-          <Link href="/stats">
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className={location === "/stats" ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-primary"}
-            >
-              <BarChart2 className="mr-2 h-4 w-4" />
-              My Stats
-            </Button>
-          </Link>
-
+        <div className="flex items-center gap-2">
           <div className="relative">
             <HowToPlayModal 
               open={showHowToPlay} 
@@ -68,6 +57,17 @@ export function Navbar() {
             />
             <NewPlayerTooltip />
           </div>
+
+          <Link href="/stats">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className={location === "/stats" ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-primary"}
+            >
+              <BarChart2 className="mr-2 h-4 w-4" />
+              My Stats
+            </Button>
+          </Link>
 
           {user ? (
             <DropdownMenu>

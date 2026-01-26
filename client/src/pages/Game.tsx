@@ -198,21 +198,7 @@ export default function Game() {
               </div>
               <span className="text-sm font-bold tracking-tight text-gradient">Financle</span>
             </Link>
-            <div className="flex items-center gap-1">
-              <Link href="/stats">
-                <Button variant="ghost" size="sm" className="h-7 px-2 text-xs text-muted-foreground">
-                  <BarChart2 className="h-3 w-3 mr-1" />
-                  Stats
-                </Button>
-              </Link>
-              {user && (
-                <Avatar className="h-7 w-7 border border-white/10">
-                  <AvatarImage src={user.profileImageUrl || undefined} alt={user.firstName || "User"} />
-                  <AvatarFallback className="bg-primary/20 text-primary text-xs">
-                    {(user.firstName || "U").slice(0, 2).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-              )}
+            <div className="flex items-center gap-1 ml-auto">
               <div className="relative">
                 <HowToPlayModal 
                   open={showHowToPlay} 
@@ -231,6 +217,20 @@ export default function Game() {
                 />
                 <NewPlayerTooltip />
               </div>
+              <Link href="/stats">
+                <Button variant="ghost" size="sm" className="h-7 px-2 text-xs text-muted-foreground">
+                  <BarChart2 className="h-3 w-3 mr-1" />
+                  Stats
+                </Button>
+              </Link>
+              {user && (
+                <Avatar className="h-7 w-7 border border-white/10">
+                  <AvatarImage src={user.profileImageUrl || undefined} alt={user.firstName || "User"} />
+                  <AvatarFallback className="bg-primary/20 text-primary text-xs">
+                    {(user.firstName || "U").slice(0, 2).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+              )}
             </div>
           </div>
         </header>
