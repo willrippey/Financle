@@ -130,13 +130,14 @@ export function MobileKeyboard({ onKeyPress, onBackspace, disabled }: MobileKeyb
           )}
         </div>
       ))}
-      {/* Space bar row - aligned with Z to M */}
-      <div className="flex w-full gap-[3px]" style={{ paddingLeft: '46px', paddingRight: '56px' }}>
+      {/* Space bar row - centered between Z and M */}
+      <div className="flex w-full gap-[3px] justify-center" style={{ paddingLeft: '46px', paddingRight: '56px' }}>
         <button
           type="button"
           onClick={() => onKeyPress(" ")}
           disabled={disabled}
-          className={cn(keyButtonClass, "flex-1 !h-[46px]")}
+          className={cn(keyButtonClass, "!h-[46px]")}
+          style={{ width: '64%' }}
           data-testid="key-space"
         >
           space
