@@ -54,10 +54,10 @@ export default function Home() {
   const dailyCompleted = dailyGame?.status === 'won' || dailyGame?.status === 'lost';
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col">
+    <div className="h-screen bg-background text-foreground flex flex-col overflow-hidden">
       <Navbar />
       
-      <main className="flex-1 container mx-auto px-2 sm:px-4 py-3 sm:py-4 flex flex-col items-center justify-start max-w-5xl">
+      <main className="flex-1 container mx-auto px-2 sm:px-4 py-2 sm:py-4 flex flex-col items-center justify-start max-w-5xl overflow-y-auto">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
