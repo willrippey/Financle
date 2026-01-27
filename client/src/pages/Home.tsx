@@ -136,24 +136,22 @@ export default function Home() {
               </CardContent>
             </Card>
             
-            <div className="mt-4 w-full flex justify-center">
-              <div className="relative inline-flex flex-col items-center">
-                <HowToPlayModal 
-                  open={showHowToPlay} 
-                  onOpenChange={setShowHowToPlay}
-                  trigger={
-                    <button 
-                      className="flex items-center gap-1 text-sm text-muted-foreground hover:text-primary transition-colors underline underline-offset-2"
-                      data-testid="button-how-to-play-landing"
-                      onClick={handleHowToPlayClick}
-                    >
-                      <HelpCircle className="h-4 w-4" />
-                      How to Play
-                    </button>
-                  }
-                />
-                <NewPlayerTooltip />
-              </div>
+            <div className="mt-4 flex flex-col items-center">
+              <HowToPlayModal 
+                open={showHowToPlay} 
+                onOpenChange={setShowHowToPlay}
+                trigger={
+                  <button 
+                    className="flex items-center gap-1 text-sm text-muted-foreground hover:text-primary transition-colors underline underline-offset-2"
+                    data-testid="button-how-to-play-landing"
+                    onClick={handleHowToPlayClick}
+                  >
+                    <HelpCircle className="h-4 w-4" />
+                    How to Play
+                  </button>
+                }
+              />
+              <NewPlayerTooltip />
             </div>
           </motion.div>
         ) : (
