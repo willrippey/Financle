@@ -22,7 +22,17 @@ export function NewPlayerTooltip() {
       {show && (
         <motion.div
           initial={{ opacity: 0, y: -5 }}
-          animate={{ opacity: 1, y: 0 }}
+          animate={{ 
+            opacity: 1, 
+            y: [0, -4, 0],
+            transition: {
+              y: {
+                repeat: Infinity,
+                duration: 1.5,
+                ease: "easeInOut"
+              }
+            }
+          }}
           exit={{ opacity: 0, y: -5 }}
           className="mt-3 flex justify-center"
         >
