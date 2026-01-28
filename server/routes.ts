@@ -270,12 +270,21 @@ export async function registerRoutes(
       endlessStreak = stats?.currentStreak || 0;
     }
     
+    // Get percentile for completed daily games
+    let dailyPercentile = undefined;
+    if (game.type === 'daily' && isOver && game.date) {
+      const userScore = allGuesses.length;
+      const userWon = game.status === 'won';
+      dailyPercentile = await storage.getDailyPercentile(game.date, userScore, userWon);
+    }
+    
     return {
       id: game.id,
       type: game.type,
       status: game.status,
       round: Math.min(allGuesses.length + 1, 6),
       endlessStreak,
+      dailyPercentile,
       dailyDate: game.date, // For daily games, the date of the challenge
       clues: isOver ? {
         category: target.sector,

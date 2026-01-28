@@ -70,6 +70,8 @@ export interface IStorage {
   getDailyChallengeByDate(date: string): Promise<Company | undefined>;
   createDailyGameForDate(userId: string, targetCompanyId: number, date: string): Promise<Game>;
   
+  // Daily Percentile
+  getDailyPercentile(date: string, userScore: number, userWon: boolean): Promise<{ percentile: number; totalPlayers: number; betterThan: number }>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -441,6 +443,69 @@ export class DatabaseStorage implements IStorage {
       })
       .returning();
     return game;
+  }
+
+  async getDailyPercentile(date: string, userScore: number, userWon: boolean): Promise<{ percentile: number; totalPlayers: number; betterThan: number }> {
+    // Get all completed daily games for this date
+    const completedGames = await db.select({
+      gameId: games.id,
+      status: games.status,
+    })
+      .from(games)
+      .where(
+        and(
+          eq(games.type, 'daily'),
+          eq(games.date, date),
+          inArray(games.status, ['won', 'lost'])
+        )
+      );
+    
+    const totalPlayers = completedGames.length;
+    
+    if (totalPlayers <= 1) {
+      return { percentile: 100, totalPlayers, betterThan: 0 };
+    }
+    
+    // Get scores for all games (count of guesses)
+    const scores: { score: number; won: boolean }[] = [];
+    
+    for (const g of completedGames) {
+      const gameGuesses = await db.select()
+        .from(guesses)
+        .where(eq(guesses.gameId, g.gameId));
+      
+      scores.push({
+        score: gameGuesses.length,
+        won: g.status === 'won'
+      });
+    }
+    
+    // Count how many players did worse than the user
+    // Lower score is better for wins, losses are always worse than wins
+    let betterThan = 0;
+    
+    for (const s of scores) {
+      if (userWon) {
+        // User won - they're better than anyone who lost
+        if (!s.won) {
+          betterThan++;
+        } 
+        // User won - they're better than anyone who won with more guesses
+        else if (s.score > userScore) {
+          betterThan++;
+        }
+      } else {
+        // User lost - they're only better than others who also lost with more guesses
+        if (!s.won && s.score > userScore) {
+          betterThan++;
+        }
+      }
+    }
+    
+    // Calculate percentile (percentage of players you did better than)
+    const percentile = Math.round((betterThan / (totalPlayers - 1)) * 100);
+    
+    return { percentile, totalPlayers, betterThan };
   }
 
 }

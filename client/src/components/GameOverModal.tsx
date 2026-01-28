@@ -183,6 +183,16 @@ export function GameOverModal({ open, game, onPlayAgain, isDaily, onClose }: Gam
                 ? `You identified ${target?.name || "the company"} in ${Math.max(1, (game?.round || 1) - 1)} ${Math.max(1, (game?.round || 1) - 1) === 1 ? 'round' : 'rounds'}`
                 : "Better luck next time. The market is unpredictable."}
             </DialogDescription>
+            {isDaily && game?.dailyPercentile && game.dailyPercentile.totalPlayers > 1 && (
+              <div className="text-center mt-2 px-3 py-1.5 bg-primary/10 border border-primary/30 rounded-lg mx-auto">
+                <p className="text-xs sm:text-sm font-semibold text-primary">
+                  Better than {game.dailyPercentile.percentile}% of players today
+                </p>
+                <p className="text-[0.6rem] sm:text-xs text-muted-foreground">
+                  {game.dailyPercentile.totalPlayers} players completed
+                </p>
+              </div>
+            )}
           </DialogHeader>
 
           <div className="flex-1 overflow-y-auto pr-1 -mr-1 space-y-2 sm:space-y-4 min-h-0 scrollbar-hide">
