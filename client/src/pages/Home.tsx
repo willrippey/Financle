@@ -65,15 +65,15 @@ export default function Home() {
     <div className="h-screen bg-background text-foreground flex flex-col overflow-hidden">
       <Navbar />
       
-      <main className="flex-1 container mx-auto px-2 sm:px-4 py-2 sm:py-4 flex flex-col items-center justify-start max-w-5xl overflow-y-auto">
+      <main className="flex-1 container mx-auto px-2 sm:px-4 py-2 sm:py-3 flex flex-col items-center justify-start max-w-5xl overflow-y-auto">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="w-full mb-4 sm:mb-8"
+          className="w-full mb-3 sm:mb-4 lg:mb-5"
         >
           <FinancleHeader />
-          <p className="text-xs sm:text-sm lg:text-base text-muted-foreground max-w-2xl mx-auto text-balance text-center mt-3 sm:mt-4">
+          <p className="text-xs sm:text-sm lg:text-base text-muted-foreground max-w-2xl mx-auto text-balance text-center mt-2 sm:mt-3">
             Guess the S&P 500 company from 6 clues.
           </p>
         </motion.div>
@@ -136,7 +136,7 @@ export default function Home() {
               </CardContent>
             </Card>
             
-            <div className="mt-4 flex flex-col items-center">
+            <div className="mt-3 flex flex-col items-center">
               <HowToPlayModal 
                 open={showHowToPlay} 
                 onOpenChange={setShowHowToPlay}
@@ -291,7 +291,7 @@ export default function Home() {
 
               </main>
       
-      <footer className="w-full py-2 sm:py-4 border-t border-white/5 text-center text-xs text-muted-foreground px-2">
+      <footer className="w-full py-2 sm:py-3 border-t border-white/5 text-center text-xs text-muted-foreground px-2">
         <p>© 2026 Financle</p>
       </footer>
 

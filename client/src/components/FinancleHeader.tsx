@@ -56,17 +56,17 @@ export function FinancleHeader() {
   };
 
   return (
-    <div className="text-center w-full space-y-3 sm:space-y-4">
-      <h1 className="text-4xl sm:text-5xl lg:text-8xl font-extrabold tracking-tight">
+    <div className="text-center w-full space-y-2 sm:space-y-3">
+      <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight">
         <span className="text-gradient-primary">Financle</span>
       </h1>
 
-      <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 lg:gap-6">
+      <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 lg:gap-5">
         {SYMBOLS.map(symbol => (
           <div
             key={symbol}
             style={{ color: directions[symbol] ? "#22c55e" : "#ef4444" }}
-            className="inline-flex items-center gap-2 sm:gap-3 text-base sm:text-2xl lg:text-4xl font-bold transition-colors duration-500"
+            className="inline-flex items-center gap-2 sm:gap-3 text-base sm:text-xl lg:text-2xl font-bold transition-colors duration-500"
           >
             {symbol}
             <motion.div
@@ -76,9 +76,9 @@ export function FinancleHeader() {
               style={{ perspective: 1000 }}
             >
               {directions[symbol] ? (
-                <TrendingUp className="h-5 w-5 sm:h-7 sm:w-7 lg:h-8 lg:w-8" />
+                <TrendingUp className="h-5 w-5 sm:h-6 sm:w-6 lg:h-6 lg:w-6" />
               ) : (
-                <TrendingDown className="h-5 w-5 sm:h-7 sm:w-7 lg:h-8 lg:w-8" />
+                <TrendingDown className="h-5 w-5 sm:h-6 sm:w-6 lg:h-6 lg:w-6" />
               )}
             </motion.div>
           </div>
