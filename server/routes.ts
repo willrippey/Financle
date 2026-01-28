@@ -5,6 +5,16 @@ import { storage } from "./storage";
 import { api } from "@shared/routes";
 import { z } from "zod";
 
+// Get current date in Eastern Time (handles EST/EDT automatically)
+function getTodayET(): string {
+  const now = new Date();
+  const etDate = new Date(now.toLocaleString("en-US", { timeZone: "America/New_York" }));
+  const year = etDate.getFullYear();
+  const month = String(etDate.getMonth() + 1).padStart(2, '0');
+  const day = String(etDate.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
 export async function registerRoutes(
   httpServer: Server,
   app: Express
@@ -32,7 +42,7 @@ export async function registerRoutes(
   app.get(api.games.daily.path, async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
     const userId = (req.user as any).claims.sub;
-    const today = new Date().toISOString().split('T')[0];
+    const today = getTodayET();
     
     // Check if user already has a game for today
     let game = await storage.getDailyGame(userId, today);
@@ -210,7 +220,7 @@ export async function registerRoutes(
       return res.status(400).json({ message: "Date is required" });
     }
     
-    const today = new Date().toISOString().split('T')[0];
+    const today = getTodayET();
     if (date >= today) {
       return res.status(400).json({ message: "Cannot play future or current daily challenges" });
     }
